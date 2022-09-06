@@ -1,19 +1,25 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <p>{{count}}</p>
+  <button @click="clickHandle">测试</button>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      count:0
+    }
   },
-  created() {
-    console.log(this)
+  methods: {
+    clickHandle(){
+     this.count++
+    }
   },
+  //生命周期构造
+
 
 }
 </script>

@@ -1,27 +1,26 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <p>{{count}}</p>
-  <button @click="clickHandle">测试</button>
+  <div>
+    <p>{{ count }}</p>
+    <button @click="addHandler">测试</button>
+  </div>
 </template>
-<script>
 
+<script setup>
+//组合式API
+import { ref, onMounted } from "vue";
 
-export default {
-  name: 'App',
-  data() {
-    return {
-      count:0
-    }
-  },
-  methods: {
-    clickHandle(){
-     this.count++
-    }
-  },
-  //生命周期构造
-
-
+//ref 传入基本数据类型 使其变为响应式元素
+const count = ref(0);
+function addHandler(){
+  //必须使用 .value 读写内部的值
+  count.value++;
 }
+
+onMounted(() => {
+  //必须使用 .value 读写内部的值
+  console.log('初始值: ' + count.value);
+})
+
 </script>
 
 <style>

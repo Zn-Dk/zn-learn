@@ -13,13 +13,26 @@
       flex-wrap: wrap;
       gap: 40px 20px;
       list-style-type: none;
+      margin-bottom: 100px;
     }
+
+
 
     li {
       width: 20%;
       background-color: #f90;
       height: 50px;
 
+    }
+
+    .test {
+      height: 200px;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    .test li:nth-of-type(5) {
+      align-self: flex-end;
     }
 
     /*
@@ -47,12 +60,19 @@
     <li>9</li>
     <li>10</li>
   </ul>
+  <ul class="test">
+    <li>A1</li>
+    <li>A2</li>
+    <li>A3</li>
+    <li>A4</li>
+    <li>A5</li>
+  </ul>
   <pre style="font-size: 16px;">
-      GAP 的四种形式
-      gap: 10px; // 行列统一gap
-      gap: 10px 20px; // row-gap(纵向间距) column gap(横向间距)
-      row-gap: 10px; // 单独设置
-      column-gap: 20px; // 单独设置
+    GAP 的四种形式
+    gap: 10px; // 行列统一gap
+    gap: 10px 20px; // row-gap(纵向间距) column gap(横向间距)
+    row-gap: 10px; // 单独设置
+    column-gap: 20px; // 单独设置
   </pre>
 </body>
 

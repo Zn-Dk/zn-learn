@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>{{ count }}</p>
-    <button @click="addHandler">测试</button>
+    <button @click="addHandler">+</button>
 
     <!-- v-bind 多属性的对象 -->
     <!-- <div a="1" b="2"></div> -->
@@ -19,6 +19,7 @@ import { ref, reactive, onMounted } from "vue";
 
 //组合式API
 
+// script setup 声明的变量 不再需要 return 任何变量或者方法，定义后可直接在模板中使用
 
 //ref 传入基本数据类型 使其变为响应式元素
 const count = ref(0);

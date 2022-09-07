@@ -35,62 +35,22 @@ function evaluation(expression) {
     if (curr.match(/and|or/)) {
       curr = (curr === 'and') ? '\&\&' : "\|\|"
       //检查前一个是否也是 and/or
-      if (index !== 0) {
-        let preFlag = acc[index - 1].match(/&&|\|\|/)
-        //如果是 输出 'error' 到数组中
-        curr = preFlag ? 'error' : curr
-      }
+      let preFlag = acc[index].match(/\&\&|\|\|/)
+      //如果是 输出 'error' 到数组中
+      curr = preFlag ? 'error' : curr
     }
     acc.push(curr)
     return acc
   }, ['return'])
-
   if (result.includes('error')) {
     return "error"
   }
   //通过创建函数的办法 让字符串运算式变为函数语句
   let resultExpression = result.join(' ')
   const fn = new Function(resultExpression)
-  return fn()
+  console.log(fn)
+  return String(fn())
 }
 
-console.log(evaluation('true and false'))
+console.log(evaluation("true or false and true"))
 //这个函数在 浏览器中不可用
-
-
-///////////////改进
-
-// 1. 不能连续出现 and or
-// 2. 不能以 and or 开头和结尾
-function evaluation(expression) {
-  let splits = expression.split(' ')
-  let len = splits.length
-  if (splits[0].match(/and|or/) || splits[len - 1].match(/and|or/)) {
-    return "error"
-  }
-
-  let result = splits.reduce((pre, cur, index) => {
-    //如果当前是 and/or
-    if (curr.match(/and|or/)) {
-      let isAnd = (curr === 'and')
-      
-      //检查前一个是否也是 and/or
-      if (index !== 0) {
-        let preFlag = acc[index - 1].match(/&&|\|\|/)
-        //如果是 输出 'error' 到数组中
-        curr = preFlag ? 'error' : curr
-      }
-    }
-    return pre
-  })
-
-  if (result.includes('error')) {
-    return "error"
-  }
-  //通过创建函数的办法 让字符串运算式变为函数语句
-  let resultExpression = result.join(' ')
-  const fn = new Function(resultExpression)
-  return fn()
-}
-
-console.log(evaluation('true and false'))

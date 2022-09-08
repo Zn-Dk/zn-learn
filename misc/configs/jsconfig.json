@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+    // 解决prettier对于装饰器语法的警告
+    "experimentalDecorators": true,
+    // 解决.jsx文件无法快速跳转的问题
+    "jsx": "preserve"
+  }
+}

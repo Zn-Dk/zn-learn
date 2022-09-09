@@ -2,7 +2,7 @@
 
   // 从hello world 的例子来看 在函数传递参数的时候我们限制了类型
   // 类型注解 就是 ts 在静态地给我们 约束了参数类型 保证了参数类型传递的过程中不会被错误的使用
-  // 目前了解到的 可以为基本的 number string null undefined
+
   const say = (msg: string) => {
     return 'I say: ' + msg
   }

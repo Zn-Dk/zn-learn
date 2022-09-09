@@ -1,3 +1,2 @@
-import './01基本数据类型'
+import './03类class/类-静态属性-抽象类'
 window.onload = () => { document.write('Hello World') }
-console.log('abc')

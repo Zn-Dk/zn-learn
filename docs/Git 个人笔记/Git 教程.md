@@ -107,9 +107,9 @@ git push origin main
 
 ## 版本追溯 reset 
 
-![image-20220906155326814](C:\Users\qiuhaoxiang\AppData\Roaming\Typora\typora-user-images\image-20220906155326814.png)
+![image-20220906155326814](D:\git\zn-web-learn\docs\Git 个人笔记\assets\image-20220906155326814.png)
 
-![image-20220906155339551](C:\Users\qiuhaoxiang\AppData\Roaming\Typora\typora-user-images\image-20220906155339551.png)
+![image-20220906155339551](D:\git\zn-web-learn\docs\Git 个人笔记\assets\image-20220906155339551.png)
 
 
 

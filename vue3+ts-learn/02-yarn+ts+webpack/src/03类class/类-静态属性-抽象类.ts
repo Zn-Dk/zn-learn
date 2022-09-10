@@ -50,24 +50,37 @@
   */
 
   abstract class Animal {
-
-    // 预定义一个未实现 cry 方法 在子类中需要实现
+    //预定义一个 name 属性 不可以给初始值
+    abstract name: string
+    constructor(name: string) { }
+    // 预定义一个未实现 cry 方法 在子类中需要实现 (不能在抽象类中写明)
     abstract cry(): void
 
     //已实现的方法
     run() {
-      console.log('run()')
+      console.log(' Animal run()')
     }
   }
 
   class Dog extends Animal {
+    constructor(public name: string = "狗") {
+      super(name)
+    }
+
+    //抽象类的实现
     cry() {
       console.log(' Dog cry()')
     }
   }
 
-  const dog = new Dog()
+  // const ani = new Animal() // 无法创建抽象类的实例
+
+  const dog = new Dog('小黄')
+
+  console.log(dog.name) // 小黄
+
   dog.cry()
+
   dog.run()
 })()
 

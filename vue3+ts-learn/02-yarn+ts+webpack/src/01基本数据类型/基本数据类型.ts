@@ -200,6 +200,34 @@
 
 
 
+  // unknown 类型 是TS3.0中新增的一个顶级类型, 被称作安全的any
+  // 比 any 类型更语义化 表示 我现在不清楚这个变量的类型 但是又不想它是任意类型
+  // 任何类型都可以赋值给unknown类型
+
+  let un: unknown;
+  un = 123;
+  un = "abc";
+  un = false;
 
 
+  //如果没有类型断言或基于控制流的类型细化, 那么不能将unknown类型赋值给其它类型
+
+  let value1: unknown = 123;
+  let value2: number;
+  // value2 = value1;//报错
+  value2 = value1 as number;//类型断言
+  if (typeof value1 === 'number') {//基于控制流的类型细化
+    value2 = value1;
+  }
+
+  // 如果没有类型断言或基于控制流的类型细化, 那么不能在unknown类型上进行任何操作
+
+  let value3: unknown = 123;
+  // value3++;//报错
+  (value3 as number)++;
+  if (typeof value3 === 'number') {
+    value3++;
+  }
+
+  
 })()

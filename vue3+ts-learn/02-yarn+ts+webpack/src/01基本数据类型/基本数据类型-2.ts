@@ -89,4 +89,52 @@
   c = [1, 2, 3]
 
 
+
+  //////////////////////////////////////////////////////////////////////
+
+
+
+  // 文字类型
+
+  let x: 'hello' = 'hello'
+  // x = 'world' // ERROR 不能将类型“"world"”分配给类型“"hello"”
+
+
+
+  // 使用文字联合类型
+
+  function showDirection(direction: 'north' | 'south' | 'west' | 'east') {
+    return `Your direction is ${direction}`
+  }
+
+  console.log(showDirection('south'))
+  // console.log(showDirection('zzzz')) // 报错 因为不符合这四种值的一个
+
+
+  function showAnyMsg(msg: 'hello' | number[] | false) {
+    return `You have ${msg}`
+  }
+
+  console.log(showAnyMsg([1, 2, 3]))
+  console.log(showAnyMsg('hello'))
+  console.log(showAnyMsg(false))
+  // console.log(showAnyMsg(true)) //ERROR
+
+
+  let req = {
+    url: 'http://localhost',
+    method: 'POST' as 'POST', // 强制类型推断
+  }
+
+  type Request = {
+    url: string,
+    method: 'GET' | 'POST' | 'PUT'
+  }
+  function fetchData(REQ: Request) {
+    console.log('URL:' + REQ.url)
+    console.log('METHOD:' + REQ.method)
+  }
+
+  fetchData(req)
+
 })()

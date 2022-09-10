@@ -76,5 +76,37 @@
   console.log(p5)
 
   // p5.id = 100 // 无法分配到 "id" ，因为它是只读属性。
+
+
+
+  // 接口的合并
+
+
+
+  //创建两个接口 ITest 名字相同
+
+  interface ITest {
+    name: string
+  }
+
+  //然后再重写
+
+  interface ITest {
+    age: number
+  }
+
+  interface ITest {
+    gender: string
+  }
+
+  const test: ITest = {
+    // 类型“{}”缺少类型“ITest”中的以下属性: name, age, gender
+    name: 'abx', age: 14, gender: '男'
+  }
+
+  // 可以看到 重写接口并没有覆盖原来的属性 而是原来属性的合并
+
+
+
 })()
 

@@ -93,5 +93,37 @@
   bird3.fly()
 
 
+  // 使用交叉类型 实现多重接口继承
+
+  interface A {
+    a: number
+  }
+  interface B {
+    b: string
+  }
+  interface C {
+    c(): void
+  }
+
+  type All = A & B & C
+
+  let al: All = {
+    a: 1,
+    b: '123',
+    c() {
+      console.log('ccc')
+    }
+  }
+
+// 函数的形参也可以这么表示 而且不需要type声明
+function getAll(obj: A & B & C) {
+  // 这里会有智能提示
+  console.log(obj.a, obj.b)
+}
+
+getAll(al)
+
+// getAll({ a: 2 })
+//类型 "{ a: number; }" 中缺少属性 "b"，但类型 "B" 中需要该属性。
 })()
 

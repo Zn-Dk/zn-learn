@@ -731,6 +731,44 @@ interface LightableAlarm extends Alarm, Light {
 
 
 
+## 接口继承类
+
+> 当接口继承了一个类，那么接口也会拥有类的属性和方法。
+>
+> 当别的类 实现这个 接口时，会同时实现 接口的属性和方法， 继承类的属性和方法
+
+```javascript
+class Log {
+     time: string = '2020-11-2';
+     getLog(){
+         console.log('测试')
+     }
+}
+
+interface  Shape3  extends Log{
+    message : string
+}
+
+
+
+class ErrLog implements Shape3 {
+    message: string ;
+    time: string;
+    constructor(message: string, time: string) {
+        this.message = message;
+        this.time = time
+    }
+    getLog(): void {
+        console.log("Method not implemented.");
+    }
+}
+
+let errs = new ErrLog('测试','2020-11-2')
+errs.getLog()  //Method not implemented.
+```
+
+
+
 ## 使用交叉类型**
 
 - 接口允许我们通过扩展其他类型建立起新类型 
@@ -980,6 +1018,236 @@ console.log(`a: ${a}, b: ${b}, c: ${c}`)
 
 
 
+
+## 类型保护
+
+> A type guard is some expression that performs a runtime check that guarantees the type in some scope. —— TypeScript 官方文档
+
+类型保护是可执行运行时检查的一种表达式，用于确保该类型在一定的范围内。换句话说，类型保护可以保证一个字符串是一个字符串，尽管它的值也可以是一个数值。类型保护与特性检测并不是完全不同，其主要思想是尝试检测属性、方法或原型，以确定如何处理值。目前主要有四种的方式来实现类型保护：
+
+### **in 关键字**
+
+```typescript
+interface Admin {
+  name: string;
+  privileges: string[];
+}
+
+interface Employee {
+  name: string;
+  startDate: Date;
+}
+
+type UnknownEmployee = Employee | Admin;
+
+function printEmployeeInformation(emp: UnknownEmployee) {
+  console.log("Name: " + emp.name);
+  if ("privileges" in emp) {
+    console.log("Privileges: " + emp.privileges);
+  }
+  if ("startDate" in emp) {
+    console.log("Start Date: " + emp.startDate);
+  }
+}
+```
+
+### **typeof 关键字**
+
+```typescript
+function padLeft(value: string, padding: string | number) {
+  if (typeof padding === "number") {
+      return Array(padding + 1).join(" ") + value;
+  }
+  if (typeof padding === "string") {
+      return padding + value;
+  }
+  throw new Error(`Expected string or number, got '${padding}'.`);
+}
+```
+
+`typeof` 类型保护只支持两种形式：`typeof v === "typename"` 和 `typeof v !== typename`，`"typename"` 必须是 `"number"`， `"string"`， `"boolean"` 或 `"symbol"`。 但是 TypeScript 并不会阻止你与其它字符串比较，语言不会把那些表达式识别为类型保护。
+
+### **instanceof 关键字**
+
+```typescript
+interface Padder {
+  getPaddingString(): string;
+}
+
+class SpaceRepeatingPadder implements Padder {
+  constructor(private numSpaces: number) {}
+  getPaddingString() {
+    return Array(this.numSpaces + 1).join(" ");
+  }
+}
+
+class StringPadder implements Padder {
+  constructor(private value: string) {}
+  getPaddingString() {
+    return this.value;
+  }
+}
+
+let padder: Padder = new SpaceRepeatingPadder(6);
+
+if (padder instanceof SpaceRepeatingPadder) {
+  // padder的类型收窄为 'SpaceRepeatingPadder'
+}
+```
+
+**自定义类型保护的类型谓词（type predicate）**
+
+```typescript
+function isNumber(x: any): x is number {
+  return typeof x === "number";
+}
+
+function isString(x: any): x is string {
+  return typeof x === "string";
+}
+```
+
+相信除了类型谓词外，大家对其它三种方式都很熟悉了，下面我们来着重介绍一下类型谓词。
+
+### 类型谓词
+
+在开始介绍类型谓词前，我们先来看一个示例：
+
+```typescript
+interface Vehicle {
+  move: (distance: number) => void;
+}
+
+class Car implements Vehicle {
+  move = (distance: number) => {
+    // Move car…
+  };
+
+  turnSteeringWheel = (direction: string) => {
+    // Turn wheel…
+  };
+}
+
+class VehicleController {
+  vehicle: Vehicle;
+  constructor(vehicle: Vehicle) {
+    this.vehicle = vehicle;
+  }
+}
+
+const car = new Car();
+const vehicleController = new VehicleController(car);
+
+const { vehicle } = vehicleController;
+vehicle.turnSteeringWheel('left');
+```
+
+尽管你知道汽车是一辆车，但 `VehicleController` 已经把它简化为一辆基本的汽车。因为 Vehicle 并没有 `turnSteeringWheel` 属性，所以对于以上代码，TypeScript 编译器会提示以下错误信息：
+
+```typescript
+Property 'turnSteeringWheel' does not exist on type 'Vehicle'.
+```
+
+对于这个问题，我们可以利用 `instanceof` 关键字来确保当前的对象是 `Car` 汽车类的实例：
+
+```typescript
+if(vehicle instanceof Car) {
+   vehicle.turnSteeringWheel('left');
+}
+```
+
+但该方案有一定的限制，即它只对类有效。当判断的对象不是某个类的实例时就无效了，比如：
+
+```typescript
+const anotherCar = {
+  move: (distance: number) => null,
+  turnSteeringWheel: (direction: string) => null
+}; 
+
+const anotherVehicleController = new VehicleController(anotherCar);
+const { vehicle } = anotherVehicleController;
+
+if (vehicle instanceof Car) {
+  vehicle.turnSteeringWheel('left');
+  console.log("这是一辆车");
+} else {
+  console.log("这不是一辆车");
+}
+```
+
+尽管 `anotherCar` 跟前面已经定义的 `car` 拥有相同的形状，但它并不是 `Car` 汽车类的实例，因此在这种情况下，`vehicle instanceof Car` 表达式返回的结果为 false。所以以上代码的输出结果是："这不是一辆车"。
+
+尽管 `typeof` 和 `instanceof` 这两个关键字在很多情况下可以满足类型保护的需求，但在函数式编程的领域它们的功能就受限了。那么我们应该如何检查任何对象的类型的？幸运的是，你可以创建自定义类型保护。
+
+#### 自定义类型保护
+
+下面我们继续以车辆和汽车的例子为例，来创建一个自定义类型保护函数 —— `isCar`，它的具体实现如下：
+
+```typescript
+function isCar(vehicle: any): vehicle is Car {
+  return (vehicle as Car).turnSteeringWheel !== undefined;
+}
+```
+
+你可以传递任何值给 isCar 函数，用来判断它是不是一辆车。isCar 函数与普通函数的最大区别是，该函数的返回类型是 `vehicle is Car`，这就是我们前面所说的 "类型谓词"。
+
+**在 isCar 函数的方法体中，我们不仅要检查 `vehicle` 变量是否含有 `turnSteeringWheel` 属性，而且还要告诉 TS 编译器，如果上述逻辑语句的返回结果是 true，那么当前判断的 `vehicle` 变量值的类型是 Car 类型。**
+
+现在让我们来重构一下前面的条件语句：
+
+```typescript
+// vehicle instanceof Car -> isCar(anotherCar)
+if (isCar(anotherCar)) {
+  anotherCar.turnSteeringWheel('left');
+  console.log("这是一辆车");
+} else {
+  console.log("这不是一辆车");
+}
+```
+
+在重构完成后，我们再次运行代码，这时控制台会输出 "这是一辆车"。好了，现在问题已经解决了。接下来让我们来总结一下自定义类型保护有什么用？
+
+#### 自定义类型保护有什么用
+
+自定义类型保护的主要特点是：
+
+- 返回类型谓词，如 `vehicle is Car`；
+- 包含可以准确确定给定变量类型的逻辑语句，如 `(vehicle as Car).turnSteeringWheel !== undefined`。
+
+对于基本数据类型来说，我们也可以自定义类型保护来保证类型安全，比如：
+
+```typescript
+const isNumber = (variableToCheck: any): variableToCheck is number =>
+  (variableToCheck as number).toExponential !== undefined;
+
+const isString = (variableToCheck: any): variableToCheck is string =>
+  (variableToCheck as string).toLowerCase !== undefined;
+```
+
+如果你要检查的类型很多，那么为每种类型创建和维护唯一的类型保护可能会变得很繁琐。针对这个问题，我们可以利用 TypeScript 的另一个特性 —— 泛型，来解决复用问题：
+
+```typescript
+function isOfType<T>(
+  varToBeChecked: any,
+  propertyToCheckFor: keyof T
+): varToBeChecked is T {
+  return (varToBeChecked as T)[propertyToCheckFor] !== undefined;
+}
+```
+
+在以上代码中，我们定义了一个通用的类型保护函数，你可以在需要的时候使用它来缩窄类型。以前面自定义类型保护的例子来说，我们就可以按照以下方式来使用 `isOfType` 通用的类型保护函数：
+
+```typescript
+// isCar(anotherCar) -> isOfType<Car>(vehicle, 'turnSteeringWheel')
+if (isOfType<Car>(vehicle, 'turnSteeringWheel')) {
+  anotherCar.turnSteeringWheel('left');
+  console.log("这是一辆车");
+} else {
+  console.log("这不是一辆车");
+}
+```
+
+有了 `isOfType` 通用的类型保护函数之后，你不必再为每个要检查的类型编写唯一的类型保护函数。而且在实际的开发过程中，只要我们合理的使用类型保护函数，就可以让我们的代码在运行时能够保证类型安全。
 
 
 
@@ -1471,7 +1739,7 @@ jQuery('#foo');
 // ERROR: Cannot find name 'jQuery'.
 ```
 
-如果第三方库没有自带声明文件，我们需要使用 declare var 来定义它的类型
+**如果第三方库没有自带声明文件**，我们需要使用 declare var 来定义它的类型
 
 ```typescript
 declare var jQuery: (selector: string) => any;

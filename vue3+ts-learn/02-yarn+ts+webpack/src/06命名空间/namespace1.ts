@@ -37,7 +37,6 @@ namespace B {
 }
 console.log(B.c)
 
-
 const freeD = A.C.D.free
 
 // 上面的名字太长 可以简化命名空间
@@ -52,3 +51,4 @@ console.log(easyFreeD) // free
 import { another } from './namespace2'
 // 引入已经导出命名空间的模块
 console.log(another.name)
+

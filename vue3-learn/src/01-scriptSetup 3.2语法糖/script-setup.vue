@@ -1,5 +1,5 @@
 <template>
-  <div>
+
     <p>{{ count }}</p>
     <button @click="addHandler">+</button>
 
@@ -11,7 +11,7 @@
 
     <button @click="showHandler">{{ btnText }}</button>
     <p v-if="showP">showP</p>
-  </div>
+
 </template>
 
 <script setup>

@@ -10,7 +10,6 @@
 
 <script setup>
 import { watchEffect, ref } from 'vue'
-
 const id = ref(1)
 const data = ref(null)
 const error = ref(null)
@@ -18,7 +17,7 @@ const isPending = ref(true)
 
 async function useFetch(getUrl) {
   // 使用fetch函数到 jsonplaceholder 网站拉取假数据
-  
+
   // fetch(getUrl())
   //   .then(res => res.json())
   //   .then(_data => {

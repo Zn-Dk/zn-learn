@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 //import App from './vue3.0/03-setup接收的参数/setup-props-context.vue'
-import App from './vue3.0/04-computed/computed.vue'
+import App from './vue3.0/05-watch/watch.vue'
 
 const app = createApp(App)
 app.mount('#app')

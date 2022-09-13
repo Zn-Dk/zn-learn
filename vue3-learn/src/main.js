@@ -1,9 +1,6 @@
 import { createApp } from 'vue'
-import App from './00-scriptSetup/script-setup.vue'
-//import App from './01-scriptSetup/script-setup.vue'
-//import App from './02-组件/comp-a.vue'
-// import App from './03-测试watchEffect/fetch-data.vue'
-// import App from './04-测试eventbus/CompA.vue'
+//import App from './vue3.0/03-setup接收的参数/setup-props-context.vue'
+import App from './vue3.0/04-computed/computed.vue'
 
 const app = createApp(App)
 app.mount('#app')

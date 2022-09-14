@@ -1,7 +1,8 @@
 import { createApp } from 'vue'
 //import App from './vue3.0/03-setup接收的参数/setup-props-context.vue'
 //import App from './vue3.0/10-readonly&&shallowReadonly/readonly.vue'
-import App from './vue3.0/11-toRaw 与 markRaw/raw.vue'
+//import App from './vue3.0/12-customRef/customRef.vue'
+import App from './vue3.0/16-几个判断API/isApi.vue'
 
 const app = createApp(App)
 app.mount('#app')

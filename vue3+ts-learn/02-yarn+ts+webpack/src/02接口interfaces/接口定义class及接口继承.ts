@@ -93,7 +93,7 @@
   bird3.fly()
 
 
-  // 使用交叉类型 实现多重接口继承
+  // 或者是使用交叉类型 实现多重接口继承(更方便)
 
   interface A {
     a: number
@@ -115,15 +115,24 @@
     }
   }
 
-// 函数的形参也可以这么表示 而且不需要type声明
-function getAll(obj: A & B & C) {
-  // 这里会有智能提示
-  console.log(obj.a, obj.b)
-}
+  class ABC implements All {
 
-getAll(al)
+    constructor(public a: number, public b: string) { }
+    c() {
+      console.log('ccc')
+    }
+  }
 
-// getAll({ a: 2 })
-//类型 "{ a: number; }" 中缺少属性 "b"，但类型 "B" 中需要该属性。
+
+  // 函数的形参也可以这么表示 而且不需要type声明
+  function getAll(obj: A & B & C) {
+    // 这里会有智能提示
+    console.log(obj.a, obj.b)
+  }
+
+  getAll(al)
+
+  // getAll({ a: 2 })
+  //类型 "{ a: number; }" 中缺少属性 "b"，但类型 "B" 中需要该属性。(以及 c())
 })()
 

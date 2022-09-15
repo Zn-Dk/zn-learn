@@ -4,7 +4,7 @@
 
   interface ITestFn {
     // 定义函数的调用签名 传入的参数类型 以及函数返回值
-    (test: string, reg: RegExp): boolean
+    (s: string, r: RegExp): boolean
   }
 
   // const regTest: ITestFn = function (test: string, reg: RegExp): boolean {
@@ -19,7 +19,18 @@
   console.log(regTest('abcdef', /[a-z]{3,10}/)) // true
 
   console.log(regTest('ABC', /[a-z]{3,10}/)) // false
-  
+
+
+  // 字面量写法
+
+  function getUserName(callback: (user: string) => void) {
+    return callback
+  }
+
+  getUserName((a) => {
+    alert(a)
+  })('John')
+
 
 })()
 

@@ -3,12 +3,13 @@
 // SomeType extends OtherType ? TrueType : FalseType
 
 
-interface INum{
+interface INum {
 
 }
 
 type argType = string | number
 
 function getSum<T extends number | string>(x: T, y: T): T {
-  return x + y
+  //return x + y
+  return x
 }

@@ -31,8 +31,7 @@
       不可以被实例化
       含有声明但未实现的方法
       一个类可以继承多个接口
-      子类必须实现其声明未实现的方法
-      所有成员都是默认Public的，因此接口中不能有Private成员
+      **所有成员都是默认Public的，因此接口中不能有Private成员
       子类必须实现接口的所有成员(如果没有 ? 修饰 )
 
 
@@ -73,11 +72,24 @@
     }
   }
 
+  class Cat extends Animal {
+    constructor(public name: string = "猫") {
+      super(name)
+    }
+
+    //抽象类的实现
+    cry() {
+      console.log(' Cat cry()')
+    }
+  }
+
   // const ani = new Animal() // 无法创建抽象类的实例
 
   const dog = new Dog('小黄')
+  const cat = new Cat('小花')
 
   console.log(dog.name) // 小黄
+  console.log(cat.name) // 小花
 
   dog.cry()
 

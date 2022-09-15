@@ -2,7 +2,7 @@
   <h3>请输入要查找的评论记录的id</h3>
   <input type="text" v-model="searchQuery" />
 
-  <h3 v-if="searchQuery">您搜索id: {{ searchQuery }} 的结果有...</h3>
+  <h3 v-if="searchQuery">您搜索id: {{ searchQuery }} 的结果有 {{ fetchData.length }} 条</h3>
   <ul v-if="fetchData">
     <li v-for="item in fetchData" :key="item.id">
       <p>postId:{{ item.postId }}</p>
@@ -14,11 +14,13 @@
 </template>
 
 <script>
-import { customRef, shallowRef } from 'vue'
+import { customRef, shallowReactive } from 'vue'
 
 export default {
   setup() {
-    let fetchData = shallowRef(null)
+    //let fetchData = shallowRef(null)
+    let fetchData = shallowReactive([])
+
     let searchQuery = debouncedRef('', 1000)
     // customRef 定义一个手动的 可以自定义行为的ref行为 (相当于做拦截)
 
@@ -33,7 +35,7 @@ export default {
       // return 一个对象 包含了 getter setter
       return customRef((track, trigger) => {
         return {
-          // 输入框 H3激活的时候都会执行一次get操作 打印2个get
+          // 输入框 H3标签 激活的时候都会执行一次get操作 打印2个get
           // set 内触发 trigger 重新执行 get, 还需要 get 内执行 track 跟踪这一改变
           get() {
             console.log('get ' + searchId)
@@ -62,7 +64,9 @@ export default {
       try {
         let res = await fetch(`http://jsonplaceholder.typicode.com/comments?postId=${id}`)
         let data = await res.json()
-        fetchData.value = data
+        //fetchData.value = data // 要么使用 shallowRef
+        fetchData = Object.assign(fetchData, shallowReactive(data)) // reactive 类型对象必须用 assign 否则重写了数据不响应
+        console.log(fetchData)
       } catch (err) {
         console.log(err)
       }

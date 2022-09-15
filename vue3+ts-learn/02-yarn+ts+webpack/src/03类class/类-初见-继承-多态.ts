@@ -31,6 +31,8 @@ let ming = new Student('小明', 12, 6)
 stu.showStudent()
 ming.showStudent()
 
+// 类的继承 类似 ES6 语法 使用 super 关键字继承父类属性方法
+
 class UniversityStudent extends Student {
   university: string
 
@@ -44,7 +46,7 @@ class UniversityStudent extends Student {
     console.log(this.name + ' 年龄:' + this.age + ' 大学:' + this.university)
   }
 
-  //如果要调用父类型的同名方法 使用super
+  // 使用super调用父类型的同名方法
   showProtoStudent() {
     super.showStudent()
   }
@@ -70,23 +72,34 @@ let uniStu3: Student = new UniversityStudent('李四', 18, '北京大学')
 
 console.log(uniStu3)
 
-// 如果子类型没有扩展的方法, 可以让子类型引用指向父类型的实例(不常用)
+// 如果子类型没有扩展的方法, 可以让子类型引用指向父类型的实例
+// 常用于 方法名字相同 但是通过重写父类实现不同的行为的情况
 class SmartStudent extends Student {
   constructor(name: string = "默认学生", age: number = 6, grade: number = 1) {
     super(name, age, grade)
   }
 
   showStudent(): void {
-    super.showStudent()
+    console.log('这是一个聪明的学生 由Student多态实现')
   }
 }
 
-let smartStu1: SmartStudent = new Student('王五', 8, 2)
+// 这样如果有其他类也继承了 Student 并且没有拓展方法,可以统一用 Student 管理
+class Display {
+  // 传入 SmartStudent 执行的是 SmartStudent 的方法 但是 type 却可以是父类 这就叫多态
+  showStudent(type: Student) {
+    type.showStudent()
+  }
+}
 
-smartStu1.showStudent()
+let smartStu1 = new SmartStudent('王五', 8, 2)
+
+let display = new Display()
+
+display.showStudent(smartStu1) // 这是一个聪明的学生 由Student多态实现
 
 
-// 但子类型有扩展的方法, 不能让子类型引用指向父类型的实例
+// 如果子类型有扩展的方法, 不能让子类型引用指向父类型的实例
 
 // let uniStu4: UniversityStudent = new Student('王五', 8, 2)
 // ERROR: 类型“Student”缺少类型“UniversityStudent”中的以下属性: university, showProtoStudent

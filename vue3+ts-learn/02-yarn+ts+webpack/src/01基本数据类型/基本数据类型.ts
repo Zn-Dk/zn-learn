@@ -77,10 +77,14 @@
 
   // Array
 
-  // 1 在注解类型后面加 []
+  // 1 在注解类型后面加 [] (一维数组)
   let numArr: number[]
   numArr = [1, 2, 3, 4]
   console.log(numArr)
+
+  // 声明二维数组
+  let numDuoArr: number[][]
+  numDuoArr = [[1, 2], [3, 4]]
 
   // 定义好类型的数组 是不能接受**定义之外**的类型的
   //numArr = ['1', '2'] // 不能将类型“string”分配给类型“number”
@@ -103,7 +107,6 @@
   //console.log(t1[1].split('')) // ERROR 类型“number”上不存在属性“split” (当访问一个已知索引的元素，会得到正确的类型)
 
 
-
   //////////////////////////////////////////////////////////////////////
 
 
@@ -121,9 +124,9 @@
   console.log(Fruit.orange) // 1
 
   // 可以通过下标获取值
-  console.log(typeof Fruit[1]) // 'orange'
+  console.log(Fruit[1]) // 'orange'
 
-  // 下标也可以手动赋值 (不常用)
+  // 也可以手动赋值下标 (不常用)
   enum Color { Red = 1, Green = 2, Blue = 4 }
 
 
@@ -135,9 +138,9 @@
   // any 类型
 
   // 标记不明确类型的变量 可以任意赋值
-  let unknown: any = 1
-  unknown = [1, 2]
-  unknown = 'yes'
+  let anyVal: any = 1
+  anyVal = [1, 2]
+  anyVal = 'yes'
 
   // 并且当你只知道一部分数据的类型时，any 类型也是有用的。 比如，你有一个数组，它包含了不同的类型的数据：
 
@@ -148,10 +151,10 @@
   console.log(arr1) // [1, 'noo', null, Array(2), false]
 
 
-  // 注意以下这种方法声明的数组 可传入类型会变成联合类型 (string | number | number[] | null) 即可传入四种类型的一种
+  // 注意 如果赋值数组时不写类型注释, 可传入类型自动推断成联合类型 (string | number | number[] | null)
   let arr2 = [1, 'noo', null, [1, 2]]
-  // arr[4] = false      // ERROR: Boolean 不属于声明中类型的一种
 
+  // arr[4] = false      // ERROR: Boolean 不属于声明中类型的一种
 
 
 
@@ -208,26 +211,24 @@
   un = 123;
   un = "abc";
   un = false;
-
+  let un1: number[] = [1, 2, 3]
+  un = un1
+  console.log('un:', un);
 
   //如果没有类型断言或基于控制流的类型细化, 那么不能将unknown类型赋值给其它类型
-
   let value1: unknown = 123;
   let value2: number;
-  // value2 = value1;//报错
-  value2 = value1 as number;//类型断言
-  if (typeof value1 === 'number') {//基于控制流的类型细化
+
+  //value2 = value1; // ERROR: 不能将类型“unknown”分配给类型“number”
+  value2 = value1 as number;// 类型断言
+
+  // value1++ // ERROR: 对象的类型为 "unknown"。
+  (value1 as number)++; // 类型断言
+
+  if (typeof value1 === 'number') { // 基于控制流的类型细化(类型缩小)
     value2 = value1;
+    value1++
   }
 
-  // 如果没有类型断言或基于控制流的类型细化, 那么不能在unknown类型上进行任何操作
 
-  let value3: unknown = 123;
-  // value3++;//报错
-  (value3 as number)++;
-  if (typeof value3 === 'number') {
-    value3++;
-  }
-
-  
 })()

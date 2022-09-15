@@ -79,6 +79,8 @@
 
   //////////////////////protected///////////////////////
 
+
+
   class D {
     protected foo: number
     constructor(foo: number) {
@@ -100,17 +102,21 @@
       super(foo)
     }
 
-    showE() {
+    showFatherD() {
       // protected 子类可以访问
       super.showD()
     }
   }
 
   let e = new E(123)
-  e.showE() // 打印 showD
+  e.showFatherD() // 打印 showD
   console.log(e) // E {foo: 456}
 
+
+
   //////////////////////readonly///////////////////////
+
+
 
   // 只读属性必须在声明时或构造函数里被初始化。初始化之后在外部和内部都不能被修改
 

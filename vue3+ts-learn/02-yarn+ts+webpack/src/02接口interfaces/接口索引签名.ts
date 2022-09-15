@@ -4,7 +4,7 @@
 // 表示属性名是 string 类型，属性值是 number 类型
 
 interface IString {
-  // index 只是一个象征
+  // index 键的类型 : string 值
   [index: number]: string
 }
 interface IString2 {
@@ -38,7 +38,8 @@ console.log(oStr2)
 
 // 如果要指定属性名称实现 接口中的其他键值对都要满足原有索引签名规则
 interface IString3 {
-  [index: string]: number | number[], //使用联合类型解决list的报错
+  [index: string]: number | number[], // 使用联合类型解决list的报错
+
   // 类型“number[]”的属性“list”不能赋给“string”索引类型“number”
   list: number[],
   // OK

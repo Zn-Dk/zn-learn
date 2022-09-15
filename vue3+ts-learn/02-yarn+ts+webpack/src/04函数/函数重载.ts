@@ -25,6 +25,7 @@ console.log(add('1', '2')) //OK
 console.log(add(1, 2)) //OK
 
 // console.log(add(1, '2'))
+
 /*
 报错:
 

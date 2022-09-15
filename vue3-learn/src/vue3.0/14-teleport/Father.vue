@@ -2,6 +2,7 @@
   <div class="father">
     <h1>我是Father</h1>
     <Son />
+    <div id="test"></div>
   </div>
 </template>
 

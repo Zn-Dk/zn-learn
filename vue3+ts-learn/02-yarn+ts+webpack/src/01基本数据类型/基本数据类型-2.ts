@@ -1,4 +1,47 @@
 (() => {
+
+
+
+  // 可选参数
+
+  // 定义一个tuple 最后一位 number 可省略
+  type point = [number, number, number?]
+
+  let point_2D: point = [1, 2]
+
+  let point_3D: point = [1, 2, 3]
+
+
+
+  //////////////////////////////////////////////////////////////////////
+
+
+
+  // 非空断言操作符
+
+  // 属性或参数中使用 ！：表示强制解析（告诉typescript编译器，这里一定有值），常用于vue - decorator中的@Prop
+  // 变量后使用 ！：表示类型推断排除null、undefined
+
+  let element: HTMLElement
+  // element = document.querySelector("#id") // 不能将类型“HTMLElement | null”分配给类型“HTMLElement”。
+
+  // 如果已经确定这是一个有返回值的变量
+  element = document.querySelector("#id")!
+
+
+  let x: string | null | undefined
+  let y: string
+  // x = y //错误
+  x = y!//正确，y！表示y排除null undefined类型
+
+
+  function myFunc(maybeString: string | undefined | null) {
+    // const onlyString: string = maybeString; //Error
+    const ignoreUndefinedNull: string = maybeString!;//Ok
+  }
+
+
+
   //////////////////////////////////////////////////////////////////////
 
 
@@ -6,6 +49,7 @@
   // 联合类型 表示取值可以为多种类型中的一种
 
   // 使用 | 将 不同的类型分隔开
+
 
   let union: number | string | boolean = 123
   union = 'foo' // OK
@@ -94,11 +138,14 @@
 
 
 
-  // 文字类型
+  // 文字类型 (字面量类型)
 
-  let x: 'hello' = 'hello'
-  // x = 'world' // ERROR 不能将类型“"world"”分配给类型“"hello"”
+  let word: 'hello'
+  // word = 'world' // ERROR 不能将类型“"world"”分配给类型“"hello"”
 
+  let gender: 'male' | 'female'
+
+  let dice: 0 | 1 | 2 | 3 | 4 | 5 | 6
 
 
   // 使用文字联合类型

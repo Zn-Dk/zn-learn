@@ -9,8 +9,9 @@
 </template>
 
 <script setup>
-// script setup 引入的子组件不再需要注册，可以直接在模板中使用
-// 动态组件的使用与V2.x 相同 都是v-bind :is 决定了组件的渲染
+// 1.script setup 引入的子组件不再需要注册，可以直接在模板中使用
+
+// 2.动态组件的使用与V2.x 相同 都是v-bind :is 决定了组件的渲染
 import FooComp from '@/02-组件/components/FooComp.vue'
 import BarComp from '@/02-组件/components/BarComp.vue'
 

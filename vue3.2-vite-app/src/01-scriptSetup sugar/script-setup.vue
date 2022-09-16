@@ -1,20 +1,20 @@
 <template>
 
-    <p>{{ count }}</p>
-    <button @click="addHandler">+</button>
+  <p>{{ count }}</p>
+  <button @click="addHandler">+</button>
 
-    <!-- v-bind 多属性的对象 -->
-    <!-- <div a="1" b="2"></div> -->
-    <div v-bind="obj">
-      <p>{a:{{ obj.a }}, b:{{ obj.b }}}</p>
-    </div>
+  <!-- v-bind 多属性的对象 -->
+  <!-- <div a="1" b="2"></div> -->
+  <div v-bind="obj">
+    <p>{a:{{ obj.a }}, b:{{ obj.b }}}</p>
+  </div>
 
-    <button @click="showHandler">{{ btnText }}</button>
-    <p v-if="showP">showP</p>
+  <button @click="showHandler">{{ btnText }}</button>
+  <p v-if="showP">showP</p>
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 
 //组合式API
@@ -24,7 +24,7 @@ import { ref, reactive, onMounted } from "vue";
 //ref 传入基本数据类型 使其变为响应式元素
 const count = ref(0);
 const obj = reactive({ a: 1, b: 2 });
-
+  
 function addHandler() {
   //必须使用 .value 读写内部的值
   count.value++;

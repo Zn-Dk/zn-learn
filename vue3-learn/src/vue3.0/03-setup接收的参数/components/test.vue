@@ -30,6 +30,8 @@ export default {
     // slots => $slots 待接收的插槽
     // emit => 自定义事件 相当于 $emit(eventName,context)
 
+    console.log(props.name) // 打印张三, 因为没有 this , 所以通过这种方式获取
+
     console.log(context.attrs, 'attrs') // 打印 $attrs
 
     console.log(context.slots, 'slots') // 打印所有插槽

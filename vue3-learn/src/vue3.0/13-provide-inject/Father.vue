@@ -17,6 +17,12 @@ export default {
     let msg = ref('Hello From Father')
     provide('msg', msg)
 
+    // 
+    provide({
+      msg,
+
+    })
+
     return { msg }
   },
 }

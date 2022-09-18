@@ -10,7 +10,7 @@ import { getCurrentInstance, inject, ref } from 'vue';
 
 // 一. 直接引入的
 // import mitt 即可 注意是导出的统一内存地址
-// import $bus from '@/lib/bus'
+// import $bus from '@/libs/bus'
 
 // 二. 全局绑定的
 

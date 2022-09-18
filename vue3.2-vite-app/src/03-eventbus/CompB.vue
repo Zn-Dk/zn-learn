@@ -5,9 +5,9 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, inject } from 'vue';
-//import $bus from '@/lib/bus'
+//import $bus from '@/libs/bus'
 const { $bus } = inject('global')
-
+ref
 let message = ref('')
 const showMsg = (msg: string) => {
   console.log('CompB received message from CompA')

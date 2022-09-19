@@ -1,11 +1,12 @@
 import { createApp } from 'vue'
-//import App from './02-components/comp-namespace.vue'
-//import App from './03-test-eventbus/Index.vue'
-//import App from './04-defineProps/Index.vue'
-//import App from './05-withDefault/Index.vue'
-//import App from './06-defineEmits/Index.vue'
-//import App from './07-defineExpose/Index.vue'
-import App from './08-useSlots-useAttrs/Index.vue'
+// import App from './02-components/comp-namespace.vue'
+// import App from './03-test-eventbus/Index.vue'
+// import App from './04-defineProps/Index.vue'
+// import App from './05-withDefault/Index.vue'
+// import App from './06-defineEmits/Index.vue'
+// import App from './07-defineExpose/Index.vue'
+// import App from './08-useSlots-useAttrs/Index.vue'
+import App from './09-style/Style-module.vue'
 
 const app = createApp(App)
 

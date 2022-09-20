@@ -14,11 +14,13 @@ import Child from './Child.vue';
 const refChild = ref(null)
 const refSetupChild = ref(null)
 
-//普通 setup 定义的组件是默认能直接获取属性的
+//普通 script 定义的组件是默认能直接获取属性的
 console.log(refChild, 'refChild')
-console.log(refSetupChild, 'refSetupChild')
+
+// script-setup定义的组件
 // 1. value 属性没有东西
 // 2. 自己的发现 value 底层有 __v_skip:true 开启了 markRaw
+console.log(refSetupChild, 'refSetupChild')
 
 // 在 onMounted 钩子取值
 /*

@@ -22,22 +22,35 @@ interface IList {
 // type 同理
 
 
-// defineProp 返回一个对象
-const props = defineProps<
+// defineProp 返回一个包含 props 的对象
+// const props = defineProps<
+//   {
+//     name: string,
+//     age: number,
+//     // 字面量的方式声明 (如果写的很长还是建议写到接口里)
+//     // list?: { id: number, content: string, jazz?: string }[]
+//     // 实现接口
+//     list?: IList[],
+//   }
+
+// >()
+
+// // 如果 script 中需要用到 props 可以这样获取
+// console.log(props.list, 'list')
+// console.log(props.age, 'age')
+
+
+// 通过解构的方式取值 也是可行的
+const { name, age, list } = defineProps<
   {
     name: string,
     age: number,
-    // 字面量的方式声明 (如果写的很长还是建议写到接口里)
-    // list?: { id: number, content: string, jazz?: string }[]
-    // 实现接口
     list?: IList[],
   }
-
 >()
 
-// 如果 script 中需要用到 props 可以这样获取
-console.log(props.list, 'list')
-console.log(props.age, 'age')
+console.log(name, age, list)
+
 
 </script>
 

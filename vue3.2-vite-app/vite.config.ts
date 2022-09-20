@@ -8,7 +8,6 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-
     vue(),
     // AutoImport({
     //   // 指定 vue 自动化导入 api (无需 import)
@@ -20,6 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      // 'vue': 'vue/dist/vue.esm-bundler.js',
     },
   },
 })

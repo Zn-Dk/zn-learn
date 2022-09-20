@@ -7,7 +7,8 @@ import { createApp } from 'vue'
 // import App from './07-defineExpose/Index.vue'
 // import App from './08-useSlots-useAttrs/Index.vue'
 // import App from './09-style/Style-v-bind.vue'
-import App from './10-test-webComponent/Index.vue'
+// import App from './10-test-webComponent/Index.vue'
+import App from './11-revision-playground/Index.vue'
 
 const app = createApp(App)
 

@@ -1,10 +1,11 @@
 import { createApp } from 'vue'
-import App from './vue3.0/03-setup接收的参数/setup-props-context.vue'
-//import App from './vue3.0/10-readonly&&shallowReadonly/readonly.vue'
-//import App from './vue3.0/12-customRef/customRef.vue'
-//import App from './vue3.0/14-teleport-unfinished/Father.vue'
-//import App from './vue3.0/15-异步组件+Suspense-unfinished/Father.vue'
-//import App from './vue3.0/16-几个判断API/isApi.vue'
+// import App from './vue3.0/03-setup接收的参数/setup-props-context.vue'
+import App from './vue3.0/05-watch/watchEffect.vue'
+// import App from './vue3.0/10-readonly&&shallowReadonly/readonly.vue'
+// import App from './vue3.0/12-customRef/customRef.vue'
+// import App from './vue3.0/14-teleport-unfinished/Father.vue'
+// import App from './vue3.0/15-异步组件+Suspense-unfinished/Father.vue'
+// import App from './vue3.0/16-几个判断API/isApi.vue'
 
 const app = createApp(App)
 app.mount('#app')

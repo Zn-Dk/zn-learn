@@ -24,7 +24,7 @@ export default {
 
   setup(props, context) {
     // console.log(props, context)
-    // props 对象，包含：组件外部传递过来，且组件内部声明接收了的属性。
+    // props 对象，包含：父组件传递，且组件内部使用 props 声明接收了的属性。
     // context 上下文 内含
     // attrs => $attrs 待接收的属性
     // slots => $slots 待接收的插槽

@@ -8,7 +8,7 @@
 
 <script></script>
 
-<script setup>
+<script setup lang="js">
 import { watchEffect, ref } from 'vue'
 const id = ref(1)
 const data = ref(null)

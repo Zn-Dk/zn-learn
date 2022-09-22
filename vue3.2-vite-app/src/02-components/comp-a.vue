@@ -7,7 +7,7 @@ export default {
 }
 </script>
 
-<script setup>
+<script setup lang="ts">
 //Vue3 会自动根据文件名推断组件 name 比如 comp-a => CompA
 </script>
 

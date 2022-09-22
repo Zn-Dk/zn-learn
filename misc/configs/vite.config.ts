@@ -45,21 +45,6 @@ export default defineConfig({
   },
   // 打包配置
   build: {
-    // lib: {
-    //   entry: path.resolve(__dirname, 'src/main.ts'), // 入口文件位置
-    //   name: 'my-app',
-    //   // fileName: (format) => `my-app.${format}.js`
-    // },
-    // sourcemap: true, // 是否生成sourcemap
-
-    // outDir: 'dist', // 指定输出路径 默认 /dist
-
-    assetsDir: 'static', // 指定生成静态资源的存放路径
-
-    // chunkSizeWarningLimit: 1500, // 警报门槛，限制大文件大小
-
-    minify: 'esbuild', // 混淆器，terser构建后文件体积更小
-
     // 清除console和debugger
     terserOptions: {
       compress: {
@@ -67,13 +52,15 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
-
+    //警报门槛，限制大文件大小
+    // chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
         //对静态文件进行打包处理（文件分类）
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+        //此处打开后会导致背景图路径有问题，所以暂时隐藏，未找到合适的解决方案
+        // chunkFileNames: 'assets/js/[name]-[hash].js',
+        // entryFileNames: 'assets/js/[name]-[hash].js',
+        // assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
   },

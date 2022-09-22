@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref, inject } from 'vue';
 //import $bus from '@/libs/bus'
-const { $bus } = inject('global')
+const g: any = inject('global')
 ref
 let message = ref('')
 const showMsg = (msg: string) => {
@@ -14,8 +14,8 @@ const showMsg = (msg: string) => {
   message.value = msg
 }
 
-$bus.on('msgToB', showMsg)
-onBeforeUnmount(() => $bus.off('msgToB', showMsg))
+g.$bus.on('msgToB', showMsg)
+onBeforeUnmount(() => g.$bus.off('msgToB', showMsg))
 
 </script>
 

@@ -2,7 +2,9 @@
   <!--  teleport to=移动到的元素目标 一般移动到 body根元素 -->
   <!-- <teleport to="#test">  传送到Father组件下的 #test -->
   <!-- to 的值可以是一个 CSS 选择器字符串，也可以是一个 DOM 元素对象。 -->
-  <teleport to="body">
+
+  <!-- 属性 disabled 为 true 时 teleport失效, 故可以利用这个属性动态的决定是否teleport -->
+  <Teleport :disabled="false" to="body">
     <transition name="dialog">
       <div class="dialog-mask" v-if="isShow">
         <div class="dialog">
@@ -11,7 +13,7 @@
         </div>
       </div>
     </transition>
-  </teleport>
+  </Teleport>
 </template>
 
 <script>
@@ -27,7 +29,7 @@
 export default {
   emits: ['close'],
   props: { isShow: Boolean },
-  setup() {},
+  setup() { },
 }
 </script>
 
@@ -41,10 +43,12 @@ export default {
   right: 0;
   margin: auto;
 }
+
 .dialog-mask {
   background-color: rgba(0, 0, 0, 0.5);
   transition: 0.3s ease;
 }
+
 .dialog {
   width: 300px;
   height: 300px;

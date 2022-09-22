@@ -18,11 +18,11 @@ import { getCurrentInstance, inject, ref } from 'vue';
 // const { $bus } = getCurrentInstance().appContext.config.globalProperties
 
 // 方法2. main.ts 内 app.provide inject 全局 ('global') (推荐)
-const { $bus } = inject('global')
+const global:any = inject('global')
 
 const message = ref('')
 const emitMsg = () => {
-  $bus.emit('msgToB', message.value)
+  global.$bus.emit('msgToB', message.value)
 }
 
 </script>

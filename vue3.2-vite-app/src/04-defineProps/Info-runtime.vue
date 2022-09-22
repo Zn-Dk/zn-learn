@@ -44,7 +44,7 @@ export default defineComponent({
 })
 </script> -->
 
-<script lang="ts" setup>
+<script setup>
 // 使用 setup 语法糖的时候
 // 类似 defineXXXX 的一些方法在运行前会经过一个编译的过程
 // 无需引入组件, 这里是因为借助了 Compiler Macros (编译时宏命令)

@@ -10,8 +10,9 @@ import { createApp } from 'vue'
 // import App from './10-test-webComponent/Index.vue'
 // import App from './11-revision-playground/Index.vue'
 // import App from './12-globalComponent-recurComponent/Global-Index.vue'
-import App from './12-globalComponent-recurComponent/Recur-Index.vue'
+// import App from './12-globalComponent-recurComponent/Recur-Index.vue'
 // import App from './13-Suspense-AsyncComponent/Index.vue'
+import App from './15-provideInject/Index.vue'
 
 // 2.1 注册全局组件 自定义
 import GlobalCard from '@/12-globalComponent-recurComponent/GlobalCard.vue'

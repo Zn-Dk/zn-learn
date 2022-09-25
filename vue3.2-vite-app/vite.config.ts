@@ -40,6 +40,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@pub': path.resolve(__dirname, 'public'),
       // 'vue': 'vue/dist/vue.esm-bundler.js',
     },
   },

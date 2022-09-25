@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 // import App from './02-components/comp-namespace.vue'
-// import App from './03-test-eventbus/Index.vue'
+// import App from './03-eventbus/Index.vue'
 // import App from './04-defineProps/Index.vue'
 // import App from './05-withDefault/Index.vue'
 // import App from './06-defineEmits/Index.vue'
@@ -12,7 +12,9 @@ import { createApp } from 'vue'
 // import App from './12-globalComponent-recurComponent/Global-Index.vue'
 // import App from './12-globalComponent-recurComponent/Recur-Index.vue'
 // import App from './13-Suspense-AsyncComponent/Index.vue'
-import App from './15-provideInject/Index.vue'
+// import App from './15-provideInject/Index.vue'
+// import App from './16-customHooks/base64.vue'
+import App from './17-customPlugin/Index.vue'
 
 // 2.1 注册全局组件 自定义
 import GlobalCard from '@/12-globalComponent-recurComponent/GlobalCard.vue'
@@ -24,6 +26,36 @@ import mitt from 'mitt'
 
 // 1.2 使用 globalProperties 接收全局变量
 app.config.globalProperties.$bus = mitt() // 别忘了执行
+// 1.2-1 制作声明(这样引入全局变量后才会有方法提示)
+type Bus = {
+  on: (evName: string, handler: any) => void
+  off: (evName: string, handler: any) => void
+  emit: (evName: string) => void
+}
+
+// Vue3 声明文件的形式如下
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    // 全局变量: 方法属性的相关类型声明
+    $bus: Bus
+  }
+}
+
+// 3.1 配置自定义插件
+import myLoading from './17-customPlugin/myLoading'
+app.use(myLoading)
+// 3.1-1 声明这个插件的变量
+import { Ref } from 'vue'
+type load = {
+  isShow: Ref<boolean>
+  show: () => void
+}
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    // 全局变量: 方法属性的相关类型声明
+    $myLoading: load
+  }
+}
 
 app
   // 1.3 配置全局变量 页面中使用 inject 接收(推荐)

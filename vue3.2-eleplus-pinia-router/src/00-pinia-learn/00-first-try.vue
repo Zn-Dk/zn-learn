@@ -14,7 +14,7 @@
 import { ref } from 'vue';
 
 // usePinia store
-import testStore from './store/test'
+import testStore from '@/store/test'
 
 const store = testStore()
 

@@ -1,10 +1,11 @@
 import { createApp } from 'vue'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import App from './App.vue'
+// import ElementPlus from 'element-plus' // 自动按需导入 不需要import
+// import 'element-plus/dist/index.css'
+import App from '@/00-pinia-learn/02-解构.vue'
 import { createPinia } from 'pinia'
 const app = createApp(App)
-app.use(ElementPlus)
+
+// app.use(ElementPlus)
 
 // pinia
 app.use(createPinia())

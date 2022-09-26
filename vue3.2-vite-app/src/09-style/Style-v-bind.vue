@@ -2,15 +2,24 @@
   <!-- 绑定一个静态的类名 -->
   <h2 class="title">Hello World</h2>
   <p class="test">test</p>
+  <p class="color">3秒之后我将变色</p>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 // 单文件组件的 <style> 标签可以通过 v-bind 这一 CSS 函数将 CSS 的值关联到动态的组件状态上：
 
 // 声明一个变量
 const bold = ref(900)
+
+// 改变变量查看效果
+const color = ref('blue')
+onMounted(() => {
+  setTimeout(() => {
+    color.value = 'pink'
+  }, 3000)
+})
 
 </script>
 
@@ -44,5 +53,10 @@ const bold = ref(900)
 .test {
   color: var(--main-font-color);
   background-color: var(--main-orange-color);
+}
+
+.color {
+  font-size: 32px;
+  color: v-bind(color)
 }
 </style>

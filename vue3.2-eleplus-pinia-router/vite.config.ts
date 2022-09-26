@@ -1,18 +1,14 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import path from "path";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import path from 'path'
 
 // import compressPlugin from "vite-plugin-compression"; //静态资源压缩
 // import legacyPlugin from "@vitejs/plugin-legacy"; //浏览器兼容
 
 // 自动引入 api
-// import AutoImport from 'unplugin-auto-import/vite'
-
-// 移动端vw适配配置
-// import postcsspxtoviewport from 'postcss-px-to-viewport' //插件
-
-// 打包体积分析 npm i rollup-plugin-visualizer -D
-import { visualizer } from "rollup-plugin-visualizer";
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // 参考 https://vitejs.dev/config/
 export default defineConfig({
@@ -21,28 +17,18 @@ export default defineConfig({
     open: true, //vite项目启动时自动打开浏览器
     hmr: true, //开启热更新
   },
-  // css: {
-  //   // vite 自带 postcss 配置项
-  //   postcss: {
-  //     plugins: [
-  //       postcsspxtoviewport({
-  //         unitToConvert: 'px', // 要转化的单位
-  //         viewportWidth: 750, // UI设计稿的宽度
-  //         unitPrecision: 4, // 转换后的精度，即小数点位数
-  //       }),
-  //     ],
-  //   },
-  // },
   plugins: [
     vue(),
-    // 打包体积分析
-    visualizer({ open: true }),
-    // AutoImport({
-    //   // 指定 vue 自动化导入 api (无需 import)
-    //   imports: ['vue'],
-    //   // 创建声明文件的目录(否则生成在根目录下)
-    //   dts: 'src/auto-import.d.ts',
-    // }),
+    AutoImport({
+      // 指定 vue 自动化导入 api (无需 import)
+      // imports: ['vue'],
+      resolvers: [ElementPlusResolver()],
+      // 创建声明文件的目录(否则生成在根目录下)
+      dts: 'src/auto-import.d.ts',
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
     // compressPlugin({
     //   //gzip静态资源压缩
     //   verbose: true, // 默认即可
@@ -59,8 +45,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      "@pub": path.resolve(__dirname, "public"),
+      '@': path.resolve(__dirname, 'src'),
+      '@pub': path.resolve(__dirname, 'public'),
       // 'vue': 'vue/dist/vue.esm-bundler.js',
     },
   },
@@ -71,19 +57,15 @@ export default defineConfig({
     //   name: 'my-app',
     //   // fileName: (format) => `my-app.${format}.js`
     // },
-    // sourcemap: false, // 是否生成sourcemap (生产环境禁用)
+    // sourcemap: true, // 是否生成sourcemap
 
     // outDir: 'dist', // 指定输出路径 默认 /dist
 
-    assetsDir: "static", // 指定生成静态资源的存放路径
+    assetsDir: 'static', // 指定生成静态资源的存放路径
 
     // chunkSizeWarningLimit: 1500, // 警报门槛，限制大文件大小
 
-    // assetsInlineLimit: 4096, // assets 文件小于指定 Byte 时打包成 base64 默认: 4096 => 4kb
-
-    cssCodeSplit: true, // 是否拆分 css
-
-    minify: "esbuild", // 混淆器，esbuild 打包速度最快, terser 构建后文件体积更小(需要手动安装)
+    minify: 'esbuild', // 混淆器，terser构建后文件体积更小
 
     // 清除console和debugger
     terserOptions: {
@@ -96,10 +78,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         //对静态文件进行打包处理（文件分类）
-        chunkFileNames: "assets/js/[name]-[hash].js",
-        entryFileNames: "assets/js/[name]-[hash].js",
-        assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
   },
-});
+})

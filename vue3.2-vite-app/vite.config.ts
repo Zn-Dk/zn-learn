@@ -8,6 +8,12 @@ import path from 'path'
 // 自动引入 api
 // import AutoImport from 'unplugin-auto-import/vite'
 
+// 移动端vw适配配置
+// import postcsspxtoviewport from 'postcss-px-to-viewport' //插件
+
+// 打包体积分析 npm i rollup-plugin-visualizer -D
+import { visualizer } from 'rollup-plugin-visualizer'
+
 // 参考 https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -15,8 +21,22 @@ export default defineConfig({
     open: true, //vite项目启动时自动打开浏览器
     hmr: true, //开启热更新
   },
+  // css: {
+  //   // vite 自带 postcss 配置项
+  //   postcss: {
+  //     plugins: [
+  //       postcsspxtoviewport({
+  //         unitToConvert: 'px', // 要转化的单位
+  //         viewportWidth: 750, // UI设计稿的宽度
+  //         unitPrecision: 4, // 转换后的精度，即小数点位数
+  //       }),
+  //     ],
+  //   },
+  // },
   plugins: [
     vue(),
+    // 打包体积分析
+    visualizer({ open: true }),
     // AutoImport({
     //   // 指定 vue 自动化导入 api (无需 import)
     //   imports: ['vue'],
@@ -51,7 +71,7 @@ export default defineConfig({
     //   name: 'my-app',
     //   // fileName: (format) => `my-app.${format}.js`
     // },
-    // sourcemap: true, // 是否生成sourcemap
+    // sourcemap: false, // 是否生成sourcemap (生产环境禁用)
 
     // outDir: 'dist', // 指定输出路径 默认 /dist
 
@@ -59,7 +79,11 @@ export default defineConfig({
 
     // chunkSizeWarningLimit: 1500, // 警报门槛，限制大文件大小
 
-    minify: 'esbuild', // 混淆器，terser构建后文件体积更小
+    // assetsInlineLimit: 4096, // assets 文件小于指定 Byte 时打包成 base64 默认: 4096 => 4kb
+
+    cssCodeSplit: true, // 是否拆分 css
+
+    minify: 'esbuild', // 混淆器，esbuild 打包速度最快, terser 构建后文件体积更小(需要手动安装)
 
     // 清除console和debugger
     terserOptions: {

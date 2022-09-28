@@ -60,7 +60,8 @@ const change3 = () => {
   store.$state = {
     // count: '30', // 不能修改定义的类型
     count: 30,
-    foo: 'NU'
+    foo: 'NU',
+    URL: 'http://'
   }
 }
 

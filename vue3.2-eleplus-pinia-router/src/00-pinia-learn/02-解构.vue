@@ -23,7 +23,7 @@ const store = useTestStore()
 // const { foo, count } = store
 // console.log(foo, count)
 
-// 使用 api storeToRefs 将其包装为 ref
+// 使用 api storeToRefs 将整个 store 包装为 ref (其原理跟toRefs 一样给里面的数据包裹一层 toRef)
 const { foo, count } = storeToRefs(store)
 console.log(foo, count)
 

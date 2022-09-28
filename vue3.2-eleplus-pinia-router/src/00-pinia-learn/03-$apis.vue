@@ -15,7 +15,7 @@
   <br>
   <el-button @click="change2">change2</el-button>
   <br>
-  <el-button @click="store.fetchData('http://www.baidu.com')">fetchData</el-button>
+  <el-button @click="store.fetchData('https://httpbin.org/get')">fetchData</el-button>
   <br>
   <el-button @click="resetStore">resetStore</el-button>
 </template>
@@ -80,7 +80,7 @@ const unSub = store.$subscribe((mutation, state) => {
 
 
   // 示例 持久化
-  localStorage.setItem(mutation.storeId, JSON.stringify(state))
+  // localStorage.setItem(mutation.storeId, JSON.stringify(state))
 
   // unSub()
 })

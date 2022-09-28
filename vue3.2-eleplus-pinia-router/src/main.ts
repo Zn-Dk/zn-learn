@@ -1,18 +1,19 @@
 import { createApp } from 'vue'
-// import ElementPlus from 'element-plus' // 自动按需导入 不需要import
-// import 'element-plus/dist/index.css'
 import App from '@/00-pinia-learn/03-$apis.vue'
-import { createPinia } from 'pinia'
 const app = createApp(App)
 
-// app.use(ElementPlus)
+// ElementPlus
+// import ElementPlus from 'element-plus' // 自动按需导入 不需要import
+// import 'element-plus/dist/index.css'
 
-// pinia
-app.use(createPinia())
+// pinia + 持久化插件
+import { createPinia } from 'pinia'
+import piniaPersist from 'pinia-plugin-persist'
+const pinia = createPinia()
+pinia.use(piniaPersist)
 
 // eventBus
 import mitt from 'mitt'
-
 app.config.globalProperties.$bus = mitt()
 type Bus = {
   on: (evName: string, handler: any) => void
@@ -25,4 +26,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
-app.mount('#app')
+app
+  .use(pinia)
+  // .use(ElementPlus)
+  .mount('#app')

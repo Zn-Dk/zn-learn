@@ -58,6 +58,23 @@ export default defineStore(Name.test, {
       this.URL = data?.url
     },
   },
+  // 持久化插件
+  // 存储的 key 默认为 store 的 id 名称 比如本例子就是 'Test'
+  persist: {
+    enabled: true, // 是否启用持久化 默认整个store都存储
+    strategies: [
+      {
+        key: 'UA_USER', // 自定义 key 名称
+        storage: sessionStorage,
+        paths: ['foo', 'count'], // foo 和 count 字段用会话存储
+      },
+      {
+        key: 'UA_URL', // 自定义 key 名称
+        storage: localStorage,
+        paths: ['URL'], // URL 字段用本地存储
+      },
+    ],
+  },
 })
 
 // 创建store还可以传递一个setup函数 类似 vue setup 组合式 api 的写法

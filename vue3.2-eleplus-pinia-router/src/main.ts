@@ -8,9 +8,19 @@ const app = createApp(App)
 
 // pinia + 持久化插件
 import { createPinia } from 'pinia'
-import piniaPersist from 'pinia-plugin-persist'
 const pinia = createPinia()
-pinia.use(piniaPersist)
+
+// import piniaPersist from 'pinia-plugin-persist'
+// 自己实现的状态持久化插件测试
+// import myPiniaPersist from './01-pinia持久化实现/piniaPlugin'
+// pinia.use(
+//   myPiniaPersist({
+//     type: 'localStorage',
+//     customPrefix: 'Store',
+//   }),
+// )
+
+//pinia.use(piniaPersist)
 
 // eventBus
 import mitt from 'mitt'

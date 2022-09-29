@@ -1,12 +1,14 @@
-import { ref, computed } from "vue";
+import { shallowRef, computed, reactive } from "vue";
 import { defineStore } from "pinia";
+import { getApiList } from "@/http/index";
+import type { RootObject } from "@/core/type";
 
 export const useChartStore = defineStore("chart", () => {
-  const count = ref(0);
+  const list = shallowRef(<RootObject>{});
+  const fetchList = async () => {
+    let result = await getApiList();
+    list.value = result;
+  };
 
-  function increment() {
-    count.value++;
-  }
-
-  return { count, increment };
+  return { fetchList, list };
 });

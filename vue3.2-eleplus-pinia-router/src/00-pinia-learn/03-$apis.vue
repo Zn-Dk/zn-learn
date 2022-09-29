@@ -18,19 +18,21 @@
   <el-button @click="store.fetchData('https://httpbin.org/get')">fetchData</el-button>
   <br>
   <el-button @click="resetStore">resetStore</el-button>
+  <br>
+  <el-button @click="change3">changeStoreTest2</el-button>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 
 import useTestStore from '@/store/test'
-
+import { useTest2Store } from '@/store/test2'
 
 const store = useTestStore()
+const store2 = useTest2Store()
 
 // $id 获取 store 名称
 // console.log('store名称: ' + store.$id)
-
 
 
 
@@ -78,12 +80,19 @@ const unSub = store.$subscribe((mutation, state) => {
   // 打印 state Proxy对象
   console.log(state)
 
-
-  // 示例 持久化
+  // 示例 持久化(可以放到插件内实现)
   // localStorage.setItem(mutation.storeId, JSON.stringify(state))
 
   // unSub()
 })
+
+
+const change3 = () => {
+  store2.$patch((state) => {
+    state.count = 10000
+    state.name = 'Bracken'
+  })
+}
 
 
 

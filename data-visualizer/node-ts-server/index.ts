@@ -29,6 +29,10 @@ router.get("/list", async (req, res) => {
       ...data,
     });
   }
+  // const data = require("./mock/data-20220929171517.json");
+  // res.send({
+  //   ...data,
+  // });
 });
 
 app.use("/api", router);

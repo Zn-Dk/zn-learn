@@ -4,7 +4,7 @@
   <!-- 注意 基础值可以正常使用 v-bind简写 :
     引用数据类型要使用 .prop 修饰符强制地将 v-bind 绑定值设置为 DOM 属性。  -->
   <ce-vue-comp :list.prop="list" :msg="msg"></ce-vue-comp>
-  <!-- 简写成 . -->
+  <!-- 或者简写成 . -->
   <ce-vue-comp .list="list" :msg="msg"></ce-vue-comp>
 </template>
 
@@ -22,10 +22,11 @@ alias: [
 
 */
 
-// 函数式写法
+// 1.简单函数式写法
 import './web-comp';
 
-// 直接引入 sfc 文件的方法，但这里注意。 要使用这种方式模式，只需将组件文件名以 .ce.vue 结尾即可(customElement)
+// 2.直接引入 sfc 文件的方法 这种不需要使用 esm-bundler。
+// 要使用这种模式，只需将组件文件名以 .ce.vue 结尾即可(customElement)
 import { defineCustomElement, ref, shallowRef } from 'vue';
 import ceVueWebComp from './web-comp.ce.vue';
 const myCeVueWebComp = defineCustomElement(ceVueWebComp)

@@ -7,15 +7,15 @@ export default {
     // 所用到的模板需要编译成VNode + render
     const VNode: VNode = createVNode(BaseLoading)
     const el = container ? document.querySelector(container) : document.body
-    // render 之后 VNode才读出 component
-    // 组件中使用 defineExpose 导出
+    // 注意 script setup 组件中要使用 defineExpose 导出属性方法
+    // 执行 render 之后才能在 VNode 获取 component
     render(VNode, el)
     // console.log(VNode)
 
+    // 获取这个组件暴露的方法属性
     const exposed = VNode.component.exposed
 
-    // 将exposed 的方法/属性 挂载到一个全局对象上的属性
-    // 就可以通过 $myLoading方法使用了
+    // 将exposed 的方法/属性挂载到一个全局属性上 就可以通过这个全局变量使用这个插件了
     app.config.globalProperties.$myLoading = {
       ...exposed,
     }

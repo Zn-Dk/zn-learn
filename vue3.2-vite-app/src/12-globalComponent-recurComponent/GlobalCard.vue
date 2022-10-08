@@ -2,17 +2,16 @@
   <div class="my-card">
     <section class="my-card-head">
       <slot name="head-main">
-        <p class="card-head--main">{{mainT}}</p>
+        <p class="card-head--main">{{ mainT }}</p>
       </slot>
       <slot name="head-sub">
-        <p>{{subT}}</p>
+        <p>{{ subT }}</p>
       </slot>
     </section>
     <section class="my-card-body">
       <slot name="body">
         <p>
-
-          {{body}}
+          {{ body }}
         </p>
       </slot>
     </section>
@@ -37,8 +36,6 @@ withDefaults(defineProps<ICardList>(), {
   subT: '默认副标题',
   body: '默认卡片主体内容',
 })
-
-
 </script>
 
 <style lang="scss">

@@ -10,7 +10,7 @@
 import { ref } from 'vue';
 defineProps(['count'])
 
-// 使用 ts 的函数签名解决
+// 使用 ts 的函数签名声明事件属性
 interface Events {
   // (e:事件名称(包括原生事件), 传入的参数ctx)
   (e: 'handle-click', step: number): void

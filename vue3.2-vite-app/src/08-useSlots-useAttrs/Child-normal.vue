@@ -15,6 +15,7 @@
 import { defineComponent, onMounted, } from 'vue';
 
 export default defineComponent({
+  // context => { slots, attrs, emit, expose }
   setup(_props, { slots, attrs }) {
 
     console.log(slots, 'slots') // <= useSlots

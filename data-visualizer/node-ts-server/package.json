@@ -4,8 +4,7 @@
   "description": "```\r npm install ts-node -g\r ```",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "nodemon --watch index.ts --exec \"ts-node\" index.ts"
+    "start": "nodemon --watch index.ts --exec \"ts-node\" index.ts"
   },
   "keywords": [],
   "author": "",

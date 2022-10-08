@@ -10,7 +10,7 @@
         </section>
         <section>
           <div>较上日+ {{store.chinaAdd.nowConfirm}}</div>
-          <div>{{store.chinaTotal.nowConfirm}}</div>
+          <div>{{store.chinaTotal.}}</div>
           <div>现有确诊</div>
         </section>
         <section>

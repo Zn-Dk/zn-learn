@@ -1,16 +1,23 @@
 import { createApp } from 'vue'
-import App from '@/00-pinia-learn/03-$apis.vue'
+import App from '@/02-router/index.vue'
+// import App from '@/03-elementPlus/00-skeleton.vue'
 const app = createApp(App)
+
+// vue-router
+import router from './02-router/router/index03'
 
 // ElementPlus
 // import ElementPlus from 'element-plus' // 自动按需导入 不需要import
-// import 'element-plus/dist/index.css'
+import 'element-plus/dist/index.css'
 
-// pinia + 持久化插件
+// pinia
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 
-// import piniaPersist from 'pinia-plugin-persist'
+// 持久化插件
+import piniaPersist from 'pinia-plugin-persist'
+pinia.use(piniaPersist)
+
 // 自己实现的状态持久化插件测试
 // import myPiniaPersist from './01-pinia持久化实现/piniaPlugin'
 // pinia.use(
@@ -20,7 +27,6 @@ const pinia = createPinia()
 //   }),
 // )
 
-//pinia.use(piniaPersist)
 
 // eventBus
 import mitt from 'mitt'
@@ -38,5 +44,6 @@ declare module '@vue/runtime-core' {
 
 app
   .use(pinia)
+  .use(router)
   // .use(ElementPlus)
   .mount('#app')

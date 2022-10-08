@@ -23,7 +23,7 @@ console.log(styles)
 </script>
 
 
-// css module
+// css module 默认名 $style
 <style module>
 .red {
   color: red;

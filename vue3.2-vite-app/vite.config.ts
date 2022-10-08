@@ -12,7 +12,7 @@ import path from 'path'
 // import postcsspxtoviewport from 'postcss-px-to-viewport' //插件
 
 // 打包体积分析 npm i rollup-plugin-visualizer -D
-import { visualizer } from 'rollup-plugin-visualizer'
+// import { visualizer } from 'rollup-plugin-visualizer'
 
 // 参考 https://vitejs.dev/config/
 export default defineConfig({
@@ -36,15 +36,17 @@ export default defineConfig({
   plugins: [
     vue(),
     // 打包体积分析
-    visualizer({ open: true }),
+    // visualizer({ open: true }),
+
     // AutoImport({
     //   // 指定 vue 自动化导入 api (无需 import)
     //   imports: ['vue'],
     //   // 创建声明文件的目录(否则生成在根目录下)
     //   dts: 'src/auto-import.d.ts',
     // }),
+
+    // // gzip静态资源压缩
     // compressPlugin({
-    //   //gzip静态资源压缩
     //   verbose: true, // 默认即可
     //   disable: false, //开启压缩(不禁用)，默认即可
     //   deleteOriginFile: false, //删除源文件
@@ -52,6 +54,8 @@ export default defineConfig({
     //   algorithm: "gzip", //压缩算法
     //   ext: ".gz", //文件类型
     // }),
+
+    // // 兼容插件
     // legacyPlugin({
     //   targets: ["chrome 52"], // 需要兼容的目标列表，可以设置多个
     //   additionalLegacyPolyfills: ["regenerator-runtime/runtime"], // 面向IE11时需要此插件

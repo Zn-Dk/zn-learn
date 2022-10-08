@@ -7,9 +7,11 @@
       <!-- 异步组件必须配合 Suspense 使用 -->
       <div class="playground">
         <Suspense>
+          <!-- 加载完成展示的内容 -->
           <template #default>
             <Sus />
           </template>
+          <!-- 加载中内容 -->
           <template #fallback>
             <h3>Now loading, please wait...</h3>
           </template>

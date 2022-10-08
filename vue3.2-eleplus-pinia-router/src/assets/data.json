@@ -1,0 +1,34 @@
+[
+  {
+    "id": "we534324",
+    "title": "腾讯黑鲨3S",
+    "des": "骁龙865处理器，120Hz刷新率",
+    "price": "3999",
+    "thumbSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/237942bfcaf2bbe82fbe966c2f584d69.jpg?thumb=1&w=200&h=200&f=webp&q=90",
+    "picSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/237942bfcaf2bbe82fbe966c2f584d69.jpg"
+  },
+  {
+    "id": "we232224",
+    "title": "小米10 青春版 5G",
+    "des": "50倍潜望式变焦 / 轻薄5G手机",
+    "price": "1899",
+    "thumbSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/8729282b199b3ec51e31c1b6b15f3f93.jpg?thumb=1&w=200&h=200&f=webp&q=90",
+    "picSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/8729282b199b3ec51e31c1b6b15f3f93.jpg"
+  },
+  {
+    "id": "we232352",
+    "title": "小米10",
+    "des": "骁龙865/1亿像素相机",
+    "price": "3699",
+    "thumbSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/0099822e42b4428cb25c4cdebc6ca53d.jpg?thumb=1&w=200&h=200&f=webp&q=90",
+    "picSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/0099822e42b4428cb25c4cdebc6ca53d.jpg"
+  },
+  {
+    "id": "we864334",
+    "title": "Redmi 9A",
+    "des": "5000mAh长循环大电量，6.53寸超大护眼屏幕",
+    "price": "499",
+    "thumbSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c892a7640f58032489cbff8a948b50f9.jpg?thumb=1&w=200&h=200&f=webp&q=90",
+    "picSrc": "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c892a7640f58032489cbff8a948b50f9.jpg"
+  }
+]

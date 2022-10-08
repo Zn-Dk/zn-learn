@@ -5,16 +5,17 @@ import { createApp } from 'vue'
 // import App from './05-withDefault/Index.vue'
 // import App from './06-defineEmits/Index.vue'
 // import App from './07-defineExpose/Index.vue'
-// import App from './08-useSlots-useAttrs/Index.vue'
-// import App from './09-style/Style-slotted-scoped.vue'
+import App from './08-useSlots-useAttrs/Index.vue'
+// import App from './09-style/Style-v-bind.vue'
 // import App from './10-test-webComponent/Index.vue'
 // import App from './11-revision-playground/Index.vue'
 // import App from './12-globalComponent-recurComponent/Global-Index.vue'
 // import App from './12-globalComponent-recurComponent/Recur-Index.vue'
 // import App from './13-Suspense-AsyncComponent/Index.vue'
+// import App from './14-keepAlive/Index.vue'
 // import App from './15-provideInject/Index.vue'
 // import App from './16-customHooks/base64.vue'
-import App from './17-customPlugin/Index.vue'
+// import App from './17-customPlugin/Index.vue'
 // import App from './18-pxtoviewport-test/Index.vue'
 
 // 2.1 注册全局组件 自定义
@@ -29,12 +30,12 @@ import mitt from 'mitt'
 app.config.globalProperties.$bus = mitt() // 别忘了执行
 // 1.2-1 制作声明(这样引入全局变量后才会有方法提示)
 type Bus = {
-  on: (evName: string, handler: any) => void
-  off: (evName: string, handler: any) => void
-  emit: (evName: string) => void
+  on: (evName: string | symbol, handler: any) => void
+  off: (evName: string | symbol, handler: any) => void
+  emit: (evName: string | symbol) => void
 }
 
-// Vue3 声明文件的形式如下
+// 1.2-2 Vue3 声明文件的形式如下
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
     // 全局变量: 方法属性的相关类型声明
@@ -65,6 +66,6 @@ app
     // axios
     $bus: mitt(),
   })
-  // 2.2 注册全局自定义组件(可以多个注册) (参数 组件名称, 组件对象)
+  // 2.2 注册全局自定义组件(可以多个注册) (参数 全局组件名称, 组件对象)
   .component('GlobalCard', GlobalCard)
   .mount('#app')

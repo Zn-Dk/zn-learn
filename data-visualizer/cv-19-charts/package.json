@@ -9,15 +9,14 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@types/echarts": "^4.9.16",
     "animate.css": "^4.1.1",
     "axios": "^0.27.2",
     "echarts": "^5.4.0",
-    "element-plus": "^2.2.17",
     "pinia": "^2.0.21",
     "vue": "^3.2.38"
   },
   "devDependencies": {
+    "@types/echarts": "^4.9.16",
     "@types/node": "^16.11.56",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vue/tsconfig": "^0.1.3",

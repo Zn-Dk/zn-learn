@@ -10,6 +10,9 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
+// 打包体积分析 npm i rollup-plugin-visualizer -D
+import { visualizer } from 'rollup-plugin-visualizer'
+
 // 参考 https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -19,6 +22,8 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    // 打包体积分析
+    visualizer({ open: true }),
     AutoImport({
       // 指定 vue 自动化导入 api (无需 import)
       // imports: ['vue'],

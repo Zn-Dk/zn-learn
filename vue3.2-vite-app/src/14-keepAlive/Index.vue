@@ -5,7 +5,13 @@
     <article>
       <header class="test">Hello World</header>
       <div class="playground">
-
+        <button @click="flag = !flag">Switch Component</button>
+        <!-- include 希望保持状态的组件 -->
+        <!-- exclude 不希望保持状态的组件 -->
+        <!-- max 保持状态组件的最大数目(最好不要超过10) -->
+        <keep-alive :include="['CompA']" :exclude="['CompB']" max="2">
+          <component :is="flag ? CompA : CompB"></component>
+        </keep-alive>
       </div>
     </article>
   </main>
@@ -13,7 +19,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import CompA from './CompA.vue';
+import CompB from './CompB.vue';
 
+let flag = ref(true)
 </script>
 
 <style lang="scss">

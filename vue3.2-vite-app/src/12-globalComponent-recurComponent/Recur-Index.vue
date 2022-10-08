@@ -4,7 +4,6 @@
     </aside>
     <article>
       <header class="test">递归组件的使用</header>
-      <!-- 直接使用全局组件 -->
       <div class="tree-list">
         <TreeList :list="list" @on-click="displayInfo" />
       </div>
@@ -44,7 +43,11 @@ const list = reactive<ITree[]>([
           {
             title: '1-2-1',
             body: 'LOREM LOREM LOREM LOREM',
-          }
+          },
+          {
+            title: '1-2-2',
+            body: 'LOREM LOREM LOREM LOREM',
+          },
         ]
       },
     ]

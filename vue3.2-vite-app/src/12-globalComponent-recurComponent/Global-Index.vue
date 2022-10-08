@@ -1,14 +1,16 @@
 <template>
   <main>
     <aside>
+      <!-- 使用全局组件 -->
       <GlobalCard v-for="item in list" :main-t="item.mainT" :sub-t="item?.subT" :body="item.body"></GlobalCard>
+
+      <!-- 使用全局组件内的插槽 -->
       <GlobalCard>
-        <!-- 使用全局组件内的插槽 -->
         <template #head-main>
           <img src="/vite.svg" alt="!">
         </template>
         <template #head-sub>
-          <a href="http://www.baidu.com" target="_blank">百度</a>
+          <a href="http://www.baidu.com" style="color:brown;" target="_blank">百度</a>
         </template>
         <template #body>
           <input type="text" placeholder="使用了body插槽">
@@ -17,8 +19,8 @@
     </aside>
     <article>
       <header class="test">Hello World</header>
-      <!-- 直接使用全局组件 -->
       <div class="card-list">
+        <!-- 使用全局组件 -->
         <GlobalCard v-for="item in 50"></GlobalCard>
       </div>
     </article>

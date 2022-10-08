@@ -20,15 +20,28 @@ export default defineStore(Name.test, {
     URL: '',
   }),
   getters: {
+    // 简单使用: 接收 state 参数 以便调用 state
     getCurrency: state => {
       return '$' + state.count
     },
+    // 进阶使用: 返回函数以供传参
+    getTaxMoney: state => (tax: number) => tax + state.count,
+
+    // 进阶使用: 在getter 中调用其他 getter 使用 this 不能写箭头函数
+    getFooMoney(state): string {
+      return this.getCurrency + state.foo
+    },
+
+    // 更高阶的场景: 访问其他存储
+    // otherGetter(state) {
+    //   const otherStore = useOtherStore()
+    //   return state.localData + otherStore.data
+    // },
   },
   actions: {
     addMoney() {
       this.count++
     },
-
     // 测试异步方法
     async fetchData(url) {
       const useMyFetch = createFetch({

@@ -1,10 +1,11 @@
 import { createApp } from 'vue'
-import App from '@/02-router/index.vue'
+import App from '@/00-pinia-learn/00-first-try.vue'
+// import App from '@/02-router/index.vue'
 // import App from '@/03-elementPlus/00-skeleton.vue'
 const app = createApp(App)
 
 // vue-router
-import router from './02-router/router/index03'
+// import router from './02-router/router/index03'
 
 // ElementPlus
 // import ElementPlus from 'element-plus' // 自动按需导入 不需要import
@@ -27,7 +28,6 @@ pinia.use(piniaPersist)
 //   }),
 // )
 
-
 // eventBus
 import mitt from 'mitt'
 app.config.globalProperties.$bus = mitt()
@@ -44,6 +44,6 @@ declare module '@vue/runtime-core' {
 
 app
   .use(pinia)
-  .use(router)
+  // .use(router)
   // .use(ElementPlus)
   .mount('#app')

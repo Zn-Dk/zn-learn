@@ -15,12 +15,13 @@
   <p>Pinia getter: {{store.getCurrency}}</p>
 
   <p>Pinia action - addCount, click the button below this:</p>
-  <el-button @click="store.addMoney">5. action 修改 state (常规做法)addMoney</el-button>
+  <el-button @mousedown="addMoney" @mouseup="clearTimer">5. action 修改 state (常规做法)addMoney</el-button>
+  <el-button @click="store.$reset()" type="danger">reset</el-button>
 </template>
 
 <script setup lang="ts">
 
-// usePinia store
+// usePinia stor
 import useTestStore from '@/store/test'
 const store = useTestStore()
 
@@ -65,8 +66,24 @@ const change3 = () => {
   }
 }
 
+let timer: NodeJS.Timeout, inter: NodeJS.Timer
 // 5. 通过 action修改
+// 小案例: 按住鼠标数字持续增加
+const addMoney = () => {
+  store.addMoney()
+  // 1s 后 开启Interval增加
+  timer = setTimeout(() => {
+    inter = setInterval(() => {
+      store.addMoney()
+    }, 100)
+  }, 1000)
+}
 
+// 鼠标抬起 清除定时器
+const clearTimer = () => {
+  clearTimeout(timer)
+  clearInterval(inter)
+}
 </script>
 
 <style lang="scss" scoped>

@@ -6,6 +6,11 @@
 
   <p>Pinia getter: {{store.getCurrency}}</p>
 
+  <p>Pinia getter with Params:</p>
+  Tax: <input type="text" place="input tax money" v-model.number="tax">
+  <span style="color:red; font-weight:bold;">Price:
+    ${{store.getTaxMoney(tax)}}(Tax included: {{tax}})</span>
+
   <p>Pinia action - addCount, click the button below this:</p>
   <button @click="store.addMoney">addMoney</button>
 
@@ -23,6 +28,7 @@ import useTestStore from '@/store/test'
 
 const store = useTestStore()
 
+let tax = ref(0)
 
 let reqData = ref({})
 onMounted(async () => {

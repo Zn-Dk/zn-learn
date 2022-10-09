@@ -5,9 +5,15 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
-let barHeight = ref('5px')
+// 外部传入高度 默认 5px
+let { height } = withDefaults(defineProps<{
+  height: number
+}>(), {
+  height: 5
+})
+
 
 const progress = ref<HTMLElement>()
 let timer = 0
@@ -65,7 +71,8 @@ defineExpose({
   top: 0;
   z-index: 99;
   width: 100%;
-  height: v-bind(barHeight);
+  // bind 高度变量到 css上
+  height: calc(v-bind(height) * 1px);
 
   .progress-bar {
     position: absolute;

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-size: 72px;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrap {
+      flex: 1;
+    }
+
+    /*
+      1.
+      用一个wrap 将除了 footer 之外的元素包起来 min-height: 100%;
+      并且设一个负的 margin-bottom，让它正好等于 footer 的高度
+    */
+    /* .wrap {
+      min-height: 100%;
+      margin-bottom: -120px;
+    } */
+
+    header {
+      height: 120px;
+      background-color: slateblue;
+    }
+
+    main {
+      background-color: gray;
+    }
+
+    .a {
+      /* height: 500px; */
+      background-color: gray;
+    }
+
+    .b {
+      height: 1500px;
+      background-color: skyblue;
+    }
+
+    footer {
+      height: 320px;
+      background-color: brown;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      HEADER
+      <button style="position:fixed; font-size: 24px;">scrollIntoView</button>
+    </header>
+    <main>
+      <div class="a">MAIN1</div>
+      <!-- <div class="b">MAIN2</div> -->
+    </main>
+  </div>
+  <footer>FOOTER</footer>
+  <script>
+    const el = document.querySelector('.a')
+    const btn = document.querySelector('button')
+    /*
+      el.scrollIntoView 滚动至目标元素
+
+      behavior：它定义元素出现在可视区内过程的动画，有 auto 和 smooth 两种选择。
+      block：定义元素的垂直方向的对齐方式，有"start", "center", "end", 或 "nearest" 4 个选项，默认 start。 // nearest 最靠近的方式
+      inline：定义元素水平对齐方式，有"start", "center", "end", 或 "nearest"4 个选项，默认"nearest"。
+    */
+
+    btn.onclick = () => {
+      el.scrollIntoView({
+        behavior: "smooth", // 平滑滚动到目标
+        block: "start"
+      })
+    }
+
+  </script>
+</body>
+
+</html>

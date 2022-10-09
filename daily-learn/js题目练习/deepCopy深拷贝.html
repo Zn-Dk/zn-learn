@@ -1,0 +1,125 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-05-04 10:26:32
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月d:\MyWebCode\正式学习-5月\邱浩祥_JS_202200503\homework\deepCopy深拷贝.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    //方法1  JSON 深拷贝
+    let obj = {
+      a: null,
+      b: NaN,
+      c: Infinity,
+      d() { },
+      e: [1, 2, 3]
+    }
+
+    let jsonClone = JSON.parse(JSON.stringify(obj));
+    //{a: null, b: null, c: null, e: [1,2,3]} 局限性
+    //undefined、任意函数、Object关键字以及 Symbol 值
+    //出现在非数组对象的属性值中时,在序列化过程中会被忽略
+    //出现在数组中时,转换成 `null`
+
+    //方法2  解构 单纯写为浅拷贝
+    let O = {
+      a: [1, 2, 3],
+    }
+    let oC = { ...O };
+    oC.a.push(3);
+    console.log(oC, O) //{a: [1, 2, 3, 3]} {a:[1, 2, 3, 3]}
+
+    //需要专门拷贝引用类型
+    let aa = {
+      age: 18,
+      name: 'aaa',
+      address: {
+        city: 'shanghai'
+      }
+    }
+    let bb = {
+      ...aa,
+      address: { ...aa.address }
+    };
+    bb.address.city = 'shenzhen';
+    console.log(aa.address.city);  // shanghai
+
+
+    //方法3 自定义递归函数
+    const A = {
+      a: [1, 2, 3],
+      b: 'aaa',
+      c: {
+        d: {
+          e: [1, [{ a: 1, b: 2 }, 3], 4]
+        }
+      }
+    }
+
+    function deepCopy(o) {
+      //引用类型 数组的处理
+      if (Array.isArray(o)) {
+        return o.map((item) => deepCopy(item));
+      }
+      //引用类型 对象的处理
+      if (typeof o === 'object' && o !== null) {
+        return Object.fromEntries(Object.entries(o)
+          .map((([key, value]) => [key, deepCopy(value)]))
+        )
+      }
+      //基础类型 直接返回
+      return o;
+    }
+
+    console.log(deepCopy(A));
+
+    /*
+    执行过程
+      1.A是对象, Object.entries返回 [[a:value],[b:value],[c:value]]
+      2.对该二维数组map遍历, 解构 [key value] 返回[key,deep(value)]
+        把value丢进递归(判断value是引用类型还是基本类型)
+      3.举例c
+        3.1 c: value 是 {d:e:[arr]} 递归 则继续进入 d:value =>e:[arr]
+        3.2 e:[arr] 是二维数组 遍历每一项并丢进递归 其中有对象 处理方式同上
+        3.3 一直到各自的最底层节点(值为基本类型) 返回基本类型值
+      4.递归结束 结果出栈 全部返回一直到根节点
+      5.通过 Object.fromEntries 将得到的可迭代数组 转换成一个新对象(深拷贝)
+
+      const A = {
+      a: [1, 2, 3],
+      b: 'aaa',
+      c: {
+        d: {
+          e: [1, [{ a: 1, b: 2 }, 3], 4]
+        }
+      }
+    }
+
+
+
+    */
+  </script>
+</body>
+
+</html>

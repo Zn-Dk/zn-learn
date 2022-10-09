@@ -1,0 +1,119 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-05-04 09:58:59
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月d:\MyWebCode\正式学习-5月\邱浩祥_JS_202200503\homework\递归.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    const o = {
+      k: {
+        k: {
+          k1: {
+            k1: {
+              k1: {
+                k1: {
+                  k1: true
+                }
+              }
+            }
+          },
+          k2: {
+            k2: [1, 2],
+            k3: {
+              k3: {
+                k3: 'Hello!'
+              },
+            }
+          }
+        }
+      },
+      j: {
+        j: {
+          j: 'Hi'
+        }
+      }
+    }
+
+
+    const o1 = {
+      a: 0,
+      b: {
+        c: 1
+      }
+    }
+
+    //统计对象最大嵌套层数 并打印各节点最内层的值(简单版本)
+    function getMaxLayer(o) {
+      let infoArr = []; //节点信息
+      let maxLayer = 0; //最大层数
+      function recur(o, layer) {
+        if (typeof o === 'object' &&
+          !Array.isArray(o) && //如果键值是数组则直接终止
+          o !== null) {
+          layer++;
+          //遍历每一层节点
+          return Object.keys(o).forEach((item) => recur(o[item], layer));
+        }
+        //递归终止
+        infoArr.push({ value: o, layer }); //返回节点信息
+        maxLayer = Math.max(maxLayer, layer); //每层节点层数与最大层数比较,决定是否更新
+      }
+      recur(o, 0);
+      console.log(infoArr);
+      return `对象最大嵌套层数为 ${maxLayer} 层`;
+    }
+
+    console.log(getMaxLayer(o));
+    // 对象最大嵌套层数为 7 层 [{value: true, layer: 7}...]
+    console.log(getMaxLayer(o1));
+    // 对象最大嵌套层数为 2 层
+
+
+    //1-100 的和 (n - m) 的和
+    // let calc = (start = 1, end = 100, sum = 0) => {
+    //   if (start <= end) {
+    //     sum += start;
+    //     start++;
+    //     return calc(start, end, sum);
+    //   }
+    //   return sum;
+    // }
+    // console.log(calc(1, 100));
+
+    function getCount(n) {
+      if (n === 1) {
+        return n;
+      }
+      return n + getCount(n - 1); // 100+(99+(98+...+(1)))
+    }
+
+    function getMulti(n) {
+      if (n === 1) return 1;
+      return n * getMulti(n - 1);
+    }
+  </script>
+</body>
+
+</html>

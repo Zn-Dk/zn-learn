@@ -1,0 +1,50 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-05-03 12:13:16
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月d:\MyWebCode\JS题目练习\多维数组进行扁平化并从大到小排序.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    //对多维数组进行扁平化并从大到小排序
+
+    const arr = [
+      11,
+      [23, 7],
+      [6, [12, 3, 9]],
+      [8, 4]
+    ]
+
+    let flat = arr.flat(Infinity).sort((a, b) => a - b)
+    console.log(flat);
+    //[3, 4, 6, 7, 8, 9, 11, 12, 23]
+
+
+    let str = JSON.stringify(arr).replace(/[\[\]]/g, ''); //替换所有的括号
+    let flat2 = JSON.parse('[' + str + ']').sort((a, b) => a - b)
+              //加上左右括号,parse回数组,最后排序
+  </script>
+</body>
+
+</html>

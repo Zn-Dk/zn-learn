@@ -1,0 +1,74 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-05-21 10:41:46
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-5月d:\MyWebCode\JS题目练习\数组按指定特征进行分组.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    /*
+        函数实现
+        输入 数组值,函数或者属性
+        输出 对象
+          key: 数组所有元素经过处理后的值
+          value: 相同key数组元素集合
+
+        [1.2,3.4,5.6] => groupBy([1.2,3.4,3.2,5.6],Math.floor) =>
+        {
+          1: [1.2]
+          3: [3.4,3.2]
+          5: [5.6]
+        }
+
+
+        如果输入字符串 如 ['one','two','three']
+        => groupBy(arr,'length') =>输出
+        => {
+              3: ['one', 'two']
+              5: ['three']
+        }
+     */
+
+    function groupBy(arr, type) {
+      return arr.reduce((acc, cur) => {
+        //如果 type 是函数 执行函数, 否则返回数组属性
+        let result;
+        if (typeof type === 'function') {
+          result = type(cur);
+        } else {
+          result = cur[type];
+        }
+
+        if (!acc[result]) {
+          acc[result] = [cur];
+        } else {
+          acc[result].push(cur);
+        }
+        return acc;
+      }, {})
+
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,197 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-06-05 18:56:06
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \homeworkd:\MyWebCode\JS题目练习\EventLoop-宏任务与微任务练习.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+
+    setTimeout(() => console.log(0));
+
+    new Promise((resolve) => {
+      console.log(1);
+      resolve(2);
+      console.log(3);
+    }).then((o) => console.log(o));
+
+    console.log(7);
+
+    new Promise((resolve) => {
+      console.log(4);
+      resolve(5);
+    }).then((o) => console.log(o))
+      .then(() => console.log(6));
+
+
+      
+    //程序从上到下执行
+    //首先 所有promise对象语句会立即运行
+    //包括按程序书写顺序执行同步代码 依次输出 1=>3=>7=>4
+    //然后 then 执行 输出 2 => 5 => 6
+    //最后，setTimeout有一个4ms的最短时间(宏任务)
+    //所以 最后输出 0
+    //结果 1-3-7-4-2-5-6-0
+
+    /*
+
+    promise.then和setTimeout都是异步执行，会先执行谁呢？
+
+    setTimeout异步会放到异步队列中等待执行。
+
+    promise.then异步会放到microtask queue中。
+    microtask队列中的内容经常是为了需要直接在当前脚本执行完后立即发生的事，
+    所以当同步脚本执行完之后，就调用microtask队列中的内容，然后把异步队列中的setTimeout
+    放入执行栈中执行，所以最终结果是先执行promise.then异步，然后再执行setTimeout异步。
+
+
+
+    Promise 的回调函数属于异步任务，会在同步任务之后执行。
+    但是，Promise 的回调函数不是正常的异步任务，而是微任务（microtask）。
+    它们的区别在于，正常任务追加到下一轮事件循环，微任务追加到本轮事件循环。
+    这意味着，微任务的执行时间一定早于正常任务。
+    */
+
+    //例题2
+
+    console.log(1);
+
+    setTimeout(() => {
+      console.log(2);
+      Promise.resolve().then(() => {
+        console.log(3)
+      });
+    });
+
+    new Promise((resolve, reject) => {  //注意
+      console.log(4)
+      resolve(5)
+    }).then((data) => {
+      console.log(data);
+
+      Promise.resolve().then(() => { //注意
+        console.log(6)
+      }).then(() => {
+        console.log(7)
+
+        setTimeout(() => {
+          console.log(8) //<= 坑
+        }, 0);
+      });
+    })
+
+    setTimeout(() => {
+      console.log(9);
+    })
+
+    console.log(10);
+
+
+    //先想好再看下面答案
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 1 4 10 5 6 7 2 3 9 8
+    //log(8) 是微任务里then追加的宏任务回调 他会被排到最后执行(放在marcoTask 它入栈最晚)
+
+
+
+    //练习3 终极试题
+
+    setTimeout(() => {
+      console.log(1)
+
+      Promise.resolve().then(() => {
+        console.log(11)
+      })
+      process.nextTick(() => {
+        console.log(2)
+      })
+    })
+
+    console.log(3)
+
+    new Promise((resolve) => {
+      console.log(4)
+      resolve(5)
+    }).then((n) => {
+      console.log(n)
+    })
+
+
+    Promise.resolve().then(() => {
+      console.log(6)
+      setTimeout(() => {
+        console.log(7)
+      })
+    })
+
+    setImmediate(() => {
+      console.log(8)
+      process.nextTick(() => {
+        console.log(9)
+      })
+    })
+
+    console.log(10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //setImmediate -- node 独有宏任务 类似timeout 但是不能设定延时
+    //process.nextTick -- node 独有微任务
+    //如果 process.nextTick 与 promise 同时存在 会优先执行
+
+    //3 4 10 5 6 1 2 11 8 9 7
+
+
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-05-03 00:16:28
+ * @LastEditTime: 2022-07-24 13:49:25
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \blog-serverd:\MyWebCode\JS题目练习\重命名旧键.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-04-28 19:36:25
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月\邱浩祥_JS_20220429\template.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+
+    var capitals = { // 创建对象'capital'
+      "Persia": "Tehran" // key "Persia" 和 value "Tehran"
+    };
+    console.log(capitals);
+
+    // 用于重命名旧键的函数
+    function renameKey(obj, old_key, new_key) {
+      // 检查如果 old key = new key
+      if (old_key !== new_key) {
+        //修改对象的旧键提取描述
+        Object.defineProperty(obj, new_key,
+          Object.getOwnPropertyDescriptor(obj, old_key));
+        delete obj[old_key]; // 删除旧键
+      }
+    }
+
+    renameKey(capitals, "Persia", "HELLO")
+    console.log(capitals);
+
+  </script>
+</body>
+
+</html>

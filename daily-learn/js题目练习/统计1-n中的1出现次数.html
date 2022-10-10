@@ -1,0 +1,71 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-05-03 00:16:28
+ * @LastEditTime: 2022-05-03 00:47:21
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月d:\MyWebCode\正式学习-5月\邱浩祥_JS_202200501\template copy.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-04-28 19:36:25
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月\邱浩祥_JS_20220429\template.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    //统计 1-n 整数中出现 1 的次数
+    // 1-10 [1,10] 2
+    // 1- 20 [1,10,11...] =>12
+
+    /*
+      方法1 将数字 使用正则匹配
+          2  用 filter
+    */
+
+
+    function countOne(num) {
+      return Array.from({ length: num })
+        .map((v, i) => i + 1)
+        .reduce((acc, cur) => {
+          const curTest = /1/.test(cur) ? 1 : 0;
+          return acc + curTest;
+        }, 0)
+    }
+
+    console.log(countOne(10)); //11
+
+    function countOne1(num) {
+      return Array.from({ length: num })
+        .map((v, i) => i + 1)
+        .filter((v, i) => String(v).includes(1)).length
+    }
+    console.log(countOne1(20));
+    console.log(countOne1(222));
+
+  </script>
+</body>
+
+</html>

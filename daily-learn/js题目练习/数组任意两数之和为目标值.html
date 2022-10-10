@@ -1,0 +1,121 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-05-21 11:08:40
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-5月\邱浩祥_JQ_20220520\template copy.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    /*
+    两数之和
+
+    输入 一个整数数组和一个目标整数
+
+    计算过程  在数组中找出和为目标值的两个整数
+        注意 不能为同一个元素
+
+    输出 两个数对应数组下标组成的数组, 如果不存在返回空数组
+
+    arr = [2, 3, 5, 7 ,11, 15] , target = 10
+    10 = 3 + 7 => [1, 3]
+    */
+
+
+    //方法1 暴力破解 两层循环
+    function findSumIdx(arr, target) {
+      let len = arr.length;
+      for (let i = 0; i < len; i++) {
+        for (let j = 1; j < len - i; j++) {
+          if (arr[i] + arr[j] === target) {
+            return [i, j];
+          }
+        }
+      }
+      return [];
+    }
+
+
+    //方法2 一层循环 indexOf(也有一层n时间复杂度) On^2
+    /*
+      循环数组 用第一个值 减去目标值 得到差值
+      如果这个差值能在数组里找到 而且不是自身元素
+      返回 idx 和 diffIdx
+    */
+    function findSumIdx2(arr, target) {
+      let len = arr.length;
+      for (let i = 0; i < len; i++) {
+        let diff = target - arr[i];
+        let diffIdx = arr.indexOf(diff);
+        if (diffIdx !== -1 && diffIdx !== i) {
+          return [i, diffIdx];
+        }
+      }
+      return [];
+    }
+
+    //方法3 空间换时间 HashMap
+    /*
+      增加一个Map 记录已遍历的数组及索引
+      遍历到一个新数字时 先计算出和target差值
+      查询差值是否在map中出现过
+      如果出现过,则直接拿出差值对应的idx和当前idx
+
+      has(key):has()函数返回一个布尔值,表示某个键(key)是否在当前的Map实例中;
+      set(key,value):set()函数设置键名key所对应的键值为value,该函数的返回值是当前的Map实例;
+      get(key):get()函数返回key对应的键值,如果找不到对应的key,则返回undefined.
+     */
+
+    function findSumIdx3(arr, target) {
+      let len = arr.length;
+      const map = new Map();
+      for (let i = 0; i < len; i++) {
+        let diff = target - arr[i];
+        if (!map.has(diff)) {
+          map.set(arr[i], i);
+        } else {
+          return [map.get(diff), i];
+        }
+      }
+      return [];
+    }
+
+
+
+
+
+    console.time('第一种方法耗时');
+    findSumIdx([2, 11, 15, 12, 2, 23, 3, 5, 7, 11, 5, 9], 8) //第一种方法耗时: 0.03-0.07ms
+    console.timeEnd('第一种方法耗时');
+
+    console.time('第二种方法耗时');
+    findSumIdx2([2, 11, 15, 12, 2, 23, 3, 5, 7, 11, 5, 9], 8) //第二种方法耗时: 0.025-0.04ms
+    console.timeEnd('第二种方法耗时');
+
+    console.time('第三种方法耗时');
+    findSumIdx3([2, 11, 15, 12, 2, 23, 3, 5, 7, 11, 5, 9], 8) //第三种方法耗时: ~0.03ms
+    console.timeEnd('第三种方法耗时');
+
+  </script>
+</body>
+
+</html>

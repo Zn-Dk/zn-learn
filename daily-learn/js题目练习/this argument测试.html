@@ -1,0 +1,81 @@
+<!--
+ * @Author: Qiu Haoxiang
+ * @Date: 2022-04-28 16:56:02
+ * @LastEditTime: 2022-05-03 00:14:25
+ * @LastEditors: LastAuthor
+ * @Description:
+ * @FilePath: \正式学习-4月d:\MyWebCode\正式学习-5月\邱浩祥_JS_202200501\homework\this argument测试.html
+ * 可以输入预定的版权声明、个性签名、空行等
+-->
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>case</title>
+  <script src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/reset.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+    var length = 1;
+    function fn() {
+      console.log(this.length);
+    }
+
+    var obj = {
+      length: 100,
+      action: function (callback) {
+        //1
+        callback();
+        //2
+        arguments[0]();
+        //3
+        var foo = arguments[0];
+        foo();
+        //4
+        this.foo2 = arguments[0];
+        this.foo2();
+      }
+    };
+
+    var arr1 = [1, 2, 3, 4];
+    obj.action(fn, ...arr1);
+
+    //1 因为callback自己执行是指向window
+    //result = 1
+
+    //2 arguments[0] 是fn函数
+    //result = 1 错误 argument 指向arr1 应该是arr1.length = 5
+
+    //3 foo是局部变量 值为callback函数体 函数调用者是自己 非严格模式 指向window
+    //result = 1;
+
+    //4 相当于给对象增加 foo2 这个键 值为callback函数体 this指向obj 相当于obj.foo2();
+    //result = 100;
+
+
+    //对于2的引题
+    var length = 1;
+    function foo() {
+      console.log(this.length);
+    }
+
+    var arr2 = [foo, 2, 3];
+    arr2[0](); //相当于调用者是数组arr2
+
+    var f1 = arr2[0]; //只是左查询了函数体
+    f1();
+  </script>
+</body>
+
+</html>

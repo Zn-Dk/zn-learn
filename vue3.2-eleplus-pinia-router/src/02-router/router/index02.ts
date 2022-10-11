@@ -17,6 +17,14 @@ const option: RouterOptions = {
       alias: '/user',
       component: () => import('../components/02导航守卫/Index.vue'),
     },
+    {
+      name: '404',
+      // Vue3 删除了 * 通配符作为 404 路由
+      // 现在必须使用自定义的 regex 参数来定义所有路由(*、/*) , 下面 pathMatch 是参数的名称, 意为 match .* 的任意多个字符
+      path: '/:pathMatch(.*)',
+      alias: '/:pathMatch(404)',
+      component: () => import('../components/NotFound.vue'),
+    },
   ],
 }
 

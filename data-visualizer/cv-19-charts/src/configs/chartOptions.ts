@@ -21,7 +21,7 @@ interface DataPie {
 
 // 传入数据 data 返回 option
 export function optionsChinaMap(dataList: DataMap[]) {
-  const option: echarts.EChartsOption = {
+  const option /*: echarts.EChartsOption*/ = {
     backgroundColor: "rgba(0,0,0,0)",
     geo: {
       map: "china",
@@ -176,7 +176,7 @@ export function optionsPie(dataList: DataPie[]) {
     "#ff8e43",
     "#f56b6d",
   ];
-  const options: echarts.EChartsOption = {
+  const options /*: echarts.EChartsOption*/ = {
     backgroundColor: "rgba(255,255,255,.3)",
     color: fontColor,
     // roseType: "area",
@@ -203,7 +203,7 @@ export function optionsPie(dataList: DataPie[]) {
         label: {
           show: true,
           // alignTo: "labelLine", // ! 文字对齐方式
-          formatter: function (e) {
+          formatter: function (e: any) {
             let {
               data: { value, name },
             } = e;

@@ -145,8 +145,6 @@ return defineConfig({
 }
 ```
 
-
-
 ## 8 如何通过vite给项目配置多个环境？
 
 以开发、测试和生产环境为例
@@ -410,3 +408,20 @@ export default fetchData
 ```
 
 注意引用方式的变化：require------->new URL('./images/5.png',import.meta.url).href
+
+
+
+
+
+## 12 vite 打包后直接预览项目
+
+之前我们要预览 build 后的文件, 通常来说，
+
+- 第一种办法是手动到 dist 文件夹下手动启用 live server 预览, 而这样往往又会遇到要修改资源路径前缀 比如 "/path" 改为 'path' , 对于某些路由懒加载的资源,更有可能直接不加载。
+
+- 第二种办法则需要自己开启一个 node 服务器，启动静态资源`app.use(express.static(<path>))`后将文件扔到 public 目录上，或者直接放到实际项目的后端服务器上, 也不是很方便。
+
+
+
+- vite 提供一个 **preview** 的功能帮助我们**直接启动打包好的项目**
+- 执行 `npx vite preview`， 或者在 `package.json` 中创建命令 `preview: "vite preview"` 通过 `npm run preview` 执行, 就可以直接预览生产版本的文件了。

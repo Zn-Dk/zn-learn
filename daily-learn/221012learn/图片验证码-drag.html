@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #wrap {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      border: 1px solid #000;
+    }
+
+    #wrap>h3 {
+      margin: 20px;
+      padding: 10px;
+      width: 300px;
+      text-align: center;
+      background-color: palevioletred;
+      color: whitesmoke;
+      transition: all .3s;
+    }
+
+    .pic {
+      width: 400px;
+      height: 400px;
+      background: #111 url('./bg.jpg');
+    }
+
+    .slice {
+      position: absolute;
+      top: 0;
+      width: 100px;
+      height: 100px;
+      background: #111 url('./bg.jpg') no-repeat;
+      box-shadow: 0px 0 6px #333;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .mask {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(0, 0, 0, .4);
+      transition: all .3s;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="pic"></div>
+    <div class="slice" draggable="true" id="dragger"></div>
+    <div class="mask"></div>
+    <h3>请拖动图片到滑块上完成验证</h3>
+  </div>
+
+  <script>
+    // 背景区域大小
+    const backgroundSize = [400, 400]
+    // 生成的碎片位置
+    const slicePos = [200, 200]
+
+    // 碎片 背景位置与图片相同
+    const slice = document.querySelector('.slice')
+    // 遮罩 (放置区)
+    const mask = document.querySelector('.mask')
+
+    const tips = document.querySelector('#wrap>h3')
+    // 是否为拖拽
+    let isDown = true
+
+    // 初始化位置
+    const initPos = (slicePos) => {
+      // 注意是负值
+      slice.style.backgroundPositionX = -slicePos[0] + 'px'
+      slice.style.backgroundPositionY = -slicePos[1] + 'px'
+      mask.style.left = slicePos[0] + 'px'
+      mask.style.top = slicePos[1] + 'px'
+    }
+    initPos(slicePos)
+
+
+    // 拖拽
+    const dragHandle = (e) => {
+      e.target.style.boxShadow = '0px 0 6px yellow'
+    }
+
+    slice.addEventListener('dragstart', dragHandle)
+    slice.addEventListener('drag', dragHandle)
+
+
+    // 放置
+    const dropHandle = (e) => {
+      e.preventDefault()
+
+      e.target.append(slice)
+      tips.style.backgroundColor = 'yellowgreen'
+      tips.textContent = '验证成功!'
+    }
+    // 必须在 dragover 清除默认事件 否则无法拖拽成功
+    const dragOverHandle = (e) => {
+      e.preventDefault()
+      e.target.style.boxShadow = '0px 0 6px yellow'
+    }
+
+    mask.addEventListener('drop', dropHandle)
+    mask.addEventListener('dragover', dropHandle)
+
+  </script>
+</body>
+
+</html>

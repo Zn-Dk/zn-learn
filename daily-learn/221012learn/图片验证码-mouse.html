@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #wrap {
+      width: 500px;
+      height: 500px;
+      border: 1px solid #000;
+    }
+
+    h3 {
+      margin: 20px;
+      padding: 10px;
+      width: 300px;
+      text-align: center;
+      background-color: palevioletred;
+      color: whitesmoke;
+      transition: all .3s;
+    }
+
+    .pic {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      background: #111 url('./bg.jpg');
+    }
+
+    .slice {
+      z-index: 1;
+      position: absolute;
+      top: 0;
+      width: 100px;
+      height: 100px;
+      background: #111 url('./bg.jpg') no-repeat;
+      box-shadow: 0px 0 6px #333;
+      cursor: grab;
+      user-select: none;
+      transition: box-shadow .3s
+    }
+
+    .mask {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(0, 0, 0, .4);
+      transition: background-color .3s;
+    }
+
+    .off {
+      box-shadow: none;
+    }
+
+    .active {
+      box-shadow: 0px 0 6px white;
+    }
+
+    .tips-active {
+      background-color: yellowgreen;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="pic">
+      <div class="slice"></div>
+      <div class="mask"></div>
+    </div>
+    <h3>请拖动图片到滑块上完成验证</h3>
+
+  </div>
+
+  <script>
+    // 背景区域大小
+    const backgroundSize = [400, 400]
+    // 碎片大小
+    const sliceSize = [100, 100]
+    // 生成的碎片背景位置
+    const slicePos = [200, 200]
+
+    const wrap = document.querySelector('#wrap')
+
+    // 碎片 背景位置与图片相同
+    const slice = document.querySelector('.slice')
+    // 遮罩
+    const mask = document.querySelector('.mask')
+
+    const tips = document.querySelector('h3')
+
+
+    // 初始化位置
+    const initPos = (slicePos) => {
+      // 注意是负值
+      slice.style.backgroundPositionX = -slicePos[0] + 'px'
+      slice.style.backgroundPositionY = -slicePos[1] + 'px'
+      // 随机出生点
+      slice.style.left = Math.max(0, Math.min(50, Math.random() * 50)) + 'px'
+      slice.style.top = Math.max(0, Math.min(50, Math.random() * 50)) + 'px'
+      mask.style.left = slicePos[0] + 'px'
+      mask.style.top = slicePos[1] + 'px'
+    }
+    initPos(slicePos)
+
+    // isDown 鼠标是否按下 isComplete 完成验证
+    let isDown = false
+    let isComplete = false
+
+    // 拖拽 mouse
+    const startPos = {}
+    const downHandle = (e) => {
+      if (isDown) return
+      isDown = true
+      e.target.classList.add('active')
+      // 记录位置 offsetX/Y 鼠标距离元素左上角的 xy 用于计算真实top left
+      startPos.x = e.offsetX
+      startPos.y = e.offsetY
+    }
+
+    // 移动中
+    const moveHandle = (e) => {
+      if (!isDown) return
+      let mX = e.pageX,
+        mY = e.pageY
+      let x = Math.max(0, Math.min(mX - startPos.x, backgroundSize[0] - sliceSize[0]))
+      let y = Math.max(0, Math.min(mY - startPos.y, backgroundSize[1] - sliceSize[1]))
+
+      // 鼠标超出范围
+      if (mX === 0 || mX > 400 || mY === 0 || mY > 400) {
+        isDown = false
+      }
+      // 移动到遮罩上方时
+      mask.classList.remove('active')
+      tips.classList.remove('tips-active')
+      let tipText = isComplete ? '验证成功!' : '请拖动图片到滑块上完成验证'
+      tips.innerText = tipText
+      if (mX >= slicePos[0] + 50 && mX <= slicePos[0] + sliceSize[0] ||
+        mY >= slicePos[1] + 50 && mY <= slicePos[1] + sliceSize[1]) {
+        mask.classList.add('active')
+        tips.classList.add('tips-active')
+        isComplete = true
+      } else {
+        isComplete = false
+      }
+
+      slice.style.left = x + 'px'
+      slice.style.top = y + 'px'
+    }
+
+    // 碎片 抬起
+    const mouseUpHandle = (e) => {
+      if (isDown) isDown = false
+      if (isComplete) {
+        mask.classList.remove('active')
+        mask.classList.add('off')
+        // 删除这个节点
+        slice.remove()
+        mask.style.backgroundColor = 'transparent'
+      }
+      slice.classList.remove('active')
+      slice.classList.add('off')
+    }
+
+
+    slice.addEventListener('mousedown', downHandle)
+    slice.addEventListener('mouseup', mouseUpHandle)
+    wrap.addEventListener('mousemove', moveHandle)
+
+  </script>
+</body>
+
+</html>

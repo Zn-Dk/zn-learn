@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .r {
+      width: calc(100% - 300px);
+      height: 1000px;
+      margin-left: 300px;
+      background-color: pink;
+    }
+
+    .l {
+      float: left;
+      width: 300px;
+      height: 1000px;
+      background-color: palegreen;
+      text-align: center;
+    }
+
+    .a {
+      padding: 10px;
+      height: 100px;
+      margin: 20px;
+      background-color: #fff;
+    }
+
+    .a-wrap {
+      overflow: hidden;
+    }
+
+    .b {
+      /* inline-block 设置完后 父元素 text-align: center; 就可以水平居中 */
+      display: inline-block;
+      text-align: center;
+      width: 30px;
+      height: 50px;
+      background-color: skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="l">
+    <div class="a"></div>
+    <div class="a-wrap">
+      <div class="a"></div>
+    </div>
+    <div class="b"></div>
+  </div>
+  <div class="r"></div>
+</body>
+
+</html>

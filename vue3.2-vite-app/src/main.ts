@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 // import App from './02-components/comp-namespace.vue'
+import App from './02-1-testwatchEffect/fetch-data.vue'
 // import App from './03-eventbus/Index.vue'
 // import App from './04-defineProps/Index.vue'
 // import App from './05-withDefault/Index.vue'
@@ -17,7 +18,7 @@ import { createApp } from 'vue'
 // import App from './16-customHooks/base64.vue'
 // import App from './17-customPlugin/Index.vue'
 // import App from './18-pxtoviewport-test/Index.vue'
-import App from './19-v-model-on-comp/Father.vue'
+// import App from './19-v-model-on-comp/Father.vue'
 
 // 2.1 注册全局组件 自定义
 import GlobalCard from '@/12-globalComponent-recurComponent/GlobalCard.vue'

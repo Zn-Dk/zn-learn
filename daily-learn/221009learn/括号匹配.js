@@ -64,17 +64,21 @@ function bracketMatchBol(str) {
     if (leftBracket.includes(s)) {
       stack.push(s);
     } else if (MATCHES[s]) {
+      // 1. !stack.length => 即 栈内没有左括号 , 那么这个右括号就是单独存在的, 不匹配,输出 false
+      // 2. 如果栈内有左括号, 最里面的出栈(pop) 并与当前的右括号进行匹配, 不匹配,输出 false
       if (!stack.length || MATCHES[s] != stack.pop()) {
         return false;
       }
     }
   }
-
-  return true;
+  // 判断栈是否已清空 清空返回 true
+  return !stack.length;
 }
 
 // 测试
 console.log(bracketMatchBol("a{dsa}(sas)[dsa]")); // true
+console.log(bracketMatchBol("a(b(c)")); // false
+console.log(bracketMatchBol("ac[c(fe]gwd)")); // false
 console.log(bracketMatchBol("a{dsa}(sas[)dsa]")); // false
 console.log(bracketMatchBol("([}}])")); // false
 console.log(bracketMatchBol("a{dsa}(sas)[dsa]]]")); // false

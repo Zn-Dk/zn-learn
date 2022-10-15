@@ -87,7 +87,7 @@ export default defineConfig({
 
     cssCodeSplit: true, // 是否拆分 css
 
-    minify: 'esbuild', // 混淆器，esbuild 打包速度最快, terser 构建后文件体积更小(需要手动安装)
+    // minify: 'esbuild', // 混淆器，默认 esbuild 打包速度最快, terser 构建后文件体积更小(需要手动安装)
 
     // 清除console和debugger
     terserOptions: {

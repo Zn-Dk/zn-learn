@@ -1,7 +1,8 @@
 import { createApp } from 'vue'
 // import App from '@/00-pinia-learn/00-first-try.vue'
 // import App from '@/02-router/index.vue'
-import App from './03-elementPlus/01-虚拟列表/virtualList.vue'
+import App from './03-elementPlus/00-骨架屏/00-skeleton.vue'
+// import App from './03-elementPlus/01-虚拟列表/virtualList.vue'
 const app = createApp(App)
 // vue-router
 import router from './02-router/router/index02'

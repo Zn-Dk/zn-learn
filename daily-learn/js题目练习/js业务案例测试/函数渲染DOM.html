@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实际业务测试</title>
+  <style>
+    .fw400 {
+      font-weight: 400;
+    }
+
+    .c666 {
+      color: #666;
+    }
+
+    .fz28 {
+      font-size: 28px;
+    }
+
+    .title {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <script>
+
+    /*
+      将这个虚拟节点数据 具象化成实际标签
+    */
+    var domData = {
+      tagName: 'div',
+      id: 'header',
+      className: 'title fw400 c666 fz28',
+      innerText: '我是一个header标签',
+      children: [
+        {
+          tagName: 'h1',
+          id: '',
+          className: 'logo',
+          innerText: '我是logo',
+          children: []
+        },
+        {
+          tagName: 'ul',
+          id: '',
+          className: 'nav',
+          innerText: '',
+          children: [
+            {
+              tagName: 'li',
+              id: '',
+              className: 'list',
+              innerText: '导航1',
+              children: []
+            },
+            {
+              tagName: 'li',
+              id: '',
+              className: 'list',
+              innerText: '导航2',
+              children: []
+            },
+          ]
+        }
+      ]
+    }
+
+
+    function parseDOM(data, parentEle) {
+      const dom = document.createElement(data.tagName)
+      const children = data?.children;
+      for (key in data) {
+        if (key !== 'children') {
+          dom[key] = data[key]
+        }
+      }
+      if (children?.length) {
+        children.forEach((item) => parseDOM(item, dom))
+      }
+      parentEle.append(dom);
+    }
+
+    parseDOM(domData, document.body)
+  </script>
+</body>
+
+</html>

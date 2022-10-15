@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>this指向问题</title>
+</head>
+
+<body>
+  <script>
+
+    let num = 1;
+    const O = {
+      num: 0,
+      add() {
+        this.num++;
+        return function () {
+          console.log(this.num);
+          this.num++;
+        }
+      }
+    }
+    const I = {
+      num: 5
+    }
+
+    I.add = O.add();
+
+    /*
+
+    O.add函数执行
+    O.num 变为 1
+    返回函数体
+    I.add属性为函数体 即
+        const I = {
+            num: 5
+            add: function () {
+                console.log(this.num);
+                this.num++;
+            }
+          }
+
+    */
+
+    I.add.call(O); //打印 几?
+    /*
+
+    将对象I add函数的this指向改为 对象O 因为O.num已经在上一步变成了 1
+    所以打印 1
+
+    */
+  </script>
+</body>
+
+</html>

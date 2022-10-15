@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>前端JavaScript 试题</title>
+  <meta charset='utf-8'>
+  <link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'>
+  <style></style>
+</head>
+
+<body>
+  <div id='preview-contents' class='note-content'>
+
+
+
+
+
+    <h2 id="前端javascript-试题">前端JavaScript 试题</h2>
+
+
+
+    <h3 id="选择题">选择题 :</h3>
+
+    <ol>
+      <li rel="1">
+        <p>下列结果正确的是 <code>["1", "2", "3"].map(parseInt)</code><del>（B）</del> <br>
+          A. <code>["1", "2", "3"]</code> <br>
+          B. <code>[1, 2, 3]</code> <br>
+          C. <code>[0, 1, 2]</code> <br>
+          D. <code>都不对</code></p> 正确D
+        [1,NaN,NaN] parseInt(string, radix);
+        第二个参数是进制数 map 第二个参数是 index
+        <p>parseInt('1',0,arr) = 1</p>
+        <p>parseInt('2',1,arr) = NaN</p>
+        <p>parseInt('3',2,arr) = NaN</p>
+
+
+        <hr>
+      </li>
+      <li rel="2">
+        <p>下列结果正确的是<code>[typeof null, null instanceof Object]</code>（A） <br>
+          A. <code>["object", false]</code> <br>
+          B. <code>[null, false]</code> <br>
+          C. <code>["object", true];</code> <br>
+          D. <code>other</code></p>
+
+        <hr>
+      </li>
+      <li rel="3">
+        <p>以下代码块结果是什么? ( A )</p>
+
+        <pre class="prettyprint hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-keyword">var</span> name = <span class="hljs-string">'World!'</span>;
+</div><div class="hljs-line">(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'undefined'</span>) {
+</div><div class="hljs-line">        <span class="hljs-keyword">var</span> name = <span class="hljs-string">'Jack'</span>;
+</div><div class="hljs-line">        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Goodbye '</span> + name);
+</div><div class="hljs-line">    } <span class="hljs-keyword">else</span> {
+</div><div class="hljs-line">        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Hello '</span> + name);
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">})();
+</div></code></pre>
+
+        <p>A. <code>Goodbye Jack</code> <br>
+          B. <code>Hello Jack</code> <br>
+          C. <code>Hello undefined</code> <br>
+          D. <code>Hello World</code></p>
+
+        <hr>
+      </li>
+      <li rel="4">
+        <p>这个表达的结果是什么？（C）</p>
+
+        <pre class="prettyprint hljs-dark"><code class="hljs actionscript"><div class="hljs-line"><span class="hljs-keyword">var</span> arr= [<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>];
+</div><div class="hljs-line">arr[<span class="hljs-number">10</span>] = <span class="hljs-number">10</span>;
+</div><div class="hljs-line">arr.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x)</span> </span>{ <span class="hljs-keyword">return</span> x === <span class="hljs-literal">undefined</span>;});
+</div></code></pre>
+
+        <p>A. <code>[undefined × 7]</code> <br>
+          B. <code>[0, 1, 2, 10]</code> <br>
+          C. <code>[]</code> <br>
+          D. <code>[undefined]</code></p>
+
+        <hr>
+      </li>
+      <li rel="5">
+        <p><code>[]==[]</code> 结果为?(B) <br>
+          A. <code>true</code> <br>
+          B. <code>false</code> <br>
+          C. <code>error</code> <br>
+          D. <code>other</code></p>
+
+        <hr>
+      </li>
+      <li rel="6">
+        <p><code>[1 &lt; 2 &lt; 3, 3 &lt; 2 &lt; 1]</code> 的结果为? (A) <br>
+          A. <code>[true, true]</code> <br>
+          B. <code>[true, false]</code> <br>
+          C. <code>error</code> <br>
+          D. <code>other</code></p>
+
+        <hr>
+      </li>
+      <li rel="7">
+        <p>以下代码运行结果是?(D )</p>
+
+        <pre class="prettyprint hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-keyword">var</span> obj={
+</div><div class="hljs-line">    <span class="hljs-attr">num</span>:<span class="hljs-number">3</span>,
+</div><div class="hljs-line">    <span class="hljs-attr">add</span>:<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">this</span>.num++;
+</div><div class="hljs-line">        (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+</div><div class="hljs-line">            <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.num);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.num = <span class="hljs-number">5</span>;
+</div><div class="hljs-line">        })();
+</div><div class="hljs-line">        <span class="hljs-keyword">this</span>.num = <span class="hljs-number">6</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">  };
+</div><div class="hljs-line">obj.add();
+</div></code></pre>
+
+        <p>A. <code>4</code> <br>
+          B. <code>5</code> <br>
+          C. <code>6</code> <br>
+          D. <code>undefined</code></p>
+      </li>
+    </ol>
+
+    <hr>
+
+    <ol start="8">
+      <li rel="8">
+        <p>
+          <code>[!!Array.hasOwnProperty , Array.hasOwnProperty(toString),[1,2,3] instanceof Object, typeof [1,2,3] === Array]</code>
+          以下结果正确的是?(B) <br>
+        <pre>
+            直接在console中执行{} instanceof Object，该语句以左花括号{开头，
+              会被理解为block(块)，浏览器报错
+
+              if (a > 1) {
+                  // 这里是一个block
+              }
+              为了不被解释为block，而是期望的对象字面量表达式，有以下几种方法：
+
+              var result = {} instanceof Object;
+              ({}) instanceof Object
+          </pre>
+
+
+        A. <code>[true,true,false,false]</code> <br>
+        B. <code>[true,false,true,false]</code> <br>
+        C. <code>[false,true,false,true]</code> <br>
+        D. <code>[true,false,false,true]</code>
+        </p>
+      </li>
+    </ol>
+
+    <hr>
+
+    <ol start="9">
+      <li rel="9">
+        <p><code>[Function.prototype === Object.__proto__ ,Object.prototype.isPrototypeOf(Function)]</code> 以下结果正确的是?(A
+          ) <br>
+          A. <code>[true,true]</code> <br>
+          B. <code>[true,false]</code> <br>
+          C. <code>[false,true]</code> <br>
+          D. <code>[false,false]</code></p>
+      </li>
+    </ol>
+
+    <hr>
+
+    <ol start="10">
+      <li rel="10">
+        <p>以下代码运行结果是?(D )</p>
+
+        <pre class="prettyprint hljs-dark"><code class="hljs javascript"><div class="hljs-line">(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+</div><div class="hljs-line">      <span class="hljs-keyword">var</span> x = y = <span class="hljs-number">1</span>;
+</div><div class="hljs-line">})();
+</div><div class="hljs-line"><span class="hljs-built_in">console</span>.log(y);
+</div><div class="hljs-line"><span class="hljs-built_in">console</span>.log(x);
+</div></code></pre>
+
+        <p>A. <code>1 , 1</code> <br>
+          B. <code>1, undefined</code> <br>
+          C. <code>undefined , 1</code> <br>
+          D. <code>1, error</code></p>
+      </li>
+    </ol>
+
+
+
+    <h3 id="简答题-扩展">简答题 （扩展）</h3>
+
+    <p>下列for循环运算时间复杂度分别为?
+    <pre>O(N^2)   <del>O(N)</del>O(N+1) 因为len要算一次   第三个N-1?(最优解,如果需要获取i 还需要-1)</pre>
+    </p>
+
+    <pre class="prettyprint hljs-dark"><code class="hljs applescript"><div class="hljs-line"><span class="hljs-keyword">for</span>(var i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-built_in">length</span>; i++){
+</div><div class="hljs-line">    console.<span class="hljs-built_in">log</span>(arr[i]);
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">for</span>(var i = <span class="hljs-number">0</span>, len = arr.<span class="hljs-built_in">length</span>; i &lt; len; i++){
+</div><div class="hljs-line">    console.<span class="hljs-built_in">log</span>(<span class="hljs-built_in">item</span>);
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">for</span>(var i = <span class="hljs-number">0</span>,<span class="hljs-built_in">item</span>;<span class="hljs-built_in">item</span> = arr[i++];){
+</div><div class="hljs-line">    console.<span class="hljs-built_in">log</span>(<span class="hljs-built_in">item</span>);
+</div><div class="hljs-line">}
+</div></code></pre>
+
+    <hr>
+
+    <p>实现函数 callIt，调用之后满足如下条件 <br>
+      1、返回的结果为调用 fn 之后的结果 <br>
+      2、fn 的调用参数为 callIt 的第一个参数之后的全部参数</p>
+
+
+    <code class="hljs actionscript">
+    <div class="hljs-line">function callIt(fn,...args){</div>
+    <div class="hljs-line">return fn(...args)</div>
+    <div class="hljs-line">}</div>
+      </code>
+
+    <pre class="prettyprint hljs-dark"><code class="hljs actionscript"><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">callIt</span><span class="hljs-params">(fn)</span> </span>{
+</div><div class="hljs-line">   <span class="hljs-comment">//some code</span>
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">callIt(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a,b)</span></span>{<span class="hljs-keyword">return</span> a+b},<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)  <span class="hljs-comment">//5</span>
+</div></code></pre>
+
+    <hr>
+
+    <p>实现 fizzBuzz 函数，参数 num 与返回值的关系如下： <br>
+      1、如果 num 能同时被 3 和 5 整除，返回字符串 fizzbuzz <br>
+      2、如果 num 能被 3 整除，返回字符串 fizz <br>
+      3、如果 num 能被 5 整除，返回字符串 buzz <br>
+      4、如果参数为空或者不是 Number 类型，返回 false <br>
+      5、其余情况，返回参数 num</p>
+
+    <pre class="prettyprint hljs-dark"><code class="hljs actionscript"><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fizzBuzz</span><span class="hljs-params">(num)</span> </span>{
+</div><div class="hljs-line">     <span class="hljs-comment">//some code</span>
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">fizzBuzz(<span class="hljs-number">15</span>); <span class="hljs-comment">//fizzbuzz</span>
+</div></code></pre>
+
+    <pre>
+    function fizzBuzz(num) {
+    if (typeof num !== 'number') {
+    return false;
+    }
+
+    if (num % 3 === 0) {
+    return num % 5 === 0 ? 'fizzbuzz' : 'fizz'
+    }
+
+    if (num % 5 === 0) {
+    return 'buzz'
+    }
+
+    return num;
+    }
+
+    fizzBuzz(15); //fizzbuzz
+  </pre>
+
+
+
+    <hr>
+
+
+    <p>实现 statistical 函数 ，统计字符串中每个字符出现的次数，返回json对象表示</p>
+
+    <pre class="prettyprint hljs-dark"><code class="hljs actionscript"><div class="hljs-line"> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">statistical</span><span class="hljs-params">(str)</span> </span>{
+</div><div class="hljs-line">     <span class="hljs-comment">//some code</span>
+</div><div class="hljs-line"> }
+</div><div class="hljs-line">statistical(<span class="hljs-string">'aaaabbbcccccciii'</span>); <span class="hljs-comment">//{a: 4, b: 3, c: 6, i: 3}</span>
+</div></code></pre>
+
+    <pre class="prettyprint hljs-dark">
+    <code class="hljs actionscript">
+    <div class="hljs-line">function statistical(str) {</div><div class="hljs-line">   return [...str].reduce((acc, cur) => {</div><div class="hljs-line">       acc[cur] ? acc[cur]++ : acc[cur] = 1;</div><div class="hljs-line">       return acc;</div><div class="hljs-line">   }, {})</div><div class="hljs-line">}</div>
+      </cod>
+    </pre>
+
+    <hr>
+  </div>
+</body>
+
+</html>

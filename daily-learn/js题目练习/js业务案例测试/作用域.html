@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作用域练习</title>
+</head>
+
+<body>
+  <script>
+
+    var x = 10;
+    function fn() {
+      x = 20;
+      console.log(x); //这里打印值是多少? 20
+      var x = 30;
+    }
+    x = 30;
+    fn();
+    console.log(x); //这里打印值是多少? 30
+
+
+    /*============================分割线========================== */
+    //var x
+    //fun x
+
+    console.log(x);//这里打印值是多少?  函数体x=40
+    var x = function () {
+      x = 90;
+    }
+    //x<-匿名函数函数体(x=90)
+
+    x(); //x->90
+    var x = 30; //x->30
+
+    function x() {
+      x = 40;
+    }
+
+    console.log(x); //这里打印值是多少? 30
+
+    /*============================分割线========================== */
+
+    var x = 20;
+    function fn1() {
+      console.log(x); //这里打印值是多少? 40
+    }
+    x = 30;
+    function fn2() {
+      var x = 1;
+      fn1();
+    }
+    x = 40;
+
+    fn2();
+
+
+    /*============================分割线========================== */
+    var x = 20;
+    function fn() {
+      if (x) {  //<-undefined 局部x
+        var x = 30; //<-内部有var声明 if不创建块级作用域
+      }
+      console.log(x);//这里打印值是多少? undefined
+    }
+    fn();
+    console.log(x);//这里打印值是多少? 20
+
+    /*============================分割线========================== */
+
+    function fun(param) {
+      console.log(param);//这里打印值是多少? 5
+      var param = function () {
+        console.log(1);
+      }
+      console.log(param);//这里打印值是多少? 函数体
+    }
+    fun(5);
+
+    /*============================分割线========================== */
+    var foo = 1;
+    function bar() {
+      function foo() { }
+      foo = 10;
+      console.log(foo);//这里打印值是多少? 10
+    }
+    bar();
+    console.log(foo);//这里打印值是多少? 1
+
+    /*============================分割线========================== */
+
+    function fn() {
+      var a = b = 3;
+    }
+
+    console.log(b);//这里打印值是多少? 报错 not defined
+    console.log(a);//这里打印值是多少? 无
+  </script>
+
+</body>
+
+</html>

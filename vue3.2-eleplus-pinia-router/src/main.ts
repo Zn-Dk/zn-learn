@@ -1,11 +1,11 @@
 import { createApp } from 'vue'
 // import App from '@/00-pinia-learn/00-first-try.vue'
-// import App from '@/02-router/index.vue'
-import App from './03-elementPlus/00-骨架屏/00-skeleton.vue'
+import App from '@/02-router/index.vue'
+// import App from './03-elementPlus/00-骨架屏/00-skeleton.vue'
 // import App from './03-elementPlus/01-虚拟列表/virtualList.vue'
 const app = createApp(App)
 // vue-router
-import router from './02-router/router/index02'
+import router from './02-router/router/index'
 
 // ElementPlus
 // import ElementPlus from 'element-plus' // 自动按需导入 不需要import
@@ -44,6 +44,6 @@ declare module '@vue/runtime-core' {
 
 app
   .use(pinia)
-  // .use(router)
+  .use(router)
   // .use(ElementPlus)
   .mount('#app')

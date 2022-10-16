@@ -1,6 +1,6 @@
 // export function genColumn
 
-export const columns: Column<any>[] = [
+export const columns = [
   {
     key: "index",
     title: "序号",

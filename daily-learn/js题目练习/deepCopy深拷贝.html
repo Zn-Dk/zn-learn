@@ -117,8 +117,88 @@
     }
 
 
-
     */
+
+    // 其他方法1
+    function deepCopy(oldObj, newobj) {
+      for (var key in oldObj) {
+        var item = oldObj[key];
+        // 判断是否是对象
+        if (item instanceof Object) {
+          newobj[key] = {};  //定义一个空的对象来接收拷贝的内容
+          deepCopy(item, newobj[key]); //递归调用
+          // 判断是否是数组
+        } else if (item instanceof Array) {
+          newobj[key] = [];  //定义一个空的数组来接收拷贝的内容
+          deepCopy(item, newobj[key]); //递归调用
+        } else {
+          newobj[key] = oldObj[key];
+        }
+      }
+    }
+    obj = {
+      name: 'wade',
+      age: 37,
+      friend: {
+        name: 'james',
+        age: 34
+      }
+    }
+    var cloneObj = {};
+    deepCopy(obj, cloneObj);
+    obj.name = 'rose';
+    obj.friend.name = 'curry';
+    console.log(obj);
+    console.log(cloneObj);
+
+
+
+    // 其他方法 2
+    function deepClone(target) {
+      let result;
+      // 判断是否是对象类型
+      if (typeof target === 'object') {
+        // 判断是否是数组类型
+        if (Array.isArray(target)) {
+          result = []; // 如果是数组,创建一个空数组
+          for (let i in target) { // 遍历 递归调用
+            result.push(deepClone(target[i]))
+          }
+          // 再判断是否是 null
+        } else if (target === null) {
+          result = null; // 如果是,直接等于 null
+          // 判断是否是正则对象
+        } else if (target.constructor === RegExp) {
+          result = target; // 如果是,直接赋值拷贝
+        } else { // 则是对象
+          result = {}; // 创建一个空对象
+          for (let i in target) { // 遍历 递归调用
+            result[i] = deepClone(target[i]);
+          }
+        }
+      } else {
+        // 表示不是对象类型，则是简单数据类型  直接赋值
+        result = target;
+      }
+      // 返回结果
+      return result;
+    }
+    var obj = {
+      name: 'wade',
+      age: 37,
+      friend: {
+        name: 'james',
+        age: 34
+      }
+    }
+    cloneObj = {};
+    deepCopy(obj, cloneObj);
+    obj.name = 'rose';
+    obj.friend.name = 'curry';
+    console.log(obj);
+    console.log(cloneObj);
+
+
   </script>
 </body>
 

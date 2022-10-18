@@ -22,6 +22,18 @@ import { TableV2SortOrder } from 'element-plus'
 import { ref, h, render } from 'vue'
 let list = ref(genList(1000))
 
+// let vn = h(
+//   'div',
+//   {
+//     class: 'bar',
+//     onClick: e => {
+//       e.target.style.color = 'red'
+//     },
+//   },
+//   [h('h1', 'Hello Title'), h('p', 'I'm p tag.')],
+// )
+// render(vn, document.body)
+
 // 排序 方法
 
 // 单列排序

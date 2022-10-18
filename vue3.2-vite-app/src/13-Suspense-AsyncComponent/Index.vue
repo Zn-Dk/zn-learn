@@ -1,7 +1,6 @@
 <template>
   <main>
-    <aside>
-    </aside>
+    <aside></aside>
     <article>
       <header class="test">Suspense 异步组件</header>
       <!-- 异步组件必须配合 Suspense 使用 -->
@@ -19,11 +18,10 @@
       </div>
     </article>
   </main>
-
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent } from 'vue'
 // 搭配 defineAsyncComponent + Suspense 使用异步组件
 // 使用之后 打包 build 也会生成独立的属于异步组件的 .js .css
 const Sus = defineAsyncComponent(() => import('./Suspense.vue'))

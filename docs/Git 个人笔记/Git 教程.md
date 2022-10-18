@@ -107,13 +107,9 @@ git push origin main
 
 ## 版本追溯 reset 
 
-![image-20220906155326814](D:\git\zn-web-learn\docs\Git 个人笔记\assets\image-20220906155326814.png)
+![image-20220906155326814](assets\image-20220906155326814.png)
 
-![image-20220906155339551](D:\git\zn-web-learn\docs\Git 个人笔记\assets\image-20220906155339551.png)
-
-
-
-在仓库网页上可以看到项目提交的历史记录和浏览历史版本文件
+![image-20220906155339551](assets\image-20220906155339551.png)在仓库网页上可以看到项目提交的历史记录和浏览历史版本文件
 
 
 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>递归函数</title>
+</head>
+
+<body>
+
+
+  <script>
+    /*
+    1 编写一个函数实现n^k (n的k次方)，使用递归实现。
+    2 角谷定理。输入一个自然数，若为偶数，则把它除以2，若为奇数，则把它乘以3加1。经过如此有限次运算后，总可以得到自然数值1。求经过多少次可得到自然数1。
+    3 一个人赶着鸭子去每个村庄卖，每经过一个村子卖去所赶鸭子的一半又一只。这样他经过了7个村子后还剩2鸭子，问他出发时共赶多少只鸭子？经过每个村子卖出多少只鸭子？ 13 = 2+4+7
+    4 数列1,1,2,4,7,13,24,44,...求数列的第 n项 (找
+          从n=4 开始 为前三项之和
+            4 = 1 + 1 + 2
+            7 = 1 + 2 + 4
+            13 = 2 + 4 + 7
+            24 = 13 + 4 + 7
+            44 = 7 + 13 + 24
+    规律) 递归实现
+    */
+
+    // 1
+    function getPow(n, p) {
+      if (p === 0) {
+        return 1
+      }
+      return n * getPow(n, p - 1)
+    }
+
+    //1+...+n
+    function getSum(n) {
+      if (n === 1) {
+        return 1
+      }
+      return n + getSum(n - 1)
+    }
+
+
+    // 2
+    function conjecture(n, count = 0) {
+      if (n === 0 || n === 1) {
+        return count
+      }
+      if (n % 2 === 0) {
+        return conjecture(n / 2, count + 1)
+      }
+      return conjecture(3 * n + 1, count + 1)
+    }
+
+    // 3
+
+    //rest = (before / 2) - 1
+    //before = 2 * (rest + 1)
+    function getDuck(rest = 2, time = 7) {
+      if (time === 0) {
+        console.log(`出发时有${rest}只鸭子`)
+        return
+      }
+      let before = 2 * (rest + 1)
+      console.log(`经过第${time}个村子,卖出${before - rest}只鸭子`)
+      time--
+      getDuck(before, time)
+    }
+
+    //4
+    function getArrItem(n) {
+      if (n === 0 || n === 1) {
+        return 1
+      }
+      if (n === 2) {
+        return 2
+      }
+      return getArrItem(n - 1) + getArrItem(n - 2) + getArrItem(n - 3)
+    }
+  </script>
+</body>
+
+</html>

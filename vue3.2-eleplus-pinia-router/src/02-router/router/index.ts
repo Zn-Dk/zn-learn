@@ -7,7 +7,7 @@ const option: RouterOptions = {
   // vue2 mode  "hash"   vue3  createWebHashHistory()
   // vue2 mode "abstact" vue3  createMemoryHistory()
 
-  history: createWebHashHistory(),
+  history: createWebHistory(),
 
   routes: [
     {

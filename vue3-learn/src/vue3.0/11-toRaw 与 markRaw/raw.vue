@@ -22,12 +22,12 @@ import { markRaw, reactive, toRefs, isReactive } from 'vue'
 export default {
   /*
 
-  ref/reactive数据类型的特点:
+  ref/reactive 数据类型的特点:
   每次修改都会被追踪, 都会更新UI界面, 但是这样其实是非常消耗 性能的
   所以如果我们有一些操作不需要追踪, 不需要更新UI界面, 那么这个时候,
   我们就可以通过toRaw方法拿到它的原始数据, 对原始数据进行修改
   这样就不会被追踪, 这样就不会更新UI界面, 这样性能就好了
-  
+
   - toRaw：
     - 作用：将一个由reactive生成的响应式对象转为普通对象。
     - 使用场景：用于读取响应式对象对应的普通对象，对这个普通对象的所有操作，不会引起页面更新。

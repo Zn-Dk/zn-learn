@@ -1,17 +1,26 @@
 <template>
+  <h3>Computed</h3>
   <p>Computed fullName : {{ fullName }}</p>
   <hr />
   <div>
-    <h3>asd</h3>
+    <h3>ref</h3>
     <p ref="refTest">ref test</p>
-    <p :ref="getRef">getRef function test</p>
+    <input :ref="getRef" />getRef function test
   </div>
-
+  <hr />
+  <h3>ref + shallowRef</h3>
   <div>
     <p>refV: {{ refV.a }}, shallowRefV:{{ shallowRefV.a }}</p>
     <button @click="changeRef">Click button to change refV and shallowRefV together</button>
   </div>
   <hr />
+  <div>
+    <h3>v-model</h3>
+    <p>input v-model 绑定后不能写 value</p>
+    <input type="text" v-model="modelVal" />
+    <input type="checkbox" v-model="isCheck" />A
+    <p>{{ isCheck }}</p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +38,7 @@ let fullName = computed(() => {
 //// 复习2 ref
 const refTest = ref<any>(null)
 onMounted(() => {
-  console.log(refTest.value, 'refTest')
+  // console.log(refTest.value, 'refTest')
 })
 // 通过函数获取
 const getRef = el => console.log(el)
@@ -46,6 +55,11 @@ const changeRef = () => {
   refV.value.a = 2
   shallowRefV.value.a = 2
 }
+
+// v-model
+
+const modelVal = ref('')
+const isCheck = ref(true)
 </script>
 
 <style>

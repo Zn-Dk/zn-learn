@@ -61,6 +61,12 @@ export default {
     })
 
     console.log('refP', refP)
+
+    /*
+      PS 这里有个 bug shallowRef 和 ref 同时使用会使得 shallowRef 值一起更新
+
+    */
+
     return {
       count,
       msg,

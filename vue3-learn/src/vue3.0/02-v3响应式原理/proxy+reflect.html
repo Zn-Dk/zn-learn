@@ -21,7 +21,7 @@
       可以同样的进行  Reflect.get / .set / .deleteProperty 操作 对数据进行 CRUD
 
       Reflect 的好处之一 Reflect.defineProperty ( target, propertyKey, attributes )
-      类同于Object.defineProperty()，不同的是该方法返回的是布尔值，
+      类同于Object.defineProperty()，不同的是该方法返回的是布尔值，而 Object.defineProperty 返回的是原对象
       而不需要你像以前 Object 那样 trycatch 捕捉异常(因为Object.defineProperty是在执行出错的时候直接抛错的),
 
       所以对开发底层 特别是开发框架来说 Reflect 是很有用的 (一般平常用不到 但是要了解)
@@ -48,7 +48,7 @@
 
         （1）将Object对象的一些明显属于语言内部的方法（比如Object.defineProperty），放到Reflect对象上。
 
-        （2）修改某些Object方法的返回结果。例如Object.defineProperty(obj, name, desc)在无法定义属性时，
+        （2）修改某些Object方法的返回结果。例如Object.defineProperty(obj, name, desc)在无法定义属性(属性被锁)时，
             会抛出一个错误，而Reflect.defineProperty(obj, name, desc)则会返回false。
 
         （3）让Object操作都变成函数行为。例如原来的key in obj和delete obj[key]，
@@ -101,20 +101,20 @@
     })
 
 
-        /* 对比Vue2
+    /* 对比Vue2
 
-        let p = {}
-      Object.defineProperty(p,'name',{
-        configurable:true,
-        get(){ //有人读取name时调用
-          return person.name
-        },
-        set(value){ //有人修改name时调用
-          console.log('有人修改了name属性，我发现了，我要去更新界面！')
-          person.name = value
-        }
-    })
-    */
+    let p = {}
+  Object.defineProperty(p,'name',{
+    configurable:true,
+    get(){ //有人读取name时调用
+      return person.name
+    },
+    set(value){ //有人修改name时调用
+      console.log('有人修改了name属性，我发现了，我要去更新界面！')
+      person.name = value
+    }
+})
+*/
   </script>
 </body>
 

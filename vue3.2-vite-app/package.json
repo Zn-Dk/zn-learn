@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "serve": "vite",
+    "s:dev": "vite serve --mode dev",
+    "s:prod": "vite serve --mode production",
+    "s:test": "vite serve --mode test",
+    "build:test": "vue-tsc --noEmit && vite build --mode test",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },

@@ -2,9 +2,8 @@
   <!-- v-model 给组件传递 props -->
   <div>
     <h3>父组件绑定子组件 v-model 默认属性为 modelValue(必须这个属性名)</h3>
-    <!-- @input="$emit('update:modelValue', $event.target.value) TS会产生类型报错 -->
-    <input type="text" @input="updateFoo" />
-    />
+    <!-- @input="$emit('update:modelValue', $event.target.value) 按字面量的书写, 但在 TS 会产生类型报错 -->
+    <input type="text" @input="updateFoo" :value="modelValue" />
   </div>
 </template>
 

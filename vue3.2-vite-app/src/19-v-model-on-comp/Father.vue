@@ -6,7 +6,8 @@
     <input type="text" v-model="foo" />
     <!-- v-model 绑定到子组件上 子组件默认接收 prop名称 modelValue  事件 update:modelValue -->
     <Child v-model="foo" />
-    <!-- 自定义名称 v-model冒号后加自定义属性 -->
+    <!-- 自定义名称 v-model冒号后加自定义属性 可以接受一个或多个 v-model -->
+    <!-- 子组件接收 prop:自定义prop   事件 update:自定义prop -->
     <Child1 v-model:title="title" v-model:price="price" />
   </div>
 </template>

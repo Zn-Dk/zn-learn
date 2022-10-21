@@ -15,7 +15,7 @@ export default {
   setup() {
     // 只需要引入 然后执行函数拿到函数的返回值
     // 类似 mixin
-    const { coord } = useMouseCoord('test')
+    const { coord } = useMouseCoord('.mouse-point')
     /*
 
     将整个业务代码抽离到单独的文件中 (业务逻辑清晰 方便修改)

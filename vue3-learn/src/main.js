@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 // import App from './vue3.0/03-setup接收的参数/setup-props-context.vue'
-import App from './vue3.0/05-watch/watchEffect.vue'
+// import App from './vue3.0/05-watch/watchEffect.vue'
+import App from './vue3.0/07-自定义hook/custom-hook.vue'
 // import App from './vue3.0/10-readonly&&shallowReadonly/readonly.vue'
 // import App from './vue3.0/12-customRef/customRef.vue'
 // import App from './vue3.0/14-teleport-unfinished/Father.vue'

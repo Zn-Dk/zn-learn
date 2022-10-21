@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <a href="http://www.baidu.com"></a>
+  <a href="https://www.zh-cn.cn"></a>
+  <a href="https://www.bilibili.com"></a>
+  <a href="https://vuejs.org"></a>
+  <script>
+    let collection = document.querySelectorAll('a')
+
+    let raws = Array.prototype.reduce.call(collection, (acc, cur) => acc + cur.href, '')
+
+    console.log(raws)
+
+    // 需求 希望得到网站的 hostname
+
+    // 1. http s? 可有无
+    // ([\w-]+) 匹配 hostname(可以带横杠+下划线(\w包含了))
+    // 分组应该从左往右数括号 所以第一个括号组, $1 | \1 匹配得到 www.xxxx.com
+    // 但是 vuejs.org 没有 www 所以 $2 => (\w+\.)?
+    // 最后 $3 是 (com|cn|org) 如果这个结果不想取出来 (?:) 做非匹配
+    let reg = /https?:\/\/((\w+\.)?[\w-]+\.(?:com|cn|org))/ig
+
+    let res = raws.match(reg)
+    console.log(res)
+
+
+
+    // 1. 使用 matchAll (新方法) matchAll 必须接受 /g 的全局正则
+    // 使用 matchAll 会得到一个迭代器的返回值，配合 for...of, [...iterator] ES6展开, 或者 Array.from()
+
+    let matches = raws.matchAll(reg) // 返回match的全部结果
+    console.log(matches) // 迭代器 注意 迭代器执行完之后 如果没有重置, 不能再调用
+
+
+    // 1.1 使用数组展开+数组方法遍历
+    let res1Arr = Array.prototype.map.call([...matches], match => {
+      return { host: match[1], findAtIndex: match.index }
+    })
+    console.log(res1Arr) // [ {host: "www.baidu.com", findAtIndex: 0} ...]
+
+    // 1.2 使用 for of
+    let res2Arr = []
+    for (const v of raws.matchAll(reg)) {
+      res2Arr.push({ host: v[1], findAtIndex: v.index })
+    }
+    console.log(res2Arr)
+
+    // 1.3 Array.from
+    let res3Arr = Array.from(raws.matchAll(reg), match => {
+      return { host: match[1], findAtIndex: match.index }
+    })
+    console.log(res3Arr)
+
+
+
+    // 2. 老方法 使用 reg.exec + while
+    let result, res4Arr = []
+
+    while (result = reg.exec(raws)) {
+      res4Arr.push({ host: result[1], findAtIndex: result.index })
+    }
+    console.log(res4Arr)
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 密码验证 1. 9-12 位 数字字母下划线 2.不能是纯数字 3. 不能是纯字母
+    // 以往写正则很麻烦又写不出来的时候可能会很烦躁
+    // 但是假如把匹配写进数组里呢? 再使用 Array.every
+
+    let password = 'AAAAA'
+
+    function checkValid(str) {
+      //  /[0-9]/,  如果纯字母 则检验不通过
+      //  /[a-zA-Z]/ 如果是纯数字 则检验不通过
+      let regs = [
+        /^[\w\d]{9,12}$/i,
+        /[a-zA-Z]/,
+        /[0-9]/,
+      ]
+
+      return regs.every(reg => reg.test(str))
+    }
+
+
+    console.log(checkValid('AAAAAAAAA')) // false
+    console.log(checkValid('casddqwde1')) // true
+    console.log(checkValid('111111111')) // false
+
+  </script>
+</body>
+
+</html>

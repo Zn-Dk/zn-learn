@@ -5,5 +5,5 @@ import "./01基本数据类型/基本数据类型";
 //import './05泛型/初见泛型'
 //import './06命名空间/namespace1'
 window.onload = () => {
-  document.write("Hello World");
+  document.write("Hello TypeScript");
 };

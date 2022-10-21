@@ -3,8 +3,9 @@ import { onMounted, onUnmounted, reactive } from 'vue'
 
 // 导出一个函数 返回最终需要的目标数据
 // 也可以传入参数 让函数根据参数做预期的事情
-export default function (a) {
-  console.log(a)
+export default function (selector) {
+  if (typeof selector !== 'string') return
+  console.log(selector)
   const coord = reactive({
     x: 0,
     y: 0,
@@ -30,10 +31,10 @@ export default function (a) {
 
   // 钩子
   onMounted(() => {
-    document.querySelector('.mouse-point').addEventListener('mousemove', throttle(getCoord, 30))
+    document.querySelector(selector).addEventListener('mousemove', throttle(getCoord, 30))
   })
   onUnmounted(() => {
-    document.querySelector('.mouse-point').removeEventListener('mousemove', throttle(getCoord, 30))
+    document.querySelector(selector).removeEventListener('mousemove', throttle(getCoord, 30))
   })
   return { coord }
 }

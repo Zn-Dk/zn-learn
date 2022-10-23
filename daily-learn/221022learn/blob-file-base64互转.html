@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="file" name="" onchange="activeIn(this)" id="">
+  <img src="#" alt="" class="preview" style="display: block;visibility: hidden;; width: 300px;height: 300px; ">
+  <!-- a 标签 download 属性决定了这个标签会触发下载行为, 值是保存的文件名 文件来源是源自 a:href -->
+  <a href="#" class="download" download="default">文件下载</a>
+  <script>
+    let img = document.querySelector('.preview')
+    let oDown = document.querySelector('.download')
+
+    function activeIn(ev) {
+      let file = ev.files[0]
+      console.log(file)
+      // method 1  File => BASE64 / BLOB(其实可以直接转)
+      read(file, (dataURL) => {
+        if (dataURL) {
+          img.src = dataURL
+          img.style.visibility = 'visible'
+          // a 标签 download 属性 <= 上传文件名 和 href <= dataURL
+          oDown.href = dataURL
+          oDown.download = file.name
+        }
+      })
+
+      // method 2  File => Blob
+      // img.src = URL.createObjectURL(file)
+      // img.style.visibility = 'visible'
+    }
+
+    function read(file, cb) {
+      let fr = new FileReader()
+      fr.onload = (ev) => {
+        // cb && cb(fr.result)
+
+        // 新建 blob options 的类型可以用通过传的file对象取得
+        let blob = new Blob([fr.result], { type: file.type })
+        cb && cb(URL.createObjectURL(blob))
+      }
+
+      // 1. 转为 base64
+      // fr.readAsDataURL(file)
+
+      // 2.转成 ArrayBuffer 后再转成 blob => 生成 blobURL
+      fr.readAsArrayBuffer(file)
+    }
+  </script>
+</body>
+
+</html>

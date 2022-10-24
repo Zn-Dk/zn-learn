@@ -79,7 +79,7 @@ let p = new _Promise((resolve, reject) => {
   }, 500);
 });
 
-p.then(
+let p1 = p.then(
   (res) => {
     console.log("Promise 状态:" + p.status);
     console.log(res);

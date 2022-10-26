@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <h2>主页面</h2>
+  <p class="message">接收到子窗口消息:</p>
+  <input type="text" placeholder="发消息">
+  <input type="button" value="发消息">
+  <iframe style="display: block;" id="contentIframe"
+    src="http://127.0.0.1:5503/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87/2.html"></iframe>
+</body>
+<script>
+  const ipt = document.querySelector('input[type=text]')
+  const btn = document.querySelector('input[type=button]')
+
+  const iframe = document.querySelector('#contentIframe')
+
+  const p = document.querySelector('.message')
+
+
+
+  btn.addEventListener('click', function (e) {
+    let msg = ipt.value
+    iframe.contentWindow.postMessage({ msg, date: new Date() }, '*')
+  })
+
+  window.addEventListener('message', function (e) {
+    console.log(e)
+    if (e.origin === 'http://127.0.0.1:5503') {
+      p.textContent += JSON.stringify(e.data)
+    }
+  })
+</script>
+
+</html>

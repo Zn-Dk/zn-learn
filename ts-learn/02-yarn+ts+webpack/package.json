@@ -1,5 +1,5 @@
 {
-  "name": "05-yarn+ts+webpack",
+  "name": "yarn-ts-webpack",
   "packageManager": "yarn@3.2.3",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config config/webpack.config.js",

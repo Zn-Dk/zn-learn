@@ -62,12 +62,14 @@ const modelVal = ref('')
 const isCheck = ref(true)
 </script>
 
-<style>
+<style lang="scss">
 p {
   font-size: 16px;
 }
 
 h3 {
   font-size: 20px;
+  color: $-global-bg;
+  // 全局引入的变量但是没有提示 可以先局部引入然后删除
 }
 </style>

@@ -5,21 +5,6 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"05-yarn+ts+webpack@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "05-yarn+ts+webpack@workspace:."
-  dependencies:
-    clean-webpack-plugin: ^4.0.0
-    cross-env: ^7.0.3
-    html-webpack-plugin: ^5.5.0
-    ts-loader: ^9.3.1
-    typescript: ^4.8.2
-    webpack: ^5.74.0
-    webpack-cli: ^4.10.0
-    webpack-dev-server: ^4.11.0
-  languageName: unknown
-  linkType: soft
-
 "@discoveryjs/json-ext@npm:^0.5.0":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -3972,3 +3957,18 @@ __metadata:
   checksum: 343617202af32df2a15a3be36a5a8c0c8545208f3d3dfbc6bb7c3e3b7e8c6f8e7485432e4f3b88da3031a6e20afa7c711eded32ddfb122896ac5d914e75848d5
   languageName: node
   linkType: hard
+
+"yarn-ts-webpack@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "yarn-ts-webpack@workspace:."
+  dependencies:
+    clean-webpack-plugin: ^4.0.0
+    cross-env: ^7.0.3
+    html-webpack-plugin: ^5.5.0
+    ts-loader: ^9.3.1
+    typescript: ^4.8.2
+    webpack: ^5.74.0
+    webpack-cli: ^4.10.0
+    webpack-dev-server: ^4.11.0
+  languageName: unknown
+  linkType: soft

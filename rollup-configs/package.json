@@ -1,0 +1,30 @@
+{
+  "name": "rollup-configs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup --config -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.19.4",
+    "@rollup/plugin-alias": "^4.0.2",
+    "@rollup/plugin-babel": "^6.0.2",
+    "@rollup/plugin-html": "^1.0.0",
+    "@rollup/plugin-json": "^5.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "postcss": "^8.4.18",
+    "rollup": "^3.2.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-minification": "^0.2.0",
+    "rollup-plugin-postcss": "^4.0.2"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.6",
+    "lodash-es": "^4.17.21"
+  }
+}

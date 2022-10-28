@@ -67,18 +67,28 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         open: true, //vite项目启动时自动打开浏览器
         hmr: true, //开启热更新
       },
-      // css: {
-      //   // vite 自带 postcss 配置项
-      //   postcss: {
-      //     plugins: [
-      //       postcsspxtoviewport({
-      //         unitToConvert: 'px', // 要转化的单位
-      //         viewportWidth: 750, // UI设计稿的宽度
-      //         unitPrecision: 4, // 转换后的精度，即小数点位数
-      //       }),
-      //     ],
-      //   },
-      // },
+      css: {
+        // vite 自带 postcss 配置项
+        // postcss: {
+        //   plugins: [
+        //     postcsspxtoviewport({
+        //       unitToConvert: 'px', // 要转化的单位
+        //       viewportWidth: 750, // UI设计稿的宽度
+        //       unitPrecision: 4, // 转换后的精度，即小数点位数
+        //     }),
+        //   ],
+        // },
+        // 预处理器配置
+        preprocessorOptions: {
+          scss: {
+            /**如果引入多个文件，可以最外面括号括起
+             * '@import "@/assets/scss/globalVariable1.scss"; @import"@/assets/scss/globalVariable2.scss";'
+             **/
+            // 如果是在 public 目录下的可以直接使用 /xxx.sass
+            additionalData: '@import "@/assets/global.scss"; ',
+          },
+        },
+      },
     }
   }
 

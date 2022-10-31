@@ -25,6 +25,7 @@ export default defineConfig({
   //   // vite 自带 postcss 配置项
   //   postcss: {
   //     plugins: [
+  //        // 移动端适配插件 pxtoviewport 
   //       postcsspxtoviewport({
   //         unitToConvert: 'px', // 要转化的单位
   //         viewportWidth: 750, // UI设计稿的宽度

@@ -9,9 +9,10 @@ import commonjs from "rollup-plugin-commonjs";
 // 处理 json 文件 json => es6 module 以便 tree-shaking
 import json from "@rollup/plugin-json";
 
-// import { terser } from "rollup-plugin-terser"; // 代码压缩
-// plugin-minification (rollup 3.2 不能兼容 terser 目前github的替代方案2022-10)
-import { terser } from "rollup-plugin-minification";
+// import { terser } from "rollup-plugin-terser"; // 代码压缩 (rollup 3.2 不能兼容原插件 )
+// import { terser } from "rollup-plugin-minification"; // 之前的替代方案
+// 3.x 的新包名 已被列入官方插件库, 不需要解构出来 有默认 export default
+import terser from "@rollup/plugin-terser";
 
 // 生成html模板 (类似HtmlWebpackPlugin)
 import html from "@rollup/plugin-html";

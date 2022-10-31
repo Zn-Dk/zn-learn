@@ -40,6 +40,67 @@ git init newrepo
 
 初始化后，会在 newrepo 目录下会出现一个名为 .git 的目录，所有 Git 需要的数据和资源都存放在这个目录中。
 
+## status
+
+查看当前仓库状态 (包括未跟踪待 commit 的文件等)
+
+```shell
+git status
+```
+
+## remote
+
+```shell
+git remote // 查看当前远程库名称
+```
+
+### 查看状态
+
+```shell
+git remote -v // 查看远程库状态
+```
+
+典型的示例:
+
+```shell
+> git remote -v
+origin  git@github.com:Zn-Dk/branch-test.git (fetch)
+origin  git@github.com:Zn-Dk/branch-test.git (push)
+
+```
+
+- 这便是在告诉你, 现在你要pull/push 等操作的库, 对应名称是 `origin` 以及相应的地址, 比如 `git push origin master` 就是在 `origin` 库的 `master` 分支上做操作。
+
+(在同时有其他远程库,比如 Gitee Github 共存的时候起好名字区分是有必要的)
+
+### 添加远程库
+
+```shell
+git remote add <name> <url> 
+```
+
+添加一个 <name> 的远程库, 远程库地址为 <url>
+
+比如:
+
+```shell
+git remote add github git:xxxxx
+```
+
+后续操作:
+
+```shell
+git push github <branch-name> ...
+```
+
+### 移除远程库
+
+```shell
+git remote remove <name>
+```
+
+
+
 
 ## clone
 
@@ -51,7 +112,7 @@ git clone "https://XXXX.git"
 
 ## push/pull
 
-将本地仓库的代码推送到远程仓库
+将本地仓库的代码推送到远程仓库 origin
 
 ```bash
 git push origin main(github)/master(gitee)
@@ -143,19 +204,26 @@ git reset --hard 5d0e479cfcdae5aa49f71e06ea94fb40b7498f5b
 
 ### 查看所有分支
 
-```
-git branch
+```shell
+git branch   // 列出所有本地分支
+
+git branch -r  // 列出所有远程分支
+
+git branch -a  // 列出所有本地和远程分支
+
+git branch -v // 查看所属分支 commit ID message
 ```
 
-### 新建分支
+### 分支管理
 
-```
-git branch develop(分支名)
+```shell
+git branch <name>(分支名)
+git branch -d 分支名    删除指定分支
 ```
 
 ### 切换分支
 
-```
+```shell
 git checkout develop // 切换到刚才的 develop
 ```
 
@@ -163,17 +231,19 @@ git checkout develop // 切换到刚才的 develop
 
 - 完成后续操作之后, 在该分支下对文件的更改就会被记录到新分支中正常的 add commit push
 
+  > 注意后续 pull/push 是从/到 **origin develop**
+
+  ```bash
+  git push origin develop:develop
+  ```
+
+  
+
 - 如果切换回原有 master/main 分支 则新分支的文件会不可见(物理上也是)
 
-### 分支push
-
-```
-git push origin develop:develop
-```
 
 
-
-### 合并分支
+### 合并分支 merge
 
 #### 合并到master/main
 
@@ -181,7 +251,7 @@ git push origin develop:develop
 
 执行以下:
 
-```
+```shell
 git merge <分支名>
 git push origin master/main
 ```
@@ -192,7 +262,7 @@ git push origin master/main
 
  但是如果项目由不同开发组开发(假定devA devB),devA devB要先合并到dev,再提交到master, 如果有版本冲突, 需要A B组人员沟通核实确认后, 选择一个版本进行覆盖
 
-```
+```bash
 git checkout devA
 git merge devB
 ...冲突 解决后 merge
@@ -210,7 +280,7 @@ git merge dev
 
 1. 生成公钥
 
-   ```
+   ```bash
    ssh-keygen -t rsa
    //一路回车
    //生成的目录  C盘用户文件夹\.ssh
@@ -306,3 +376,26 @@ Host github.com gitlab.com
 Host github.com
 	ProxyCommand connect -S 127.0.0.1:1080 %h %p
 ```
+
+
+
+
+
+## prune
+
+根据官方的解释，直白一点的翻译就是删除 git 数据库中不可访问的对象，那我的理解是这样的，git prune删除的是你本地 .git 下的 object 目录下，没有被使用到的 hash 值，我理解的是它会删除 origin/xx 开头的没有用到的分支，这个分支在你的远程的 git 服务器中已经删除但是本地任然存在 origin/xxx 的映射，这个时候你就可以使用git prune来删除本地的 origin/xxx 的映射。
+
+但是官方推荐使用的是 git gc，而想删除本地的 xxx 分支，就只能只用git branch -D XXX，
+
+清除本地无用分支的shell :
+
+```bash
+git fetch --all --prune && git branch -vv | grep gone | awk '{ print $1 }' | grep -v pit | xargs git branch -D
+```
+
+
+
+作者：agatex
+链接：https://www.jianshu.com/p/f215964f40a5
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body,
+    html {
+      padding: 0;
+      margin: 0;
+      font-size: 14px;
+      color: #000000;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    thead {
+      background: #3d444c;
+      color: #ffffff;
+    }
+
+    td,
+    th {
+      border: 1px solid #e1e1e1;
+      padding: 0;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <table id="jsTrolley">
+    <thead>
+      <tr>
+        <th>名称</th>
+        <th>价格</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>产品1</td>
+        <td>10.00</td>
+        <td><a href="javascript:void(0);">删除</a></td>
+      </tr>
+      <tr>
+        <td>产品2</td>
+        <td>30.20</td>
+        <td><a href="javascript:void(0);">删除</a></td>
+      </tr>
+      <tr>
+        <td>产品3</td>
+        <td>20.50</td>
+        <td><a href="javascript:void(0);">删除</a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>总计</th>
+        <td colspan="2">60.70(3件商品)</td>
+      </tr>
+    </tfoot>
+  </table>
+  <script>
+    let tbody = document.querySelector('#jsTrolley tbody')
+    let oCount = document.querySelector('#jsTrolley td[colspan="2"]')
+
+    function add(items) {
+      let frag = document.createDocumentFragment()
+      items.forEach(({ name, price }) => {
+        let tr = document.createElement('tr')
+        price = price.toFixed(2)
+        tr.innerHTML = `
+        <td>${name}</td>
+        <td>${price}</td>
+        <td><a href="javascript:void(0);">删除</a></td>`
+        frag.appendChild(tr)
+      })
+      tbody.appendChild(frag)
+      getSum()
+    }
+
+    function getSum() {
+      // 更新总价
+      let prices = document.querySelectorAll('#jsTrolley tr td:nth-of-type(2)')
+      let length = prices.length
+      let sum = [...prices].reduce((acc, cur) => {
+        return acc + Number(cur.innerText)
+      }, 0)
+      oCount.innerText = `${sum.toFixed(2)}(${length}件商品)`
+    }
+
+    // 事件委托
+    tbody.addEventListener('click', bind)
+
+    function bind(e) {
+      if (e.target.tagName.toLowerCase() === 'a') {
+        e.target.parentNode.parentNode.remove()
+        getSum()
+      }
+    }
+
+    add([{ name: '4', price: 42.71 }, { name: '5', price: 12.51 }])
+  </script>
+</body>
+
+</html>

@@ -37,9 +37,9 @@ rl.on("line", function (str: string) {
     acc[cur] ? acc[cur]++ : (acc[cur] = 1);
     return acc;
   }, <O>{});
-  // 得到最小数
+  // 得到最少出现的次数
   let min = Math.min(...Object.values(res));
-  // 输出次数大于最小数的
+
   let newStr = "";
   for (let i = 0; i < str.length; i++) {
     // 循环字符串 如果字符串这一位在统计表里的次数比最小次数大 就输入新字符串

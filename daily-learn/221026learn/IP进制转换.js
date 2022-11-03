@@ -9,7 +9,7 @@ function ipToint(ip) {
     Number(ip[1]) * 256 * 256 +
     Number(ip[2]) * 256 +
     Number(ip[3]);
-  num = num >>> 0;
+  // num = num >>> 0;
   return num;
 }
 
@@ -32,8 +32,8 @@ console.log(ipToint(ip));
 // 组合起来即为：00001010 00000000 00000011 11000001,
 // 转换为10进制数就是：167773121，
 // 所以
-// 第一位 整数右移 8*3 24位取 0
-// 第二位 左移 8 右移 24
+// 第一位 整数 位运算右移 8*3 24位
+// 第二位 右移 24 再左移 8
 // 以此类推
 function intTOiP(num) {
   var str;

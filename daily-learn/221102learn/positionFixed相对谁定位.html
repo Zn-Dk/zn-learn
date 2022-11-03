@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html {
+      margin: 20px;
+      border: 1px solid #000;
+      height: 1000px;
+    }
+
+    body {
+      margin: 20px;
+      border: 1px solid red;
+      height: calc(100% - 45px);
+    }
+
+
+    #d {
+      position: absolute;
+      top: 30%;
+      left: 30%;
+      background-color: gray;
+      width: 500px;
+      height: 500px;
+      /* transform: translateX(50px); */
+      /* 一旦有 transform 属性 则会导致子元素 fixed 相对该父元素定位 */
+    }
+
+    #dd {
+      position: fixed;
+      top: 0;
+      left: 10%;
+      width: 400px;
+      background-color: rgba(49, 222, 196, 0.588);
+      font-size: 32px;
+      line-height: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="d">
+    <div id="dd">
+      <p>本例说明了一般情况下position fixed 的定位是根据 viewport 浏览器窗口而非 body 标签</p>
+      <p>例外: 一旦有父元素 transform 属性 则会导致子元素 fixed 相对该父元素定位</p>
+
+    </div>
+  </div>
+</body>
+
+</html>

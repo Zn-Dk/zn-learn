@@ -79,12 +79,12 @@ export default defineStore(Name.test, {
       {
         key: 'UA_USER', // 自定义 key 名称
         storage: sessionStorage,
-        paths: ['foo', 'count'], // foo 和 count 字段用会话存储
+        paths: ['foo', 'count'], // state 里的 foo 和 count 用会话存储
       },
       {
         key: 'UA_URL', // 自定义 key 名称
         storage: localStorage,
-        paths: ['URL'], // URL 字段用本地存储
+        paths: ['URL'], // state 里的 URL 字段用本地存储
       },
     ],
   },

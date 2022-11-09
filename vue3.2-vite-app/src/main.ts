@@ -19,8 +19,9 @@ import { createApp } from 'vue'
 // import App from './17-customPlugin/Index.vue'
 // import App from './18-pxtoviewport-test/Index.vue'
 // import App from './19-v-model-on-comp/Father.vue'
+import App from './20-nextTick/case2.vue'
 // import App from './98-environment/EnvTest.vue'
-import App from './99-revision-playground/Index.vue'
+// import App from './99-revision-playground/Index.vue'
 // 2.1 注册全局组件 自定义
 import GlobalCard from '@/12-globalComponent-recurComponent/GlobalCard.vue'
 

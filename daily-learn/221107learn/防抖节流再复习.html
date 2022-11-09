@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .search-wrap {
+      display: flex;
+    }
+
+    .ipt {
+      font-size: 18px;
+      color: #666;
+      border: 1px solid #ccc;
+    }
+
+    span {
+      padding: 5px 6px;
+      background-color: skyblue;
+      color: whitesmoke;
+    }
+
+    .counter {
+      position: absolute;
+      right: 20%;
+      width: 100px;
+      line-height: 100px;
+      text-align: center;
+      font-size: 64px;
+      border-radius: 50%;
+      background-color: palegreen;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="search-wrap">
+    <input type="text" class="ipt" placeholder="请输入文字"><span>搜索</span>
+  </div>
+  <h3>搜索内容:</h3>
+  <ul>
+
+  </ul>
+  <div class="counter">1</div>
+  <script>
+    // debounce
+    const ul = document.querySelector('ul')
+    const input = document.querySelector('.ipt')
+    const counter = document.querySelector('.counter')
+
+    const debounce = (fn, wait) => {
+      let timer;
+      return function (...args) {
+        timer && clearTimeout(timer)
+        timer = setTimeout(() => {
+          return fn.apply(this, args)
+        }, wait);
+      }
+    }
+
+    function getSearch(e) {
+      const txt = e.target.value
+      if (txt) {
+        const li = document.createElement('li')
+        li.innerText = e.target.value
+        ul.appendChild(li)
+      }
+    }
+
+    input.addEventListener('input', debounce(getSearch, 1000))
+
+
+    // throttle
+
+    const throttle = (fn, interval) => {
+      let timer, flag = false
+      return function (...args) {
+        if (flag) return false
+        flag = true
+        timer = setTimeout(() => {
+          fn.apply(this, args)
+          flag = false
+        }, interval)
+      }
+    }
+
+
+    function addCount(e) {
+      counter.innerText = ~~counter.innerText + 1
+    }
+    input.addEventListener('input', throttle(addCount, 1000))
+  </script>
+</body>
+
+</html>

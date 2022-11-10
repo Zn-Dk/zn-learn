@@ -10,6 +10,7 @@
     "s:test": "vite serve --mode test",
     "build:test": "vue-tsc --noEmit && vite build --mode test",
     "build": "vue-tsc --noEmit && vite build",
+    "build:emit": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@types/node": "^18.7.18",
     "@vitejs/plugin-vue": "^3.1.0",
     "postcss-px-to-viewport": "^1.1.1",
+    "rollup-plugin-external-globals": "^0.6.1",
     "rollup-plugin-visualizer": "^5.8.2",
     "sass": "^1.55.0",
     "stylus": "^0.59.0",

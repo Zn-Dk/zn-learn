@@ -69,6 +69,7 @@ async function useFetch(url) {
 // watchEffect 观察到了这个值改变产生的副作用(因为useFetch内传入了新的值)
 // useFetch 重新自执行 获取数据
 watchEffect(() => {
+  id.value
   useFetch(url.value)
 })
 </script>

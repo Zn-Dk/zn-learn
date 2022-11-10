@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
-// import App from './02-components/comp-namespace.vue'
+import App from './01-scriptSetup sugar/script-setup.vue'
+// import App from './02-components/comp-a.vue'
 // import App from './02-1-testwatchEffect/fetch-data.vue'
 // import App from './03-eventbus/Index.vue'
 // import App from './04-defineProps/Index.vue'
@@ -19,7 +20,7 @@ import { createApp } from 'vue'
 // import App from './17-customPlugin/Index.vue'
 // import App from './18-pxtoviewport-test/Index.vue'
 // import App from './19-v-model-on-comp/Father.vue'
-import App from './20-nextTick/case2.vue'
+// import App from './20-nextTick/case0.vue'
 // import App from './98-environment/EnvTest.vue'
 // import App from './99-revision-playground/Index.vue'
 // 2.1 注册全局组件 自定义
@@ -63,6 +64,28 @@ declare module '@vue/runtime-core' {
     // 全局变量: 方法属性的相关类型声明
     $myLoading: load
   }
+}
+
+// Vue 错误处理捕获
+app.config.errorHandler = function (err: Error, instance, info) {
+  let {
+    message, // 异常信息
+    name, // 异常名称
+    // script, // 异常脚本url  注释的这几个需要在 stack 正则匹配
+    // line, // 异常行号
+    // column, // 异常列号
+    stack, // 异常堆栈信息
+  } = err
+  let matches = stack.match(/at\s(.*)\n/)[1]
+  let subM = matches.match(/^(https?:\/\/.*\.vue).*:(\d+):(\d+)/)
+  console.log('错误信息: ', message)
+  console.log('错误脚本url: ', subM[1])
+  console.log('异常行号: ', subM[2])
+  console.log('异常列号: ', subM[3])
+  console.log('错误类型: ', name)
+  console.log('错误栈: ', stack)
+  console.log('错误发生实例: ', instance)
+  console.log('错误发生位置/生命周期钩子: ', info) // 比如: mounted hook / setup function
 }
 
 app

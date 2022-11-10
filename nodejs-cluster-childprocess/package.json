@@ -1,0 +1,12 @@
+{
+  "name": "nodejs-cluster-childprocess",
+  "version": "1.0.0",
+  "description": "",
+  "main": "case01.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -14,6 +14,9 @@ import path from 'path'
 // 打包体积分析 npm i rollup-plugin-visualizer -D
 import { visualizer } from 'rollup-plugin-visualizer'
 
+// 打包 CDN 引入 external 排除
+import externalGlobals from 'rollup-plugin-external-globals'
+
 // 参考 https://vitejs.dev/config/
 
 // 使用函数配置形式 更加灵活
@@ -81,7 +84,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         // 预处理器配置
         preprocessorOptions: {
           scss: {
-            /**如果引入多个文件，可以最外面括号括起
+            /** 如果引入多个文件，可以最外面括号括起
              * '@import "@/assets/scss/globalVariable1.scss"; @import"@/assets/scss/globalVariable2.scss";'
              **/
             // 如果是在 public 目录下的可以直接使用 /xxx.sass
@@ -97,24 +100,26 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       ...commonConfig,
       // 打包配置
       build: {
+        // 库模式
         // lib: {
         //   entry: path.resolve(__dirname, 'src/main.ts'), // 入口文件位置
         //   name: 'my-app',
-        //   // fileName: (format) => `my-app.${format}.js`
+        //   fileName: (format) => `my-app.${format}.js`
         // },
+
+        // outDir: 'dist', // 默认 dist - 指定输出路径
+
+        assetsDir: 'static', // 默认 assets - 指定生成静态资源的存放路径,
+
+        // assetsInlineLimit: 4096, // 默认: 4096(Byte) - assets 文件小于指定 Byte 时打包成 base64
+
+        // chunkSizeWarningLimit: 1024, // 默认: 500(kb) - 打包 chunk 文件过大的警报阈值
+
+        cssCodeSplit: true, // 默认 true - 是否拆分 css 启用时，在异步 chunk 中导入的 CSS 将内联到异步 chunk 本身，并在其被加载时插入。如果禁用，整个项目中的所有 CSS 将被提取到一个 CSS 文件中。
+
         // sourcemap: false, // 是否生成sourcemap (生产环境禁用)
 
-        // outDir: 'dist', // 指定输出路径 默认 /dist
-
-        assetsDir: 'static', // 指定生成静态资源的存放路径
-
-        // chunkSizeWarningLimit: 1500, // 警报门槛，限制大文件大小
-
-        // assetsInlineLimit: 4096, // assets 文件小于指定 Byte 时打包成 base64 默认: 4096 => 4kb
-
-        cssCodeSplit: true, // 是否拆分 css
-
-        // minify: 'esbuild', // 混淆器，默认 esbuild 打包速度最快, terser 构建后文件体积更小(需要手动安装)
+        // minify: 'esbuild', // 默认 esbuild - 混淆器，esbuild 打包速度最快, 它比 terser 快 20-40 倍，压缩率只差 1%-2% , 设置 'terser' 时必须先安装 Terse
 
         // 清除console和debugger
         terserOptions: {
@@ -124,6 +129,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           },
         },
 
+        ssr: true, // 默认 undefined (boolean | string) 生成面向 SSR 的构建。
+
+        // rollup 配置
         rollupOptions: {
           output: {
             //对静态文件进行打包处理（文件分类）
@@ -131,6 +139,18 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
             entryFileNames: 'assets/js/[name]-[hash].js',
             assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
           },
+          // 排除的第三方库
+          external: ['vue', 'ant-design-vue', 'moment', 'lodash'],
+          plugins: [
+            // key : 'vue' - 这里需要和external对应，这个字符串就是(import xxx from aaa)中的aaa，也就是包的名字
+            // value: 'Vue' - 这个是第三方库 js 文件导出的全局变量的名字，比如说 vue 就是 Vue，需要查看源码或者参考作者文档
+            externalGlobals({
+              vue: 'Vue',
+              lodash: '_',
+              'ant-design-vue': 'antd',
+              moment: 'moment',
+            }),
+          ],
         },
       },
     }

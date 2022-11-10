@@ -1138,7 +1138,7 @@ var VueReactivity = (function (exports) {
     return isReactive(value) || isReadonly(value);
   }
   // observed 观察这个 ref 对象 =>
-  // 如果 __v_raw 标记不存在(我猜是非引用数据类型)的 返回 原始值
+  // 如果 __v_raw 标记不存在(基础数据类型/未被跟踪的引用类型)的返回原始值
   function toRaw(observed) {
     const raw = observed && observed["__v_raw" /* ReactiveFlags.RAW */];
     return raw ? toRaw(raw) : observed;

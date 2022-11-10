@@ -1,6 +1,6 @@
 <template>myCompA</template>
 
-<script>
+<script lang="ts">
 //script 和 script setup 是可以共存的 如果一定要显式地命名组件 可以开一个script标签写名称
 export default {
   name: 'MyCompA',

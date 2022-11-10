@@ -14,13 +14,18 @@ const isShow = ref(false)
 const name = ref('张三')
 const iptRef = ref<HTMLInputElement>()
 
-const changeName = () => {
-  isShow.value = !isShow.value
+defineExpose({
+  isShow,
+  iptRef,
+})
 
-  // 在nextTick才能获取DOM
-  nextTick(() => {
-    iptRef.value.focus()
-  })
+const emits = defineEmits<{
+  (event: 'edit', isShow: boolean): void
+}>()
+// console.log(abc)
+
+const changeName = () => {
+  emits('edit', !isShow.value)
 }
 </script>
 

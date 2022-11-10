@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniVue 2</title>
+</head>
+
+<body>
+  <div id="app">
+    <p>姓名: {{ name }}</p>
+    <p>年龄: {{ more.age }}</p>
+    <p>薪水: {{ more.secret.salary }}</p>
+    <label for="input">修改薪水</label><input type="number" step="100" class="input" v-model="more.secret.salary">
+  </div>
+  <script src="./vue.js"></script>
+  <script>
+    const vm = new Vue({
+      data() {
+        return {
+          name: 'John Doe',
+          more: {
+            age: 23,
+            secret: {
+              salary: 10000
+            }
+          },
+          inputVal: '输入内容',
+        }
+      },
+      el: '#app'
+    })
+
+
+  </script>
+</body>
+
+</html>

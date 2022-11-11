@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="referrer" content="no-referrer"> -->
+  <meta name="referrer" content="never">
+  <!-- <meta name="referrer" content="no-referrer-when-downgrade"> -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    code {
+      display: inline-flex;
+      background-color: gray;
+      color: white;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>最简单的处理: meta 标签标记 强制不携带 referrer</h3>
+  <code>
+    &lt;meta name="referrer" content="no-referrer"&gt;</code>
+  <code>
+      &lt;meta name="referrer" content="never"&gt; // 这个兼容IE</code>
+  <code>
+    &lt;meta name="referrer" content="no-referrer-when-downgrade"&gt;</code>
+  <img src="https://pics4.baidu.com/feed/b812c8fcc3cec3fd9118340caa61e8348694279d.png" alt="图片1">
+  <img
+    src="https://pics5.baidu.com/feed/b03533fa828ba61e8e4929d83addab01324e5992.png@f_auto?token=f35eab36f7d3d2219849f3c3dc107a89"
+    alt="图片2">
+</body>
+
+</html>

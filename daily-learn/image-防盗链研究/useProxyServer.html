@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    img {
+      width: 600px;
+      height: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>不做任何处理如下: 触发防盗链 403</h3>
+  <img src="https://pics4.baidu.com/feed/b812c8fcc3cec3fd9118340caa61e8348694279d.png" alt="图片1">
+  <div>
+    <h3>建立中台代理服务器 接收并 301 重定向到静态资源目录</h3>
+    <img
+      src="http://127.0.0.1:3333/img?url=https://pics5.baidu.com/feed/b03533fa828ba61e8e4929d83addab01324e5992.png@f_auto?token=f35eab36f7d3d2219849f3c3dc107a89"
+      alt="代理服务器获取">
+    <img src="http://127.0.0.1:3333/img?url=https://pics4.baidu.com/feed/b812c8fcc3cec3fd9118340caa61e8348694279d.png"
+      alt="代理服务器获取2">
+    <img
+      src="http://127.0.0.1:3333/img?url=https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE4wwu1?ver=1587"
+      alt="代理服务器获取3">
+  </div>
+</body>
+
+</html>

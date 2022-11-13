@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <main>
+    <div class="wrap">
+      <h1 class="main-title">JavaScript</h1>
+      <h2 class="subtitle">with Web Animation API</h2>
+    </div>
+    <button>Show Animation</button>
+  </main>
+
+  <script>
+    // 元素提供了 .animate 方法 可以接受类似css keyframes 的配置
+    // 数组对象 驼峰命名 css
+
+    const mainKeyFrames = [
+      {
+        opacity: 0,
+        transform: `translateY(-20px)`,
+      },
+      {
+        opacity: 1,
+        transform: `translateY(0px)`,
+      },
+    ]
+    const mainDuration = 2000
+    const mainOpts = {
+      duration: mainDuration,
+      easing: 'ease-in-out',
+    }
+
+    const subKeyFrames = [
+      {
+        letterSpacing: `-0.5em`,
+      },
+      {
+        opacity: 1,
+        letterSpacing: `normal`,
+      },
+    ]
+
+    const subOpts = {
+      duration: mainDuration / 2,
+      easing: 'ease',
+    }
+
+
+    const oMain = document.querySelector('.main-title')
+    const oSub = document.querySelector('.subtitle')
+    const oBtn = document.querySelector('button')
+
+    // 播放
+
+    oBtn.onclick = () => {
+      oSub.classList.remove('show')
+      const animateInfo = oMain.animate(mainKeyFrames, mainOpts)
+      setTimeout(() => {
+        if (animateInfo.playState === "finished") {
+          oSub.animate(subKeyFrames, subOpts)
+          oSub.classList.add('show')
+        }
+      }, 2100);
+    }
+
+  </script>
+</body>
+
+</html>

@@ -9,6 +9,10 @@ const option: RouterOptions = {
       path: '/',
       // redirect:'/path',
       redirect: { path: '/root1', query: { name: 'bar' } },
+      props: route => {
+        const { params, query } = route
+        return { ...params, ...query }
+      },
       // 函数式写法
       // redirect(to) {
       //   // 返回路径 '/index'
@@ -29,10 +33,25 @@ const option: RouterOptions = {
         {
           name: 'root2',
           path: 'root2',
+          meta: { requiredAuth: true },
           // 命名视图 形式 - 对象 默认展示的视图为 default
           components: {
             default: () => import('../components/01命名视图/BBB.vue'),
             ccc: () => import('../components/01命名视图/CCC.vue'),
+          },
+          // 路由独享守卫
+          beforeEnter: (to, from) => {
+            // reject the navigation
+            alert('没有登录, 不允许进入!')
+            return false
+          },
+        },
+        {
+          name: 'root3',
+          path: 'root3',
+          // 命名视图 形式 - 对象 默认展示的视图为 default
+          components: {
+            default: () => import('../components/01命名视图/DDD.vue'),
           },
         },
       ],
@@ -41,5 +60,14 @@ const option: RouterOptions = {
 }
 
 const router = createRouter(option)
+
+// 登录认证
+// const token = ''
+// router.beforeResolve((to, from) => {
+//   if (to.meta.requiredAuth && !token) {
+//     alert('需要登录!')
+//     return false
+//   }
+// })
 
 export default router

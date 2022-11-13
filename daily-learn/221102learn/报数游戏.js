@@ -5,8 +5,8 @@
   输出描述：如果输入参数M小于等于1或者大于等于100，输出“ERROR!”；否则按照原先的编号从小到大的顺序，以英文逗号分割输出编号字符串
   示例1：
   输入
-  输出
   3
+  输出
   58,91
 
 */
@@ -15,20 +15,22 @@ function countGame(n, M) {
   if (M <= 1 || M >= 100) return "ERROR";
   // 初始化编码
   let arr = Array.from(new Array(n), (_, k) => k + 1);
-  // let tmp = arr; // 临时数组
+  let index = 0;
   let i = 1;
-  while (i <= n) {
-    let res = []; // 结果数组
-    if (arr[i] !== M) {
-      res.push(arr[i]);
+  while (arr.length > 2) {
+    if (i !== M) {
+      // 如果没有到编号 双指针同时移动
+      index++;
       i++;
+    } else {
+      i = 1; // 重置 并移除 index 元素
+      arr.splice(index, 1);
     }
-    i = 1;
-    if (res.length < M) {
-      console.log(res);
-      return;
+    if (index === arr.length) {
+      index = 0;
     }
   }
+  console.log(arr);
 }
 
 countGame(100, 3);

@@ -7,59 +7,54 @@
 */
 
 (() => {
-
   class A {
-    public name: string
+    public name: string;
     // private constructor(name: string) {
     //   this.name = name
     // }
     constructor(name: string) {
-      this.name = name
+      this.name = name;
     }
   }
 
-  console.log(new A('a'))
-
-
+  console.log(new A("a"));
 
   //////////////////////private///////////////////////
 
-
-
   // 不应该把构造函数设为 private
-  // 无法扩展类“A”。类构造函数标记为私有。
+  // 如果 A 里的构造函数是 private, 继承时无法扩展类“A”。类构造函数标记为私有。
   // class B extends A {
   //   constructor(name: string) {
   //     super(name)
   //   }
   // }
-  // console.log(new A('a')) // 类“A”的构造函数是私有的，仅可在类声明中访问。
+  // console.log(new A('a')) // 类“A”的构造函数是私有的，仅可在该类声明中访问。
 
   class B {
-    private name: string
+    private name: string;
     // private constructor(name: string) {
     //   this.name = name
     // }
 
     constructor(name: string) {
-      this.name = name
+      this.name = name;
     }
 
     // 内部可以调用 name
     showName(str: string) {
-      console.log(this.name)
-      this.showMsg(str)
+      console.log(this.name);
+      this.showMsg(str);
     }
 
     // 内部调用
     private showMsg(str: string) {
-      console.log(str)
+      console.log(str);
     }
   }
 
   class C extends B {
     constructor(name: string) {
-      super(name)
+      super(name);
     }
 
     show() {
@@ -73,60 +68,51 @@
 
   //new B('b').showMsg('Hello') // 属性“showMsg”为私有属性，只能在类“B”中访问。
 
-  new B('b').showName('Hello') // 打印 b Hello
-
-
+  new B("b").showName("Hello"); // 打印 b Hello
 
   //////////////////////protected///////////////////////
 
-
-
   class D {
-    protected foo: number
+    protected foo: number;
     constructor(foo: number) {
-      this.foo = foo
+      this.foo = foo;
     }
-    protected showD() {
-      this.foo = 456
-      console.log('showD')
-
+    changeFoo() {
+      this.foo = 456;
+      console.log("changeFoo",this.foo);
     }
   }
 
-  let d = new D(123)
+  let d = new D(123);
   // d.foo = 456 // 属性“foo”受保护，只能在类“D”及其子类中访问。
-  // d.showD()
+  d.changeFoo() // changeFoo 456  (通过暴露的方法修改, 内部方法可以修改内部属性)
 
   class E extends D {
     constructor(foo: number) {
-      super(foo)
+      super(foo);
     }
 
-    showFatherD() {
+    changeFatherFoo() {
       // protected 子类可以访问
-      super.showD()
+      super.changeFoo();
     }
   }
 
-  let e = new E(123)
-  e.showFatherD() // 打印 showD
-  console.log(e) // E {foo: 456}
-
-
+  let e = new E(123);
+  e.changeFatherFoo(); // 打印 Foo
+  console.log(e); // E {foo: 456}
 
   //////////////////////readonly///////////////////////
-
-
 
   // 只读属性必须在声明时或构造函数里被初始化。初始化之后在外部和内部都不能被修改
 
   class F {
-    readonly r: number
+    readonly r: number;
     constructor(r: number) {
-      this.r = r
+      this.r = r;
 
       //可以在构造函数内修改
-      r = 1000
+      r = 1000;
     }
     changeR() {
       // 无法分配到 "r" ，因为它是只读属性。
@@ -134,7 +120,6 @@
     }
   }
 
-  let f = new F(100)
+  let f = new F(100);
   //f.r = 1000 // 无法分配到 "r" ，因为它是只读属性。
-})()
-
+})();

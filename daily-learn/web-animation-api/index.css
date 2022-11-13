@@ -1,0 +1,48 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  row-gap: 5px;
+  background-color: #444;
+}
+
+h1,h2{
+  font-family: PingFang SC;
+  color: beige;
+  text-align: center;
+}
+
+.main-title{
+  font-size: 72px;
+}
+.subtitle{
+  opacity: 0;
+  font-size: 24px;
+}
+
+.show{
+  opacity: 1;
+}
+
+button{
+  display: block;
+  border-radius: 6px;
+  padding: 10px 15px;
+  background-color: royalblue;
+  color: #fff;
+  outline: 0;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+button:active{
+  background:  lightgreen;
+}

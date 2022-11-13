@@ -5,17 +5,10 @@
       <h2>侧边栏</h2>
     </aside>
     <article>
-      <router-view ></router-view>
+      <router-view></router-view>
     </article>
   </main>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-let pw = ref('')
-</script>
-<script></script>
 
 <style lang="scss">
 * {

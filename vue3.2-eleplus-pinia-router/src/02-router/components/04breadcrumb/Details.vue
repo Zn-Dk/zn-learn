@@ -5,6 +5,8 @@
   <p class="de-desc">{{ item.des }}</p>
   <p class="de-price red">{{ item.price }}元起</p>
   <el-image :src="item.thumbSrc" :alt="item.title" :preview-src-list="[item.picSrc]"></el-image>
+  <el-button type="block" @click="goPromo">你可能喜欢</el-button>
+  <router-view></router-view>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +21,12 @@ const item = list.find(item => item.id === route.params.id)
 // 路由返回
 const goBack = () => {
   router.back()
+}
+
+const goPromo = () => {
+  router.push({
+    name: 'Promo',
+  })
 }
 </script>
 

@@ -6,7 +6,8 @@
     <!-- <router-link :to="{
       name: 'Details',
       params: {id:item.id}
-    }" v-for="item in list" :key="item.id"> -->
+    }" v-for="item in list" :key="item.id">
+    </router-link> -->
     <el-card v-for="item in list" :key="item.id">
       <img class="pic" :src="item.thumbSrc" :alt="item.title" width="200" height="200" />
       <h3 class="title">{{ item.title }}</h3>
@@ -18,7 +19,6 @@
       <!-- 编程式导航 -->
       <el-button @click="goDetail(item.id)">跳转到详情</el-button>
     </el-card>
-    <!-- </router-link> -->
   </ul>
 </template>
 
@@ -29,7 +29,7 @@ import list from '../../../assets/data.json'
 
 const router = useRouter()
 
-console.log(router, 'router')
+//console.log(router, 'router')
 
 // router.push 留下历史记录(可以前进后退)
 // .replace 不会留下历史记录 (登录注册)
@@ -44,6 +44,7 @@ const goDetail = (id: string) => {
   //   name: 'Details',
   //   query: { id }
   // })
+  console.log(id)
   router.push({
     name: 'Details',
     params: { id },

@@ -3,12 +3,13 @@ import { createApp } from 'vue'
 // import App from '@/00-pinia-learn/01-state.vue'
 // import App from '@/00-pinia-learn/02-解构.vue'
 // import App from '@/00-pinia-learn/03-$apis.vue'
-import App from '@/02-router/index.vue'
-// import App from '@/02-router/components/04结合breadcrumb/index.vue'
+// import App from '@/02-router/index.vue'
+import App from '@/02-router/components/04breadcrumb/index.vue'
 // import App from './03-elementPlus/index.vue'
 const app = createApp(App)
 // vue-router
-import router from './02-router/router/index01'
+// import router from './02-router/router/index01'
+import router from './02-router/router/indexBread'
 
 // ElementPlus
 // import ElementPlus from 'element-plus' // 自动按需导入 不需要import

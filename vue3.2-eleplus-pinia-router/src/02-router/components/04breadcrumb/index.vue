@@ -25,15 +25,23 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'fs'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-console.log(useRoute())
-const route = useRoute()
+
 const nav = [
   { path: '/', name: '首页' },
   { path: '/list', name: '商品列表' },
   { path: '/about', name: '关于我们' },
 ]
+
+const route = useRoute()
+
+watch(
+  () => route.matched,
+  newRoute => {
+    console.log(newRoute)
+  },
+)
 </script>
 
 <style lang="scss">

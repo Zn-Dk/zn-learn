@@ -2,28 +2,27 @@
   <el-button>Hello Element Plus</el-button>
 
   <h2>Test Pinia</h2>
-  <p>Now pinia say: {{store.foo}}, Now pinia count: {{store.count}}</p>
+  <p>Now pinia say: {{ store.foo }}, Now pinia count: {{ store.count }}</p>
 
-  <p>Pinia getter: {{store.getCurrency}}</p>
-
-  <el-button @click=" store.foo='Hello Foo' ">changeFoo</el-button>
-  <br>
-  <p>Pinia action - addCount, click the button below this:</p>
+  <p>Pinia getter: {{ store.getCurrency }}</p>
+  <p>Pinia action - addMoney, click the button below this:</p>
   <el-button @click="store.addMoney">addMoney</el-button>
-  <br>
-  <el-button @click="change1">change1</el-button>
-  <br>
-  <el-button @click="change2">change2</el-button>
-  <br>
-  <el-button @click="store.fetchData('https://httpbin.org/get')">fetchData</el-button>
-  <br>
+  <br />
+  <el-button @click="store.foo = 'Hello Foo'">changeFoo</el-button>
+  <br />
   <el-button @click="resetStore">resetStore</el-button>
-  <br>
+  <br />
+  <el-button @click="change1">$patch1</el-button>
+  <br />
+  <el-button @click="change2">$patch2</el-button>
+  <br />
+  <el-button @click="store.fetchData('https://httpbin.org/get')">fetchData</el-button>
+  <br />
   <el-button @click="change3">changeStoreTest2</el-button>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 import useTestStore from '@/store/test'
 import { useTest2Store } from '@/store/test2'
@@ -32,18 +31,13 @@ const store = useTestStore()
 const store2 = useTest2Store()
 
 // $id 获取 store 名称
-// console.log('store名称: ' + store.$id)
-
-
-
+console.log('store名称: ' + store.$id)
 
 // $reset 重置 state 为初始状态
 
 const resetStore = () => {
   store.$reset()
 }
-
-
 
 // $subscribe 订阅 监听 state 的变化(无论什么变化都会执行)
 // 与常规的 watch() 相比，使用 $subscribe() 的优点是 subscriptions 只会在 patches 之后触发一次
@@ -54,13 +48,13 @@ const resetStore = () => {
 const change1 = () => {
   store.$patch({
     count: 10,
-    foo: 'zoo'
+    foo: 'zoo',
   })
 }
 
 //  $patch 函数式修改 // type : "patch function"
 const change2 = () => {
-  store.$patch((state) => {
+  store.$patch(state => {
     state.count++
     state.foo = 'Jazz'
   })
@@ -86,17 +80,12 @@ const unSub = store.$subscribe((mutation, state) => {
   // unSub()
 })
 
-
 const change3 = () => {
-  store2.$patch((state) => {
+  store2.$patch(state => {
     state.count = 10000
     state.name = 'Bracken'
   })
 }
-
-
-
-
 
 // $onAction 订阅Actions的调用
 
@@ -124,8 +113,6 @@ const change3 = () => {
 
 //   // unSubAction()
 // })
-
-
 </script>
 
 <style lang="scss" scoped>

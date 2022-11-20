@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const o = {
+      a: 1,
+      b: 'edge',
+      c: [1, 2, [3, 4]],
+      d: {
+        e: [1],
+        f: { g: [2] }
+      },
+      h: undefined,
+      i: null,
+      j() { console.log(123) },
+      k: /\d/,
+      l: Symbol(1),
+      m: new Date(),
+      n: new Set([4, 5, 6])
+    }
+    const deepClone = (obj) => {
+      if (obj === null || typeof obj !== "object") {
+        return obj
+      }
+
+      // 循环引用的缓存处理 利用函数作为对象存储
+      let cache = null;
+      if(!deepClone.cache){
+        deepClone.cache = new WeakMap();
+      }
+      cache = deepClone.cache
+      if(cache.has(obj)){
+        return cache.get(obj)
+      }
+
+      if (obj instanceof Date) {
+        return new Date(obj)
+      }
+      if (obj instanceof RegExp) {
+        return new RegExp(obj)
+      }
+      if(obj instanceof Set){
+        const tmp = new Set()
+        obj.forEach(item=>{
+          tmp.add(deepClone(item))
+        })
+        return tmp
+      }
+      if(obj instanceof Map){
+        const tmp = new Map()
+        obj.forEach((item,key)=>{
+          tmp.set(key,deepClone(item))
+        })
+        return tmp
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map(item => deepClone(item) )
+      }
+      const o = {}
+      for (const key in obj) {
+        o[key] = deepClone(obj[key])
+      }
+      return o
+    }
+
+    let a = deepClone(o)
+    console.log(a)
+  </script>
+</body>
+
+</html>

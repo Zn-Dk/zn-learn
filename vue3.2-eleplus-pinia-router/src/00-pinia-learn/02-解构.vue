@@ -5,12 +5,10 @@
   <p>Pinia getter: {{ getCurrency }}</p>
 
   <p>Pinia action - addCount, click the button below this:</p>
-  <button @click="count++">addCount</button>
+  <el-button @click="count++">addCount</el-button>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
 // usePinia store
 import useTestStore from '@/store/test'
 import { storeToRefs } from 'pinia'

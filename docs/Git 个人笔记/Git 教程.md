@@ -51,22 +51,21 @@ git status
 ## remote
 
 ```shell
-git remote // 查看当前远程库名称
+git remote     #  查看当前远程库名称
 ```
 
 ### 查看状态
 
 ```shell
-git remote -v // 查看远程库状态
+git remote -v  #  查看远程库状态
 ```
 
 典型的示例:
 
 ```shell
 > git remote -v
-origin  git@github.com:Zn-Dk/branch-test.git (fetch)
-origin  git@github.com:Zn-Dk/branch-test.git (push)
-
+# origin  git@github.com:Zn-Dk/branch-test.git (fetch)
+# origin  git@github.com:Zn-Dk/branch-test.git (push)
 ```
 
 - 这便是在告诉你, 现在你要pull/push 等操作的库, 对应名称是 `origin` 以及相应的地址, 比如 `git push origin master` 就是在 `origin` 库的 `master` 分支上做操作。
@@ -164,6 +163,53 @@ git commit -m "commit的注释写在这里"
 git push origin main
 ```
 
+## 提交规范
+
+多人协作时，为了更好管理分支以及提交日志，我们最好建立相关规范，提高协作效率。
+
+**示例分支规范**
+
+| 分支            | 介绍                                                         | 环境     |
+| --------------- | ------------------------------------------------------------ | -------- |
+| master          | 仓库默认分支，暂无使用                                       | -        |
+| release         | 线上保护分支                                                 | Prd      |
+| release-pre     | 预发环境分支，用于 QA 做固定 Pre 测试                        | Pre      |
+| test            | 测试环境分支，用于 QA 做固定 Test 测试                       | Test     |
+| feature/xxx     | 功能开发分支                                                 | Dev/Test |
+| hotfix/xxx      | 热修复分支                                                   | Pre/Prd  |
+| release-2022xxx | 上线分支；上线当日部署到 Pre 进行验证，通过以后直接作为上线分支使用 | Pre/Prd  |
+
+日常开发中，对于线上环境、预发环境和测试环境建议使用固定分支进行部署，所有分支以 `release` 作为基线分支。之所以不用`release-pre` 或者 `release` 作为上线分支，是因为上线当天经常因为各种原因导致只有部分`feature`是可以上线的。上线当天创建 `release-20220818` 并部署到Pre，如果验证通过直接部署上线，如果部分上线，则直接丢弃，再创建一个新的上线分支即可，避免污染 `release` 。
+
+**提交规范**
+
+提交代码时，务必填写提交日志，日志清晰明了，说明本次提交的目的。同时需要遵循一定的提交规范。
+
+```text
+<type>(<scope>): <subject>  
+```
+
+1. Header：包括三个字段：type（必需）、scope（可选）和 subject（必需）。
+
+2. Type：提交 commit 的类别，建议使用下面标识
+
+> feat: 加入新特性
+> fix: 修复 bug
+> improvement: 在现有特性上的改进
+> docs: 更改文档
+> style: 修改了代码的格式
+> refactor: 代码重构,不包含 bug 的修复以及新增特性
+> perf: 提升性能的改动
+> test: 测试用例的改动
+> build: 改变了构建系统或者增加了新的依赖
+> ci: 修改了自动化流程的配置文件或者脚本
+> chore: 除了源码目录以及测试用例的其他修改
+> revert: 回退到之前的一个 commit
+
+3. Scope：用于说明 commit 影响的范围，默认可忽略。
+
+4. Subject：简短精炼的提交描述。
+
 
 
 ## 版本追溯 reset 
@@ -176,19 +222,129 @@ git push origin main
 
 如果需要在本地回溯之前的版本 需要使用 `reset` 命令
 
-```
-git reset --hard <version>
-```
-
-
-
-首先复制好想要还原的版本号 比如图上的 5d0e479....
+- 硬回滚(所有状态都回到目标 commit, **其他更新文件会被一并抹去**)
 
 ```
-git reset --hard 5d0e479cfcdae5aa49f71e06ea94fb40b7498f5b
+git reset --hard <commit>
 ```
 
-> 如果想要返回最新的版本 输入最新版本的版本号即可
+- 软回滚(现在已经添加了新文件,**还想保留修改和新增的其他文件**)
+
+```
+git reset --soft <commit> 
+```
+
+
+
+### 示例(硬回滚):
+
+这里做的操作是将版本的 head 指针指向了历史提交树, 可以通过日志 git reflog 进行查看, 示例代码: 
+
+1. 创建了一个 commit 52fb314 添加文件 3.txt 此时指针在本次 commit
+
+```bash
+git reflog
+
+# 52fb314 (HEAD -> main, origin/main, origin/HEAD) HEAD@{0}: commit: 3.txt added
+# 6bfe69f HEAD@{1}: clone: from github.com:Zn-Dk/branch-test.git
+```
+
+2. reset 回退到之前的版本, 我们检查目录文件 3.txt 已经不存在了
+
+而且 .git/refs/heads/main 的版本号也已经改变
+
+```bash
+git reset --hard 6bfe69f
+
+# HEAD is now at 6bfe69f "Merge branch 'dev'"
+```
+
+3. 再次查看 reflog, 可以发现指针回退到了之前的版本
+
+```bash
+git reflog
+
+# 6bfe69f (HEAD -> main) HEAD@{0}: reset: moving to 6bfe69f  #  越往前越新
+# 52fb314 (origin/main, origin/HEAD) HEAD@{1}: commit: 3.txt added
+# 6bfe69f (HEAD -> main) HEAD@{2}: clone: from github.com:Zn-Dk/branch-test.git
+```
+
+4. 也可以返回到之前的状态
+
+```bash
+git reset --hard 52fb314
+ 
+# HEAD is now at 52fb314 3.txt added
+```
+
+
+
+## 回退修改 revert
+
+> 上面的示例代码是回溯, 那么如果我们要撤回 commit 就得使用 revert 命令了
+
+
+
+`git revert`用于撤销文件，**撤销文件后不会影响其他的提交。**
+
+>  需要注意的是，`reset` 指要回滚到哪个版本，此版本以后的提交都会被回滚（**不包含当前版本**），而 `revert` 只能撤销某一条提交
+
+1. `git revert <commit-id>`：撤销某个提交
+2. `git revert -n|--no-commit <commit-id>`：撤销某个提交，但执行命令后不进入编辑界面，也就是不会自动帮你提交文件，需要手动提交，这与第1点的差别就是撤销和提交分开了。
+
+
+
+1. 这里回退版本 控制台显示删除了刚才的文件
+
+```bash
+git revert 52fb314
+
+[main 54c39b9] Revert "3.txt added"
+ 1 file changed, 1 deletion(-)
+ delete mode 100644 3.txt
+```
+
+2. 可以看到现在指向了一个新版本 54c39b9 此时我们推送到远程
+
+```bash
+git reflog
+54c39b9 (HEAD -> main) HEAD@{0}: revert: Revert "3.txt added"
+52fb314 (origin/main, origin/HEAD) HEAD@{1}: reset: moving to 52fb314
+6bfe69f HEAD@{2}: reset: moving to 6bfe69f
+52fb314 (origin/main, origin/HEAD) HEAD@{3}: commit: 3.txt added
+6bfe69f HEAD@{4}: clone: from github.com:Zn-Dk/branch-test.git
+```
+
+```bash
+git push origin main
+ 
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 244 bytes | 244.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+remote: no repo id givemno repo id givem
+To github.com:Zn-Dk/branch-test.git
+   52fb314..54c39b9  main -> main
+```
+
+![image-20221116173152305](assets\image-20221116173152305.png)
+
+3. 在 github 上面查看, 这次的提交被注明为指定版本的撤销 回滚状态
+
+
+
+> 合并错误代码后的处理方法如下:
+>
+> 1. 找到对应的merge记录
+> 2. 执行revert操作
+> 3. 将revert产生的分支，重新merge到master，将更改抵消
+
+
+
+
 
 
 
@@ -200,32 +356,38 @@ git reset --hard 5d0e479cfcdae5aa49f71e06ea94fb40b7498f5b
 
 
 
+
+
+
+
+
+
 ## 分支branch
 
 ### 查看所有分支
 
 ```shell
-git branch   // 列出所有本地分支
+git branch    #  列出所有本地分支
 
-git branch -r  // 列出所有远程分支
+git branch -r #  列出所有远程分支
 
-git branch -a  // 列出所有本地和远程分支
+git branch -a # 列出所有本地和远程分支
 
-git branch -v // 查看所属分支 commit ID message
+git branch -v #  查看所属分支 commit ID message
 ```
 
 ### 分支管理
 
 ```shell
-git branch <name>(分支名) // 创建指定分支
-git branch -d 分支名    // 删除指定分支
+git branch <name>(分支名) #  创建指定分支
+git branch -d 分支名    #  删除指定分支
 ```
 
 ### 切换分支
 
 ```shell
-git checkout develop // 切换到刚才的 develop
-git checkout -b dev  // -b参数表示创建并切换
+git checkout develop #  切换到刚才的 develop
+git checkout -b dev  #  -b参数表示创建并切换
 ```
 
 
@@ -262,9 +424,9 @@ $ git switch master
 
 
 
-### 合并分支 merge
+## 合并分支 merge
 
-#### 合并到master/main
+#### 合并到主分支
 
 先 checkout 切换到master/main
 
@@ -284,14 +446,26 @@ git push origin master/main
 ```bash
 git checkout devA
 git merge devB
-...冲突 解决后 merge
+# ...冲突 解决后 merge
 git checkout dev
 git merge devA/devB
-....
+# ....
 git checkout master
 git merge dev
 
 ```
+
+
+
+### 对比 merge 和 rebase
+
+ **git merge** 适合 多个**私有分支的提交合并到**(**共享**)分支
+
+ **git rebase** 适合 将**共享分支**的提交**合并到**自己的私有分支里(rebase不好追溯)
+
+>rebase 的最大好处并不是消除 merge，而是避免 merge 的交织。
+>简要来说，就是在 merge 进被合分支（如master）之前，最好将自己的分支给 rebase 到最新的被合分支（如master）上，然后用pull request创建merge请求。
+>在pull request里面还是采用普通的merge，当然可能有的人喜欢rebase merge等，要看具体情况。
 
 
 
@@ -301,8 +475,8 @@ git merge dev
 
    ```bash
    ssh-keygen -t rsa
-   //一路回车
-   //生成的目录  C盘用户文件夹\.ssh
+   # 一路回车
+   # 生成的目录位于  C盘用户文件夹\.ssh
    ```
 
    
@@ -418,3 +592,136 @@ git fetch --all --prune && git branch -vv | grep gone | awk '{ print $1 }' | gre
 链接：https://www.jianshu.com/p/f215964f40a5
 来源：简书
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+
+
+
+## 超实用技巧（引自知乎）
+
+### **场景一**
+
+如果我们正在开发一个功能，突然告知有线上问题，我们**做了一半的代码如何保存**？
+
+```bash
+# 缓存本地开发文件  
+git stash 
+
+# 取出最后一条缓存记录并删除 
+git stash pop 
+
+# 查看所有缓存列表 
+git stash list 
+
+# 应用某一条缓存 
+git stash apply stash@{index} 
+```
+
+1. 使用 `git stash` 可以临时存储本地所有变动的文件，并从当前分支删除修改的代码。
+2. 切换到 `release` 创建 `hotfix-xxx` 修复问题。
+3. 切换到 `feature/xxx` ，执行 `git stash pop` 还原刚刚开发的代码。
+
+一切都像没发生一样，很丝滑。
+
+
+
+### **场景二**
+
+`release-pre` 合并了 5 次提交，最终`QA`反馈只有一个功能对应的2次提交可以上线，我们如何把其中 2 次提交代码合并到`release`?
+
+- 方法一：把需要上线的功能分支直接合并到 `release` 进行上线。
+- 方法二：使用`git revert` 回滚其中不必要的提交。
+- 方法三：使用`git cherry-pick`挑选需要的提交进行合并。
+
+```bash
+# 把某一次提交应用到当前分支 
+git cherry-pick <commit-hash> 
+ 
+# 把某几次提交应用到当前分支 
+git cherry-pick <commit-hash> <commit-hash> 
+ 
+# 把某个区间的提交应用到当前分支，注意不包含起始提交 
+git cherry-pick <start-commit>..<end-commit> 
+```
+
+![img](https://pic2.zhimg.com/80/v2-cd95e46332d05a18bb8f900a5b699039_720w.webp)
+
+如上图，如果想要挑选 4 和 5 的提交代码到 `feature/order` 分支，则执行：`git cherry-pick 0c20eb75..6938e5e0` 即可，注意不包含起始提交，左开右闭。
+
+
+
+### **场景三**
+
+某需求做完以后，提测的时候通过`git log`发现 `feature/order` 分支有无数的提交记录，如下图，如何在提测的时候，让**提交日志更干净**？
+
+![img](https://pic1.zhimg.com/80/v2-03666133bcdfeaa47de877e6591dcf98_720w.webp)
+
+使用 `git rebase -i <start-commit> <end-commit>` 注意：**左开右闭**
+
+1. 执行命令，弹出交互式界面
+
+```text
+git rebase -i 6938e5e0 
+```
+
+![img](https://pic4.zhimg.com/80/v2-70edbdae74bc5154dbc4be77dfad13ff_720w.webp)
+
+2. 修改指令
+
+![img](https://pic4.zhimg.com/80/v2-03e04f0d50b23bf18144906931c2042b_720w.webp)
+
+我们只需要把最后三次提交的`pick`指令改为`squash`或者`fixup`即可，更多参数可参考如下：
+
+> \- pick：保留该 commit（缩写:p）
+> \- reword：保留该 commit，但我需要修改该commit的注释（缩写:r）
+> \- edit：保留该 commit, 但我要停下来修改该提交(不仅仅修改注释)（缩写:e）
+> \- squash：将该 commit 和前一个 commit 合并（缩写:s）
+> \- fixup：将该 commit 和前一个 commit 合并，但我不要保留该提交的注释信息（缩写:f）
+> \- exec：执行 shell 命令（缩写:x）
+> \- drop：我要丢弃该 commit（缩写:d）
+
+3. 输入 `:wq` 保存后，会进入到从新修改提交日志界面
+
+![img](https://pic2.zhimg.com/80/v2-13948e6432c594351f3491676b26aad5_720w.webp)
+
+4. 我们只需要删除这些日志，从新输入我们本次功能开发的日志即可：
+
+![img](https://pic1.zhimg.com/80/v2-b9ccb58aed3801235899118abcd4fee0_720w.webp)
+
+\5. 再次输入：`:wq` 保存退出即可，最后查看日志如下：
+
+![img](https://pic4.zhimg.com/80/v2-fe32183295994fc1de1e2f5604fa8d9b_720w.webp)
+
+这个世界真的很美好！！！
+
+### **场景四**
+
+多人协作时，分支提交错综复杂，如何让分支提交变的更加线性？
+
+**现实是这样的？**
+
+![img](https://pic3.zhimg.com/80/v2-247cdd9aa46e4172a0c47dafcbfb14ca_720w.webp)
+
+**使用 `rebase` 变基前后对比**
+
+
+
+![img](https://pic4.zhimg.com/80/v2-85509399b55e86b59322e4534994ddb7_720w.webp)
+
+
+
+已知线上分支 `release` 和 功能分支 `feature/order` ，当功能分支开发的同时，`release` 也同步做了修改（hotfix合并进来），此时我们通过 `rebase` 进行**变基**
+
+```text
+# 切换到功能分支 
+git checkout feature/order 
+
+# 执行变基 
+git rebase release 
+```
+
+相当于临时保存 `feature/order` 分支代码，从新拉取 `release` 最新代码到本地，然后把 `feature/order` 合并进来，这个过程称之为**变基**，如果中间发生冲突，我们需要正常处理冲突，处理完以后，使用 `git add .`添加到暂存区，使用`git rebase --continue`继续执行，直到所有冲突解决完为止。如果中途想要放弃，可使用 `git rebase --abort` 进行终止。
+
+> `git merge` 是以提交的时间为先后顺序，而 `git rebase` 不同， `release` 代码提交在前，功能分支提交在后，哪怕功能分支先提交的也不行。
+
+![v2-18cb2ae870eae225b79e31131e1420f6_r](\assets\v2-18cb2ae870eae225b79e31131e1420f6_r.jpg)

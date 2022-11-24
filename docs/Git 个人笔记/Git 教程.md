@@ -404,22 +404,22 @@ git checkout -b dev  #  -b参数表示创建并切换
 
 - 如果切换回原有 master/main 分支 则新分支的文件会不可见(物理上也是)
 
-#### switch
+#### **switch**
 
 切换分支使用`git checkout <branch>`，而撤销修改则是`git checkout -- <file>`，同一个命令，有两种作用，确实有点令人迷惑。
 
-因此，最新版本的Git提供了新的`git switch`命令来切换分支：
+**因此，最新版本的Git提供了新的`git switch`命令来切换分支(推荐)：**
 
-创建并切换到新的`dev`分支，可以使用：
+创建并切换到新的 `branchName` 分支，可以使用：
 
+```bash
+git switch -c <branchName>
 ```
-$ git switch -c dev
-```
 
-直接切换到已有的`master`分支，可以使用：
+直接切换到已有的 `branchName` 分支，可以使用：
 
-```
-$ git switch master
+```bash
+git switch <branchName>
 ```
 
 

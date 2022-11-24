@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div {
+      padding: 30px;
+      width: 300px;
+      box-shadow: 0 2px 8px #ccc;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <input type="text" value="输入框1" id="input1">
+    <button onclick="copyIpt()">复制文本</button>
+  </div>
+  <div>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto est consequatur ea neque eius sint. Quia
+      similique, libero, repudiandae quidem ullam illo iste laudantium nisi tempora molestiae maxime nemo in!</p>
+    <button onclick="copySelect()">复制已选中的文本</button>
+  </div>
+  <div>
+    <p id="p">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto est consequatur ea neque eius sint. Quia
+      similique, libero, repudiandae quidem ullam illo iste laudantium nisi tempora molestiae maxime nemo in!</p>
+    <button onclick="copySelect2()">复制已选中的文本2</button>
+  </div>
+  <script>
+    // 复制功能的核心要素是 document.execCommand('copy')
+    // 相当于执行 copy
+
+    // 如果是输入类型元素：直接调用select方法选中内容，再启动copy命令
+    // 如果是普通元素 ：需要通过document.createRange选中节点内容，再通过window.getSelection选中元素内容，再启动copy命令
+
+
+    // 方式 1 表单元素
+    // 通过 .select 方法选中 input
+
+    const copyIpt = () => {
+      const ipt1 = document.querySelector('#input1')
+      ipt1.select()
+      document.execCommand('copy')
+    }
+
+    // 方式 2 普通元素
+    // 通过 window.getSelection 返回一个 Selection对象，表示用户选择的文本范围或光标的当前位置。
+
+    const copySelect = () => {
+      const selection = window.getSelection();
+      const selectedText = selection.toString();  // 获取当前选中的文本
+      document.execCommand('copy') // 顺便执行一次复制
+      alert('你复制的内容:' + selectedText)
+    }
+
+    // 方式 3 普通元素
+    // Document.createRange() 返回一个Range对象，通过Range对象可以选中文本。
+    const copySelect2 = () => {
+      const range = document.createRange() // 创建对象
+      range.selectNode(document.querySelector('#p')) // 选择节点
+      const selection = window.getSelection()
+      // if (selection.rangeCount > 0) selection.removeAllRanges(); 清空旧选区(有问题 可以不加)
+      selection.addRange(range); // 加入当前range
+      document.execCommand('copy')
+    }
+  </script>
+</body>
+
+</html>

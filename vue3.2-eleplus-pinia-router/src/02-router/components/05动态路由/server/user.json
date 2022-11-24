@@ -1,17 +1,17 @@
 [
   {
     "username": "admin1",
-    "password": 12345,
+    "password": "12345",
     "auth_level": 1
   },
   {
     "username": "admin2",
-    "password": 12345,
+    "password": "12345",
     "auth_level": 2
   },
   {
     "username": "admin3",
-    "password": 12345,
+    "password": "12345",
     "auth_level": 3
   }
 ]

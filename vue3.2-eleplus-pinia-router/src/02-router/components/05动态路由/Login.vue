@@ -1,14 +1,14 @@
 <template>
-  <el-card class="login" style="width: 400px;">
+  <el-card class="login" style="width: 400px">
     <template #header>
-      <h2 style="text-align:center">登录</h2>
+      <h2 style="text-align: center">登录</h2>
     </template>
     <el-form :model="ruleForm" status-icon :rules="rules" ref="loginForm" label-width="100px">
       <el-form-item label="用户名" prop="username">
         <el-input v-model="ruleForm.username"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+      <el-form-item label="密码" prop="password">
+        <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="checkPass">
         <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
@@ -22,26 +22,28 @@
 </template>
 
 <script setup lang="ts">
-import { FormInstance, FormItemRule, ElMessage } from 'element-plus';
-import { reactive, ref, } from 'vue';
-import { useRouter } from 'vue-router';
-
-
+import { FormInstance, FormItemRule, ElMessage } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { RouteRecordRaw, useRouter } from 'vue-router'
+import axios from 'axios'
 const router = useRouter()
 // type FormInstance
 const loginForm = ref<FormInstance>()
 
 const ruleForm = reactive({
   username: '',
-  pass: '',
+  password: '',
   checkPass: '',
 })
 type rulesObject = {
   [key in keyof typeof ruleForm]: FormItemRule[]
-} & { email?: FormItemRule[] }
+}
 
-const validCheckPass: FormItemRule["validator"] = (rule, value, cb) => {
-  if (value !== ruleForm.pass) {
+const validCheckPass: FormItemRule['validator'] = (rule, value, cb) => {
+  if (!value) {
+    cb(new Error('请确认密码'))
+  }
+  if (value !== ruleForm.password) {
     cb(new Error('两次输入的密码不一致'))
   } else {
     cb()
@@ -49,24 +51,40 @@ const validCheckPass: FormItemRule["validator"] = (rule, value, cb) => {
 }
 
 const rules: rulesObject = {
-  username: [
-    { required: true, trigger: 'blur', message: '请输入用户名' }
-  ],
-  pass: [
-    { required: true, message: '请输入密码' }
-  ],
-  checkPass: [
-    { required: true, validator: validCheckPass, trigger: 'blur' }
-  ],
-  email: [
-  ]
+  username: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
+  password: [{ required: true, message: '请输入密码' }],
+  checkPass: [{ required: true, validator: validCheckPass, trigger: 'change' }],
 }
 
 const submitForm = () => {
-  loginForm.value.validate((isValid) => {
+  loginForm.value.validate(async isValid => {
     if (isValid) {
       window.localStorage.setItem('user', ruleForm.username)
-      router.push({ name: 'Index' })
+      try {
+        let res = await axios.post('http://localhost:9999/login', ruleForm)
+        // 根据用户权限添加路由 (嵌套到 Index 路由)
+        if (res.data?.length) {
+          // TODO 路由持久化
+          // 将路由存入 sessionStorage/pinia
+          window.sessionStorage.setItem('route', JSON.stringify(res.data))
+          res.data.forEach((item: RouteRecordRaw) => {
+            router.addRoute('Index', {
+              name: item.name,
+              path: item.path,
+              meta: item.meta,
+              component: () => import(`./${item.component}`),
+            })
+          })
+          console.log(router.getRoutes())
+          router.push({ name: 'Index' })
+        }
+      } catch (error) {
+        console.error(error)
+        ElMessage({
+          message: '登录失败',
+          type: 'error',
+        })
+      }
     } else {
       ElMessage({
         message: '表单信息有误,请检查后重试',
@@ -76,7 +94,7 @@ const submitForm = () => {
     }
   })
 }
-const resetForm = () => { }
+const resetForm = () => {}
 </script>
 
 <style lang="scss">

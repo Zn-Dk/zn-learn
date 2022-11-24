@@ -10,6 +10,7 @@ app.use(express.json())
   1. 前端登录认证, 从数据库取出用户信息, 并且含有相关用户权限的字段
   2. 根据字段到路由表中过滤应该返回的路由返回给前端
   3. 调用 vue-router 的 addRoute 方法动态添加路由
+  4. 使用 router/this.$router 的 getRoute 方法获取新增路由 并进行过滤
 
 */
 const findUserByName = (name, password) => {
@@ -25,16 +26,24 @@ const findUserByName = (name, password) => {
  */
 const getRouteList = authLevel => {
   const route = JSON.parse(readFileSync('./route.json', 'utf-8'))
-  return route.filter(route => {
+  let curroute = route.filter(route => {
     return route['auth_level'] <= authLevel
   })
+  // curroute.forEach(route => {
+  //   delete route['auth_level']
+  // })
+  return curroute
 }
 
 const cors = (req, res, next) => {
-  res.setHeader('access-control-allow-origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', '*')
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization')
   next()
 }
-app.post('/login', cors, (req, res) => {
+
+app.use(cors)
+app.post('/login', (req, res) => {
   try {
     const { username, password } = req.body
     // 认证用户

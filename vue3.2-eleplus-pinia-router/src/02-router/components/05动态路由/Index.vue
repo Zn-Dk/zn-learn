@@ -1,76 +1,33 @@
 <template>
-  <el-card>
-    <template #header>
-      <h1>欢迎你, 尊敬的 {{ userName }}</h1>
-    </template>
-    <el-menu>
-      <el-menu-item></el-menu-item>
-    </el-menu>
-    <el-card>
-      <template #header>
-        <h2>今日工作</h2>
-      </template>
-      <div>
-        <h3>待办事项</h3>
-        <el-card
-          v-show="!item.isDone"
-          v-for="item in toDoList"
-          :key="item.id"
-          shadow="hover"
-          style="margin-top: 10px"
-        >
-          类型: {{ item.type }} 内容:{{ item.content }}
-          <input type="checkbox" v-model="item.isDone" />
-        </el-card>
-      </div>
-      <div>
-        <h3>已办事项</h3>
-        <el-card
-          v-show="item.isDone"
-          v-for="item in toDoList"
-          :key="item.id"
-          shadow="hover"
-          style="margin-top: 10px"
-        >
-          类型: {{ item.type }} 内容:{{ item.content }}
-          <input type="checkbox" v-model="item.isDone" />
-        </el-card>
-      </div>
-    </el-card>
-    <el-button type="danger" @click="logout">退出登录</el-button>
-  </el-card>
+  <el-row>
+    <el-col :span="4" tag="aside">
+      <el-menu :default-active="routeList[0].path" router>
+        <el-menu-item :index="item.path" v-for="item in routeList">
+          <span slot="title">{{ item.meta?.title }} </span>
+        </el-menu-item>
+      </el-menu>
+    </el-col>
+    <el-col :span="20" tag="main">
+      <router-view :userName="userName"></router-view>
+    </el-col>
+  </el-row>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
-
-const toDoList = reactive([
-  { id: 1, type: '紧急', content: '上班准备会议PPT', isDone: false },
-  { id: 2, type: '次要', content: '月底之前提交工作汇报', isDone: false },
-  { id: 3, type: '备忘', content: '晚上记得买菜', isDone: false },
-])
-
-const unDoneList = computed(() => {
-  return toDoList.filter(item => !item.isDone)
-})
-const doneList = computed(() => {
-  return toDoList.filter(item => item.isDone)
-})
+import { toReactive } from '@vueuse/shared'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useRouter, RouteRecordRaw, useRoute } from 'vue-router'
 
 const router = useRouter()
 
-const userName = ref(window.localStorage.getItem('user') || '默认用户')
+// 计算属性 获得当前权限
+const routeList = computed(() =>
+  router.getRoutes().filter(route => {
+    return route.path.match(/^\/index\/.*/)
+  }),
+)
 
-const logout = () => {
-  ElMessage.success({
-    message: '再见,尊敬的' + userName.value,
-    duration: 1000, // 默认3秒关闭
-  })
-  router.push('/')
-  window.localStorage.removeItem('user')
-}
+const userName = ref(window.localStorage.getItem('user') || '默认用户')
 </script>
 
 <style lang="scss"></style>

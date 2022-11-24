@@ -6,11 +6,10 @@
     <h3>404 - 你似乎迷路了...</h3>
     <el-button @click="backToIndex" type="danger">返回首页</el-button>
   </el-card>
-  <h2></h2>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const backToIndex = () => {

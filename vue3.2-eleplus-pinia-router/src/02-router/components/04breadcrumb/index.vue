@@ -8,11 +8,12 @@
           }}</el-menu-item>
         </el-menu>
       </el-header>
-      <el-breadcrumb style="padding: 10px 20px" separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+      <el-breadcrumb style="padding: 10px 20px" :separator-icon="ArrowRight">
+        <el-breadcrumb-item v-for="item in $route.matched" :to="{ name: item.name }"
+          ><p class="bread-item--title">
+            {{ item.meta?.title ?? '默认标题' }}
+          </p></el-breadcrumb-item
+        >
       </el-breadcrumb>
       <el-container>
         <el-aside width="200px">Aside</el-aside>
@@ -25,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowRight } from '@element-plus/icons-vue'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -36,19 +38,40 @@ const nav = [
 
 const route = useRoute()
 
+// 使用 route.matched 匹配面包屑
 watch(
   () => route.matched,
   newRoute => {
+    // if (breadList.length === 0) breadList.push(...newRoute)
+    // let routeToAdd = newRoute.find(nRoute => {
+    //   let reg: RegExp, hasSame: boolean
+    //   breadList.forEach(route => {
+    //     reg = new RegExp(route.path)
+    //     hasSame = route.name === nRoute.name
+    //   })
+    //   return !hasSame && nRoute.path.match(reg)
+    // })
+    // routeToAdd && breadList.push(routeToAdd)
     console.log(newRoute)
   },
 )
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .common-layout {
   height: 100%;
   & > .el-container {
     height: 100%;
   }
+}
+
+.el-breadcrumb {
+  line-height: 45px;
+  background-color: rgba($color: #468, $alpha: 0.5);
+}
+.bread-item--title,
+// :deep 样式穿透
+:deep(.el-breadcrumb__separator.el-icon) {
+  color: #fff;
 }
 </style>

@@ -5,7 +5,7 @@
   <p class="de-desc">{{ item.des }}</p>
   <p class="de-price red">{{ item.price }}元起</p>
   <el-image :src="item.thumbSrc" :alt="item.title" :preview-src-list="[item.picSrc]"></el-image>
-  <el-button type="block" @click="goPromo">你可能喜欢</el-button>
+  <el-button type="success" @click="goPromo">你可能喜欢</el-button>
   <router-view></router-view>
 </template>
 

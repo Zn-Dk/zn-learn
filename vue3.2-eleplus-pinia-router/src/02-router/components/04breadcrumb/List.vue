@@ -44,7 +44,6 @@ const goDetail = (id: string) => {
   //   name: 'Details',
   //   query: { id }
   // })
-  console.log(id)
   router.push({
     name: 'Details',
     params: { id },

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    // JSX 多行 可以使用 括号 括起来
+    const ID = 'title'
+    const text = 'Hello React'
+
+    const pStyle = {
+      width: '300px',
+      padding: '20px',
+      boxShadow: '0 2px 6px #ccc',
+      border: '1px solid #666',
+      borderRadius: '8px'
+    }
+    /*
+      JSX 语法要点
+      0. 定义虚拟 DOM 时，不需要使用引号
+      1. JS 表达式 使用 单括号 mustache {} 括起
+      2. 标签 class 为了不和 js class类声明混淆，需要使用 className
+      3. 内联样式标签 style 不可以直接用 html 写法，而是使用 {{ keyName: 'value' }}
+          P.S. 本质上就是声明一个对象 {  {style}  }
+      4.只能有一个 根标签
+      5.标签必须闭合  />
+      6.标签首字母规则:
+        1). 小写开头，被认定为 html 标签，寻找不到会报错
+        2). 大写开头，被认定为 component
+    */
+    const arr = ['海底捞自热火锅', '1.5L 可口可乐', '蒙牛特仑苏']
+    const vDOM = (
+      <div style={pStyle} id={ID}>
+        <h1>今日购物清单</h1>
+        <ul>
+          {
+            arr.map((item, i) => <li key={i}>{item}</li>)
+          }
+        </ul>
+      </div>
+    )
+    ReactDOM.render(vDOM, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

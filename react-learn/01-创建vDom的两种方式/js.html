@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+
+  <!-- 直接使用 js 创建 vDOM 多层嵌套非常繁琐-->
+  <script>
+    const vDOM = React.createElement('h1', { id: 'title' }, React.createElement('span', null, 'Hello React'))
+    // ReactDOM render(vDOM,containerElement)
+    ReactDOM.render(vDOM, document.querySelector('#app'))
+  </script>.
+</body>
+
+</html>

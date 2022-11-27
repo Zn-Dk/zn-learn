@@ -1,10 +1,11 @@
 [https://www.liaoxuefeng.com/wiki/896043488029600/](https://www.liaoxuefeng.com/wiki/896043488029600/)
 
 
-# 自我学习总结
-
+# Git 工作流自我学习总结
 
 右键 - `open git bash here`
+
+
 
 ## 个人信息配置(首次commit 前会询问)
 
@@ -15,8 +16,108 @@ git config --global user.name  "zn_dk"
 
 ![image](assets/image-20220905220220-tgb8kb7.png)
 
+## 配置公钥免密推送SSH
 
-## git init
+1. 生成公钥
+
+   ```bash
+   ssh-keygen -t rsa
+   # 一路回车
+   # 生成的目录位于  C盘用户文件夹\.ssh
+   ```
+
+   
+
+2. 复制公钥文件 id_rsa.pub  (id_rsa 为私钥)
+
+3. 复制公钥到 gitee 添加 SSH 公钥
+
+4. done 可以免密提交了
+
+5. 免密的克隆 不使用 HTTPS 可以使用 SSH 链接 
+
+
+
+## 代理
+
+有些时候由于连不上git服务器而我们又需要推送代码，这时就需要设定git代理服务器。
+
+
+### 1. http和https代理
+
+
+如果说使用的是项目http或者https地址，就配置http与https代理即可，输入以下命令：
+
+```bash
+git config --global http.proxy "socks5://地址:端口"
+git config --global https.proxy "socks5://地址:端口"
+```
+
+
+例如设定本地代理：
+
+```bash
+git config --global http.proxy "socks5://127.0.0.1:7890"
+git config --global https.proxy "socks5://127.0.0.1:7890"
+```
+
+
+这样使用git clone/push/pull所有http或者https地址项目都会走代理。
+
+还可以使用下面命令取消代理设置：
+
+```bash
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+
+### 2. ssh代理设定
+
+
+如果说项目使用的ssh地址，那么就需要配置ssh代理。
+
+我们需要编辑ssh的配置文件，位于用户文件夹下的.ssh文件夹下。
+
+Windows ssh配置文件路径：`C:\Users\你的用户名.ssh\config`
+
+Linux ssh配置文件路径：`/home/你的用户名/.ssh/config`
+
+使用文本编辑器打开配置文件config加入下列配置：
+
+`ProxyCommand connect -S 代理地址:端口 %h %p`  
+如果说.ssh文件夹不存在或者config文件不存在就自己创建一个。
+
+配置好了，ssh就会走代理了。
+
+上面是配置全局走代理，事实上一般只需要为指定网址配置代理，例如只为github配置代理，就在配置文件加入：
+
+```bash
+Host github.com
+	ProxyCommand connect -S 代理地址:端口 %h %p
+```
+
+
+Host后面接的就是指定要走代理的地址，可以接多个地址例如：
+
+```bash
+Host github.com gitlab.com
+	ProxyCommand connect -S 代理地址:端口 %h %p
+```
+
+
+可见多个地址使用空格隔开放在Host后面即可，这个例子就是同时指定ssh访问github和gitlab时走代理。
+
+
+例如配置ssh访问github走本地代理：
+
+```bash
+Host github.com
+	ProxyCommand connect -S 127.0.0.1:1080 %h %p
+```
+
+
+
+## init 创建
 
 Git 使用 **git init** 命令来初始化一个 Git 仓库，Git 的很多命令都需要在 Git 的仓库中运行，所以 **git init** 是使用 Git 的第一个命令。
 
@@ -40,7 +141,7 @@ git init newrepo
 
 初始化后，会在 newrepo 目录下会出现一个名为 .git 的目录，所有 Git 需要的数据和资源都存放在这个目录中。
 
-## status
+## status 状态
 
 查看当前仓库状态 (包括未跟踪待 commit 的文件等)
 
@@ -48,7 +149,7 @@ git init newrepo
 git status
 ```
 
-## remote
+## remote 远程管理
 
 ```shell
 git remote     #  查看当前远程库名称
@@ -101,7 +202,7 @@ git remote remove <name>
 
 
 
-## clone
+## clone 克隆
 
 将仓库的内容拉取到本地, .git 地址从托管库中获取
 
@@ -109,7 +210,7 @@ git remote remove <name>
 git clone "https://XXXX.git"
 ```
 
-## push/pull
+## push/pull  推送/拉取
 
 将本地仓库的代码推送到远程仓库 origin
 
@@ -124,10 +225,9 @@ git pull origin main(github)/master(gitee)
 ```
 
 
-## add/commit
+## add/commit 添加/提交
 
-
-**git add** 命令可将该文件添加到暂存区。
+- **git add** 命令可将该文件添加到暂存区。
 
 添加一个或多个文件到暂存区：
 
@@ -163,56 +263,26 @@ git commit -m "commit的注释写在这里"
 git push origin main
 ```
 
-## 提交规范
 
-多人协作时，为了更好管理分支以及提交日志，我们最好建立相关规范，提高协作效率。
 
-**示例分支规范**
+- **commit** 附加说明
 
-| 分支            | 介绍                                                         | 环境     |
-| --------------- | ------------------------------------------------------------ | -------- |
-| master          | 仓库默认分支，暂无使用                                       | -        |
-| release         | 线上保护分支                                                 | Prd      |
-| release-pre     | 预发环境分支，用于 QA 做固定 Pre 测试                        | Pre      |
-| test            | 测试环境分支，用于 QA 做固定 Test 测试                       | Test     |
-| feature/xxx     | 功能开发分支                                                 | Dev/Test |
-| hotfix/xxx      | 热修复分支                                                   | Pre/Prd  |
-| release-2022xxx | 上线分支；上线当日部署到 Pre 进行验证，通过以后直接作为上线分支使用 | Pre/Prd  |
-
-日常开发中，对于线上环境、预发环境和测试环境建议使用固定分支进行部署，所有分支以 `release` 作为基线分支。之所以不用`release-pre` 或者 `release` 作为上线分支，是因为上线当天经常因为各种原因导致只有部分`feature`是可以上线的。上线当天创建 `release-20220818` 并部署到Pre，如果验证通过直接部署上线，如果部分上线，则直接丢弃，再创建一个新的上线分支即可，避免污染 `release` 。
-
-**提交规范**
-
-提交代码时，务必填写提交日志，日志清晰明了，说明本次提交的目的。同时需要遵循一定的提交规范。
-
-```text
-<type>(<scope>): <subject>  
+```bash
+# git commit [OPTIONS]
+OPTIONS
+    -a, --all
+      Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.
 ```
 
-1. Header：包括三个字段：type（必需）、scope（可选）和 subject（必需）。
+“加了 -a ，后，会自动把 modified 和 deleted add 到 stage 里，但是新增文件不会受影响。 ”
 
-2. Type：提交 commit 的类别，建议使用下面标识
-
-> feat: 加入新特性
-> fix: 修复 bug
-> improvement: 在现有特性上的改进
-> docs: 更改文档
-> style: 修改了代码的格式
-> refactor: 代码重构,不包含 bug 的修复以及新增特性
-> perf: 提升性能的改动
-> test: 测试用例的改动
-> build: 改变了构建系统或者增加了新的依赖
-> ci: 修改了自动化流程的配置文件或者脚本
-> chore: 除了源码目录以及测试用例的其他修改
-> revert: 回退到之前的一个 commit
-
-3. Scope：用于说明 commit 影响的范围，默认可忽略。
-
-4. Subject：简短精炼的提交描述。
+也就是在 commit 的时候，能帮你省一步 git add ，但只是对**修改和删除**文件有效， 新文件还是要 git add，不然就是 **UNtracked** ！什么是 **UNtracked** ？就是没有跟踪，不在git的代码仓里面，你更改了什么是不会提示你更改的，你提交也是不会提交到远程仓库的。
 
 
 
-## 版本追溯 reset 
+
+
+## reset 版本追溯
 
 ![image-20220906155326814](assets\image-20220906155326814.png)
 
@@ -223,6 +293,10 @@ git push origin main
 如果需要在本地回溯之前的版本 需要使用 `reset` 命令
 
 - 硬回滚(所有状态都回到目标 commit, **其他更新文件会被一并抹去**)
+
+  > **彻底抹除这次提交**，谨慎使用，一般用在误提交 master
+  >
+  > 如果需要保留记录供 review ， 建议使用 revert
 
 ```
 git reset --hard <commit>
@@ -277,9 +351,24 @@ git reset --hard 52fb314
 # HEAD is now at 52fb314 3.txt added
 ```
 
+5. 提交这次回滚到远程，此时会提示本地的版本落后于远程
+
+```bash
+git push
+error: failed to push some refs to 'gitlab.com:Zn-Dk/fetch-rebase.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+```
+
+6. 使用  push -f 强制提交（慎用，因为别人的代码提交到 master 的代码可能会被搞没，这个需要权限，建议和 leader 沟通好）
+
+   > 如果是自己的项目 权限可以在仓库设置中允许 force push
 
 
-## 回退修改 revert
+
+
+
+## revert 回退修改
 
 > 上面的示例代码是回溯, 那么如果我们要撤回 commit 就得使用 revert 命令了
 
@@ -353,6 +442,7 @@ To github.com:Zn-Dk/branch-test.git
 >1. commit 之后 本地文件是否删除都可以通过版本追溯找回
 >2. 团队开发时 commit 备注一定要写清楚 方便追溯.
 >3. 开发项目过程中, 每天至少 commit 一次.(保险 防丢失)
+>4.  要知道使用 git reset --hard 和 git revert 的场景
 
 
 
@@ -362,7 +452,7 @@ To github.com:Zn-Dk/branch-test.git
 
 
 
-## 分支branch
+## branch 分支
 
 ### 查看所有分支
 
@@ -383,7 +473,7 @@ git branch <name>(分支名) #  创建指定分支
 git branch -d 分支名    #  删除指定分支
 ```
 
-### 切换分支
+## checkout/switch 切换分支
 
 ```shell
 git checkout develop #  切换到刚才的 develop
@@ -424,7 +514,7 @@ git switch <branchName>
 
 
 
-## 合并分支 merge
+## merge 合并
 
 #### 合并到主分支
 
@@ -457,6 +547,27 @@ git merge dev
 
 
 
+## rebase 变基
+
+基本工作流程图解：
+
+```
+      A---B---C topic
+     /
+D---E---F---G master
+```
+
+```bash
+git rebase master # 当前的分支变基自 master
+git rebase master topic # 变基自 master （明确分支名，效果一样）
+```
+
+```
+               A'--B'--C' topic
+             /
+D---E---F---G master
+```
+
 ### 对比 merge 和 rebase
 
  **git merge** 适合 多个**私有分支的提交合并到**(**共享**)分支
@@ -469,106 +580,147 @@ git merge dev
 
 
 
-## 配置公钥免密推送SSH
+### 用 rebase 合并提交
 
-1. 生成公钥
+> 使用 rebase 可以使提交的历史记录显得更简洁。
 
-   ```bash
-   ssh-keygen -t rsa
-   # 一路回车
-   # 生成的目录位于  C盘用户文件夹\.ssh
-   ```
+- 现在有 3 个 commit 需要合并成一个进行最终 push
+-  rebase - i
 
-   
+```
+git rebase -i HEAD~~~(或者 HEAD~3) # 代表合并之前三次提交
+```
 
-2. 复制公钥文件 id_rsa.pub  (id_rsa 为私钥)
-
-3. 复制公钥到 gitee 添加 SSH 公钥
-
-4. done 可以免密提交了
-
-5. 免密的克隆 不使用 HTTPS 可以使用 SSH 链接 
-
-
-
-
-
-## 代理
-
-有些时候由于连不上git服务器而我们又需要推送代码，这时就需要设定git代理服务器。
-
-
-### 1，http和https代理
-
-
-如果说使用的是项目http或者https地址，就配置http与https代理即可，输入以下命令：
+- 输出
 
 ```bash
-git config --global http.proxy "socks5://地址:端口"
-git config --global https.proxy "socks5://地址:端口"
+pick b456172 A
+pick 03b28ac B
+pick ded0eee C
+
+# Rebase cf6f52b..ded0eee onto cf6f52b (3 commands)
+
+# p, pick <commit> = use commit 使用此次提交
+# r, reword <commit> = use commit, but edit the commit message 修改这次提交的 message
+# e, edit <commit> = use commit, but stop for amending
+# s, squash <commit> = use commit, but meld into previous commit 压缩这次提交
+# f, fixup [-C | -c] <commit> = like "squash" but keep only the previous  压缩提交 追加而不改变之前的策略
+#                    commit's log message, unless -C is used, in which case
+#                    keep only this commit's message; -c is same as -C but
+#                    opens the editor
+# x, exec <command> = run command (the rest of the line) using shell
+# b, break = stop here (continue rebase later with 'git rebase --continue')
+# d, drop <commit> = remove commit 丢弃这次提交
+# l, label <label> = label current HEAD with a name
+# t, reset <label> = reset HEAD to a label
+# m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
+```
+
+- 
+- 提示修改 commit message
+
+```bash
+On branch feature2
+pick b456172 A
+# This is a combination of 3 commits. <-提示 这是一次合并提交
+# This is the 1st commit message:
+
+ABC  # <-改成ABC
+
+# This is the commit message #2:
+
+B
+
+# This is the commit message #3:
+
+C
+
+# Please enter the commit message for your changes. Lines starting
+```
+
+-  :wq 保存 此时3次提交被合并
+
+
+
+
+
+## cherry-pick 获取某次提交
+
+> 用于获取某一分支的某一次提交，而不需要将整个时间线进行同步
+>
+> cherry-pick 获取后 commit 的信息是与源头一致的
+
+```bash
+git cherry-pick <commit>
+```
+
+典型例子：
+
+- 现有 feature1 feature2 两个分支都由你管理
+- 在 feature1 新建了文件 cherry.txt 并且 commit push 远程
+- 切换到 feature2 分支，此时想要获取这个  cherry.txt 
+- 复制 feature1 的提交号，比如 `git cherry-pick ab9702f8`
+- 此时可以看到  cherry.txt  已经出现在 feature2 分支里面了
+
+
+
+## stash 暂存
+
+> 用于临时切换分支，但是**修改**(注意是修改，而不是新增)的文件还未 commit 又要保留当前文件更改的情况
+
+```bash
+git stash # 将当前更改暂存
+git stash -m <message> # 将当前更改暂存(自定义message)
+git stash list # 查看 stash 暂存栈
+git stash pop [index] # 弹出暂存栈 可以指定 index
+git stash apply [index]  # 应用储藏（不清空栈）
+
+git stash drop <stash idx> 删除指定下标的储藏
+git stash clear 清空储藏栈
 ```
 
 
-例如设定本地代理：
+
+典型例子：
+
+- 现有 feature1 feature2 两个分支都由你管理
+- 在 feature1 修改了文件 feature1.txt
+- 暂存 feature1 的更改
 
 ```bash
-git config --global http.proxy "socks5://127.0.0.1:7890"
-git config --global https.proxy "socks5://127.0.0.1:7890"
+git stash
+# Saved working directory and index state WIP on feature1: 099a42e add feature1.txt
 ```
 
-
-这样使用git clone/push/pull所有http或者https地址项目都会走代理。
-
-还可以使用下面命令取消代理设置：
+- 切换新的分支 feature2 继续工作
+- 暂存 feature2 的更改
 
 ```bash
-git config --global --unset http.proxy
-git config --global --unset https.proxy
+git stash
+# Saved working directory and index state WIP on feature2: 3855ed3 add feature2.txt
 ```
 
-### 2，ssh代理设定
-
-
-如果说项目使用的ssh地址，那么就需要配置ssh代理。
-
-我们需要编辑ssh的配置文件，位于用户文件夹下的.ssh文件夹下。
-
-Windows ssh配置文件路径：`C:\Users\你的用户名.ssh\config`
-
-Linux ssh配置文件路径：`/home/你的用户名/.ssh/config`
-
-使用文本编辑器打开配置文件config加入下列配置：
-
-`ProxyCommand connect -S 代理地址:端口 %h %p`  
-如果说.ssh文件夹不存在或者config文件不存在就自己创建一个。
-
-配置好了，ssh就会走代理了。
-
-上面是配置全局走代理，事实上一般只需要为指定网址配置代理，例如只为github配置代理，就在配置文件加入：
+- 查看 stash 暂存栈
 
 ```bash
-Host github.com
-	ProxyCommand connect -S 代理地址:端口 %h %p
+git stash list
+stash@{0}: WIP on feature2: 3855ed3 add feature2.txt
+stash@{1}: WIP on feature1: 099a42e add feature1.txt
+# 可以看到 对 feature2 的修改位于栈顶，之前 feature1 的暂存在栈底部
 ```
 
-
-Host后面接的就是指定要走代理的地址，可以接多个地址例如：
+- 选择恢复在 feature1 做的更改 
 
 ```bash
-Host github.com gitlab.com
-	ProxyCommand connect -S 代理地址:端口 %h %p
+git stash pop # 弹出栈顶储藏 - vscode 叫弹出最新储藏
+git stash pop 1 # 弹出储藏 [1] - vscode 叫弹出储藏... <-使用这个
 ```
 
+- 查看 feature1.txt 发现已经恢复了之前的状态
 
-可见多个地址使用空格隔开放在Host后面即可，这个例子就是同时指定ssh访问github和gitlab时走代理。
 
 
-例如配置ssh访问github走本地代理：
 
-```bash
-Host github.com
-	ProxyCommand connect -S 127.0.0.1:1080 %h %p
-```
 
 
 
@@ -595,9 +747,80 @@ git fetch --all --prune && git branch -vv | grep gone | awk '{ print $1 }' | gre
 
 
 
+## 提交规范
+
+多人协作时，为了更好管理分支以及提交日志，我们最好建立相关规范，提高协作效率。
+
+**示例分支规范**
+
+| 分支            | 介绍                                                         | 环境     |
+| --------------- | ------------------------------------------------------------ | -------- |
+| master          | 仓库默认分支，暂无使用                                       | -        |
+| release         | 线上保护分支                                                 | Prd      |
+| release-pre     | 预发环境分支，用于 QA 做固定 Pre 测试                        | Pre      |
+| test            | 测试环境分支，用于 QA 做固定 Test 测试                       | Test     |
+| feature/xxx     | 功能开发分支                                                 | Dev/Test |
+| hotfix/xxx      | 热修复分支                                                   | Pre/Prd  |
+| release-2022xxx | 上线分支；上线当日部署到 Pre 进行验证，通过以后直接作为上线分支使用 | Pre/Prd  |
+
+日常开发中，对于线上环境、预发环境和测试环境建议使用固定分支进行部署，所有分支以 `release` 作为基线分支。之所以不用`release-pre` 或者 `release` 作为上线分支，是因为上线当天经常因为各种原因导致只有部分`feature`是可以上线的。上线当天创建 `release-20220818` 并部署到Pre，如果验证通过直接部署上线，如果部分上线，则直接丢弃，再创建一个新的上线分支即可，避免污染 `release` 。
+
+**提交规范**
+
+提交代码时，务必填写提交日志，日志清晰明了，说明本次提交的目的。同时需要遵循一定的提交规范。
+
+```text
+<type>(<scope>): <subject>  
+```
+
+1. Header：包括三个字段：type（必需）、scope（可选）和 subject（必需）。
+
+2. Type：提交 commit 的类别，建议使用下面标识
+
+> feat: 加入新特性
+> fix: 修复 bug
+> improvement: 在现有特性上的改进
+> docs: 更改文档
+> style: 修改了代码的格式
+> refactor: 代码重构,不包含 bug 的修复以及新增特性
+> perf: 提升性能的改动
+> test: 测试用例的改动
+> build: 改变了构建系统或者增加了新的依赖
+> ci: 修改了自动化流程的配置文件或者脚本
+> chore: 除了源码目录以及测试用例的其他修改
+> revert: 回退到之前的一个 commit
+
+3. Scope：用于说明 commit 影响的范围，默认可忽略。
+
+4. Subject：简短精炼的提交描述。
 
 
-## 超实用技巧（引自知乎）
+
+## github 仓库搜索技巧**
+
+1. xxx in:name 按照名称搜索
+   xxx in:description 按照描述搜索
+   xxx in:readme 按照readme中包搜索
+2. xxx stars:>n language:java   这个非常有用。
+   xxx forks:>n language:java
+3.  将某个文件代码行高亮，编辑 URL 链接（#L行号）。如果多行就是（#L行号-#L行号）
+
+> 例如 
+>
+> ```
+> https://github.com/Zn-Dk/zn-web-learn/blob/master/vue3-learn/jsconfig.json
+> 
+> // 高亮第 7-11 行文本
+> 
+> https://github.com/Zn-Dk/zn-web-learn/blob/master/vue3-learn/jsconfig.json#L7-#L11
+> ```
+>
+> 
+
+1.  **按  T  键， 在项目网页中调出搜索，搜索指定文件**
+2.  **按 "."  键**， 打开github中vscode
+
+## 业务场景（引自知乎）
 
 ### **场景一**
 

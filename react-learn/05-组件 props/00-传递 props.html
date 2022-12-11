@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class PersonInfo extends React.Component {
+      // 在 React 中, 构造函数仅用于 : 1.通过 this.state 初始化 state 2.为事件处理函数绑定 bind(this)
+      constructor(props) {
+        console.log(props) // {name: '张三', age: 18, fav: '唱歌'} 传递来的对象示例
+        super(props)
+      }
+
+      render() {
+        // 通过 this.props 接收
+        const { name, age, fav } = this.props
+        // name = "aa" + name // props 单向数据流不可修改 Uncaught TypeError: "name" is read-only
+        return (<li>
+          <p>姓名 : {name}</p>
+          <p>年龄 : {age}</p>
+          <p>爱好 : {fav}</p>
+        </li>)
+      }
+    }
+    const persons = [
+      { name: '李四', age: 20, fav: '跳舞' },
+      { name: '王五', age: 25, fav: '打篮球' },
+    ]
+    const vDOM = (
+      <div>
+        <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >组件传递 Props</h1>
+        <ul>
+          // 组件传值 props 在 标签写上相关属性
+          <PersonInfo name="张三" age={18} fav="唱歌" />
+          {
+            // 组件传递 **同名** props , 可以使用 { ...obj } 直接传入对象(这里并不是展开运算符 只是语法糖)
+            persons.map((item, index) => {
+              return <PersonInfo {...item} key={index} />
+            })
+          }
+        </ul>
+      </div>
+    )
+    ReactDOM.render(vDOM, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

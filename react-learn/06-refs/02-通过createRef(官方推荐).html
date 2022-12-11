@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class Comp extends React.Component {
+      constructor(props) {
+        super(props);
+        this.input1 = React.createRef()
+        this.input2 = React.createRef()
+      }
+
+      getIptVal1 = () => {
+        console.log(this.input1.current.value)
+      }
+      getIptVal2 = () => {
+        console.log(this.input2.current.value)
+      }
+      render() {
+        return (<div>
+          <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >createRef(官方推荐API)</h1>
+          <h2>input1: React.createRef()</h2>
+          <h2>React.createRef 将得到一个 current : nodeElement 的对象</h2>
+          <input ref={this.input1} type="text" placeholder="点击取值" />
+          <button onClick={this.getIptVal1}>输入框取值</button><br />
+          <input ref={this.input2} onBlur={this.getIptVal2} type="text" placeholder="失焦取值" />
+        </div>)
+      }
+    }
+
+    ReactDOM.render(<Comp />, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

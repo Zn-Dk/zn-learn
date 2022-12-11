@@ -30,13 +30,17 @@
       * 内部 this 指向 undefined （JSX 被 Babel 转译使用了严格模式）
     */
 
-    function FuncComponent() {
-      console.log(this)
-      return <h1>My FuncComponent</h1>
+    class ClassComponent extends React.Component {
+      render() {
+        console.log(this)
+        return <h1>My ClassComponent</h1>
+      }
     }
 
-    ReactDOM.render(<FuncComponent />, document.querySelector('#app'))
+    ReactDOM.render(<ClassComponent />, document.querySelector('#app'))
+    /*
 
+    */
   </script>
 </body>
 

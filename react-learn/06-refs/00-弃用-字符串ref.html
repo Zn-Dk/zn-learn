@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class Comp extends React.Component {
+      getIptVal1 = () => {
+        console.log(this.refs.input1.value)
+      }
+      getIptVal2 = () => {
+        console.log(this.refs.input2.value)
+      }
+      render() {
+        return (<div>
+          <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >通过 refs 获取真实 dom (字符串)</h1>
+          <h2><strong>该方法已经被弃用</strong></h2>
+          <input ref="input1" type="text" placeholder="点击取值" />
+          <button onClick={this.getIptVal1}>输入框取值</button><br />
+          <input onBlur={this.getIptVal2} ref="input2" type="text" placeholder="失焦取值" />
+        </div>)
+      }
+    }
+
+    ReactDOM.render(<Comp />, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

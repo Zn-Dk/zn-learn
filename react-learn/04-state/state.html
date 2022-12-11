@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    /*
+      函数式组件
+      * 组件名即是函数名
+      * 内部 this 指向 undefined （JSX 被 Babel 转译使用了严格模式）
+    */
+
+    class ClassComponent extends React.Component {
+      // state 直接作为实例静态属性
+      state = {
+        count: 0,
+        isGood: false
+      }
+
+      //自定义方法 写成 箭头函数访问 state
+      changeMood = () => {
+        let { isGood } = this.state
+        // 使用 React setState 函数 修改状态
+        // 状态中传递对象,值为希望修改的 key value, 只是作为更新, 而非替换整个 state
+        this.setState({ isGood: !isGood })
+      }
+
+      addCount = () => {
+        let { count } = this.state
+        this.setState({ count: ++count })
+      }
+
+      render() {
+        console.log(this)
+        return (
+          // 事件名称 由原始 html 全小写改为 驼峰 onclick => onClick
+          <div>
+            <h1> 组件 State 以及事件 </h1>
+            <p>今天我的心情 {this.state.isGood ? '阳光明媚' : '阴云密布'}<button onClick={this.changeMood}>改变心情</button></p>
+            <button onClick={this.addCount}>Count is {this.state.count}</button>
+          </div>
+        )
+      }
+
+    }
+
+    ReactDOM.render(<ClassComponent />, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

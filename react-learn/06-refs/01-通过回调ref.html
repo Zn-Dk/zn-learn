@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class Comp extends React.Component {
+      constructor(props) {
+        super(props);
+        this.input1 = null;
+      }
+
+      state = {
+        input2: null,
+      }
+
+      getIptVal1 = () => {
+        console.log(this.input1.value)
+      }
+      getIptVal2 = () => {
+        console.log(this.state.input2.value)
+      }
+      render() {
+        return (<div>
+          <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >通过 refs 获取真实 dom (回调模式)</h1>
+          <h2>回调模式 refs 会传入该 node 节点, 使用 constructor 去接收(或者state)</h2>
+          <input ref={n => this.input1 = n} type="text" placeholder="点击取值" />
+          <button onClick={this.getIptVal1}>输入框取值</button><br />
+          <input ref={n => this.state.input2 = n} onBlur={this.getIptVal2} type="text" placeholder="失焦取值" />
+        </div>)
+      }
+    }
+
+    ReactDOM.render(<Comp />, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

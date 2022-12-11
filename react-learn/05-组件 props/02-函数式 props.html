@@ -24,18 +24,26 @@
   <script src="../script/babel.min.js"></script>
   <!-- 4.now use babel to convert JSX and create HelloReact -->
   <script type="text/babel">
-    /*
-      函数式组件
-      * 组件名即是函数名
-      * 内部 this 指向 undefined （JSX 被 Babel 转译使用了严格模式）
-    */
-
-    function FuncComponent() {
-      console.log(this)
-      return <h1>My FuncComponent</h1>
+    function PersonInfo(props) {
+      const { name, age, fav } = props
+      // 函数组件 默认会接收 props 的形参
+      return (<li>
+        <p>姓名 : {name}</p>
+        <p>年龄 : {age}</p>
+        <p>爱好 : {fav}</p>
+      </li>)
     }
 
-    ReactDOM.render(<FuncComponent />, document.querySelector('#app'))
+
+    const vDOM = (
+      <div>
+        <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >函数组件传递 Props</h1>
+        <ul>
+          <PersonInfo name="张三" age={18} fav="唱歌" />
+        </ul>
+      </div>
+    )
+    ReactDOM.render(vDOM, document.querySelector('#app'))
 
   </script>
 </body>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class Comp extends React.Component {
+      state = {
+        username: '',
+        password: '',
+      }
+
+      // setUsername = (e) => {
+      //   const val = e.target.value
+      //   console.log("用户名: " + val)
+      //   this.setState({ username: val })
+      // }
+      // setPassword = (e) => {
+      //   const val = e.target.value
+      //   console.log("密码: " + val)
+      //   this.setState({ password: val })
+      // }
+      // curry 化
+      setForm = formKey => (e) => {
+        const val = e.target.value
+        console.log("密码: " + val)
+        this.setState({ formKey: val })
+      }
+
+
+      login = (e) => {
+        const { username, password } = this.state
+        e.preventDefault()
+        console.log('ajax....', username, password)
+      }
+
+      render() {
+        return (<div>
+          <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >表单数据绑定</h1>
+          <h2>所有的 input 控件 会默认传入 event 参数, 可以通过回调接收并存储到 state 对象做双向绑定</h2>
+          <form action="https://www.baidu.com/" onSubmit={this.login}>
+            用户名: <input onInput={this.setForm('username')} type="text" />
+            密码: <input onFocus={this.setForm('password')} type="text" />
+            <button> 登 录 </button>
+          </form>
+        </div>)
+      }
+    }
+
+    ReactDOM.render(<Comp />, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

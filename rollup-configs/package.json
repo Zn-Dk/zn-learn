@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "rollup --config -w"
+    "build": "rollup --config -w",
+    "dev": "rollup -cw"
   },
   "keywords": [],
   "author": "",
@@ -21,8 +22,10 @@
     "postcss": "^8.4.18",
     "rollup": "^3.2.3",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-minification": "^0.2.0",
-    "rollup-plugin-postcss": "^4.0.2"
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-serve": "^2.0.2"
   },
   "dependencies": {
     "dayjs": "^1.11.6",

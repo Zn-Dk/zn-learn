@@ -16,6 +16,7 @@ import terser from "@rollup/plugin-terser";
 
 // 生成html模板 (类似HtmlWebpackPlugin)
 import html from "@rollup/plugin-html";
+
 // 模板传递函数
 const template = ({ attributes, bundle, files, publicPath, title }) => {
   // console.log(files); 会列出所有需要打包的文件 jss[] css[]
@@ -55,13 +56,20 @@ import babel from "@rollup/plugin-babel";
 
 // alias 别名
 import alias from "@rollup/plugin-alias";
+
 // 获取 __dirname 的 ESM 写法
 import { fileURLToPath } from "url";
+
 //const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const __dirname = path.resolve();
 
 // postcss  npm i -D postcss rollup-plugin-postcss
 import postcssPlugin from "rollup-plugin-postcss";
+
+// 服务器调试
+import serve from "rollup-plugin-serve";
+// 调试时自动刷新 (与 serve 结合使用)
+import livereload from "rollup-plugin-livereload";
 
 export default {
   // 入口路径
@@ -70,8 +78,9 @@ export default {
   output: {
     // 目录
     dir: "dist",
-    // 自定义名称
+    // 默认输出名称
     // file: "bundle.js",
+    // 自定义名称 name + hash
     entryFileNames: "[name]-[hash].js",
     assetFileNames: ({ name }) => {
       const { ext, dir, base } = path.parse(name);
@@ -96,6 +105,14 @@ export default {
   // 排除项
   // external: ["dayjs"],
   plugins: [
+    // 服务器调试
+    serve({
+      open: true, // 直接启动浏览器
+      contentBase: "dist", // 服务器启动的文件夹，默认是项目根目录 (调试时使用 dist)
+      port: 8001,
+    }),
+    livereload("dist"),
+
     // 别名
     alias({
       entries: [

@@ -21,7 +21,6 @@ class BaseClass {
 
 // 装饰器功能之 —— 能力扩展
 // 我们把getPosition和addPertrol都抽象成一个单独的功能，它们得作用是给宿主扩展对应的功能。
-
 const getPosDecorator: ClassDecorator = (constructor: Function) => {
   constructor.prototype.getPosition = () => [100, 200];
 };
@@ -66,22 +65,22 @@ console.log(new Plane("飞机").addPetro()); // 飞机进行加油
 
 // console.log(new Animal("老虎")?.addPetro()); // TypeError: (intermediate value).addPetro is not a function
 
-
-
-
-
-
 /* 属性装饰器 */
 
 const initCarPropertyDec = <T>(property: T) => {
   return (target: object, propertyKey: string | symbol) => {
+    console.log(target)
     target[propertyKey] = property;
   };
 };
 
 class Car {
   @initCarPropertyDec("奔驰")
-  name!: string;
+  readonly name!: string;
+  constructor(name?: string) {
+    name && (this.name = name);
+  }
 }
 
-console.log(new Car().name);
+console.log(Reflect.getPrototypeOf(new Car())); // 奔驰 <- 原型上的
+console.log(new Car("宝马").name); // 宝马

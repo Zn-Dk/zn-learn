@@ -27,7 +27,7 @@ function classDecor2(constructor: Function | ObjectConstructor) {
 @classDecor
 class Foo {
   prop = "prop";
-  hello: string;
+  public hello: string;
   bar: any;
   constructor(msg: string) {
     this.hello = msg;
@@ -37,6 +37,7 @@ class Foo {
 // 使用装饰器前 Foo { prop: 'prop', hello: 'foo' }
 // 使用装饰器后 Foo { prop: 'prop', hello: 'override', newProp: 'newProp' }
 let f = new Foo("foo");
+console.log(f);
 f.bar(); // barrrrr
 console.log(Foo.prototype);
 
@@ -50,7 +51,7 @@ console.log(Foo.prototype);
   方法装饰器表达式会在运行时当作函数被调用，传入下列3个参数：
 
     1.对于静态成员来说是类的构造函数，对于实例成员是类的原型对象。
-    2.成员的名字。
+    2.成员的名字/方法名(propName)。
     3.成员的属性描述符。
 
   如果方法装饰器返回一个值，它会被用作方法的属性描述符。
@@ -62,44 +63,23 @@ function enumerable(bol: boolean) {
     propKey: string,
     descriptor: PropertyDescriptor
   ) {
+    console.log(target, propKey, descriptor, "----");
     // target - 方法函数体
     // propKey - 方法名称 greet
     descriptor.enumerable = bol;
   };
 }
 
-class Greeter {
-  [k: string]: any;
-  @defaultName("John Doe")
-  name: string;
-  greeting: string;
-  constructor(message: string) {
-    this.greeting = message;
-  }
-
-  @enumerable(false)
-  greet() {
-    return "Hello, " + this.greeting;
-  }
-}
-
-console.log(new Greeter("David"));
-let greet01 = new Greeter("David");
-
-for (const k in greet01) {
-  console.log(k); // greet 没有被打印
-}
-
 /*____________属性装饰器____________*/
 
 /*
-  属性装饰器声明在一个属性声明之前（紧靠着属性声明）。
-  属性装饰器不能用在声明文件中（.d.ts），或者任何外部上下文（比如 declare的类）里。
+属性装饰器声明在一个属性声明之前（紧靠着属性声明）。
+属性装饰器不能用在声明文件中（.d.ts），或者任何外部上下文（比如 declare的类）里。
 
-  属性装饰器表达式会在运行时当作函数被调用，传入下列2个参数：
+属性装饰器表达式会在运行时当作函数被调用，传入下列2个参数：
 
-    1.对于静态成员来说是类的构造函数，对于实例成员是类的原型对象。
-    2.成员的名字。
+1.对于静态成员来说是类的构造函数，对于实例成员是类的原型对象。
+2.成员的名字。
 */
 function defaultName(name: string) {
   return function (target: Object, key: string) {
@@ -110,4 +90,29 @@ function defaultName(name: string) {
   };
 }
 
-console.log(greet01.getName()); // John Doe
+class Greeter {
+  [k: string]: any;
+  @defaultName("John Doe")
+  name: string;
+  greeting: string;
+  constructor(name?: string, message: string = `I'm John Doe`) {
+    this.name = name;
+    this.greeting = message;
+  }
+
+  @enumerable(false)
+  greet() {
+    return "Hello, " + this.greeting;
+  }
+}
+
+console.log(new Greeter("David"));
+let greet01 = new Greeter("David",'this is David');
+let greet02 = new Greeter();
+
+console.log(greet01.getName()); // David
+console.log(greet02.getName()); // John Doe
+console.log(greet01.greet()) // Hello, this is David
+for (const k in greet01) {
+  console.log(k); // greet 方法没有被打印
+}

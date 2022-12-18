@@ -10,7 +10,8 @@ function resolve(dir) {
 module.exports = {
   mode: isProd ? "production" : "development",
   entry: {
-    main: resolve("src/main.js"),
+    // main: resolve("src/main.js"),
+    main: resolve("src/main.ts"),
   },
 
   output: {

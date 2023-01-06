@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app">
+  </div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class Life extends React.Component {
+      state = {
+        opacity: 1,
+      }
+
+      // 生命周期钩子 1 componentDidMount 组件挂载完毕(vue - mounted)
+      componentDidMount() {
+        console.log('组件挂载完毕,开启动画')
+        console.log(element)
+        this.changeOpacity()
+      }
+
+      // 生命周期钩子 2 componentWillUnmount 组件即将卸载(vue - beforeUnmount)
+      componentWillUnmount() {
+        console.log('组件将要卸载,清除定时器')
+        clearInterval(this.timer)
+      }
+
+      // 主动卸载组件
+      manualUnmount = () => {
+        //  主动卸载组件的方法 unmountComponent + AtNode(HTMLElement)
+        ReactDOM.unmountComponentAtNode(element)
+      }
+
+
+      changeOpacity = () => {
+        let { opacity } = this.state
+        clearInterval(this.timer)
+        this.timer = setInterval(() => {
+          opacity = (opacity <= 0) ? 1 : opacity -= 0.1
+          console.log(opacity)
+          this.setState({ opacity })
+        }, 200);
+      }
+
+      // 初始化渲染 + 状态更新的钩子
+      render() {
+        return (
+          <div>
+            <h2 style={{ fontSize: "32px", opacity: this.state.opacity }}>Hello World</h2>
+            <button onClick={this.changeOpacity}>Kill the Subtitle</button>
+            <button onClick={this.manualUnmount}>主动卸载组件</button>
+          </div>
+        )
+      }
+    }
+
+    const vDOM = (
+      <div>
+        <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >生命周期</h1>
+        <Life />
+
+      </div>
+    )
+
+    const element = document.querySelector('#app')
+    ReactDOM.render(vDOM, element)
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Where</title>
+  <style>
+    /*
+      :where 选择器
+
+      - 与 :is 类似 可以简化多个相同父级的选择器并行写法
+      - 比如 :where(div,section) p <=> div p, section p
+      - **与 is 伪类选择器最大的不同: 没有权重等级!! (:is 是 0,1,0 :where 是 0,0,0)** 方便覆盖
+      - 一般用于做网页的基础样式
+
+      - 实用小技巧 : 例如 .btn.btn[...×n] 这样的重写选择器可以提升这个样式的权重 现在就是 0,2,0
+     */
+
+    :where(section, div) {
+      width: 300px;
+      height: 300px;
+      border: 3px solid #567;
+    }
+
+    :where(section, div) p {
+      font-size: 18px;
+      text-shadow: 2px 2px 3px #ccc;
+    }
+
+    p+:where(.btn, .link) {
+      color: purple;
+    }
+
+    /* is 存在优先级 */
+    p+:is(.btn, .link) {
+      color: plum;
+    }
+
+    /* 重写选择器提高权重等级 */
+    .link.link {
+      color: skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>CSS 伪类选择器(特殊) :where </h1>
+
+  <div class="a">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum mollitia </p>
+    <button class="btn">Click Me</button>
+  </div>
+  <section class="b">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum mollitia </p>
+    <a class="link" href="http://www.example.com" target="_blank">Open Website</a>
+  </section>
+</body>
+
+</html>

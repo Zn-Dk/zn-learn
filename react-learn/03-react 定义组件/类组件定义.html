@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    /*
+      函数式组件
+      * 组件名即是函数名
+      * 内部 this 指向 undefined （JSX 被 Babel 转译使用了严格模式）
+    */
+
+    class ClassComponent extends React.Component {
+      render() {
+        console.log(this)
+        return <h1>My ClassComponent</h1>
+      }
+    }
+
+    ReactDOM.render(<ClassComponent />, document.querySelector('#app'))
+    /*
+
+    */
+  </script>
+</body>
+
+</html>

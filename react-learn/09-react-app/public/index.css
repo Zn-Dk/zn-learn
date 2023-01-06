@@ -1,0 +1,18 @@
+.todo-header{
+  display: flex;
+}
+
+.base-input {
+  flex: 1;
+  line-height: 20px;
+  padding: 8px 10px;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: box-shadow .3s ease;
+}
+
+.base-input:focus-visible{
+  outline: none;
+  box-shadow: 0 0 3px skyblue;
+}

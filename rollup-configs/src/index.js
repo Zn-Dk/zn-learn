@@ -31,5 +31,6 @@ console.log(fz + bz);
 const jz = () => {
   console.log("jz");
 };
+jz();
 
 import "@/assets/global.css";

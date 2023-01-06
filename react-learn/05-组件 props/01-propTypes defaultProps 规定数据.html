@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+
+  <!-- 3.1 use propTypes -->
+  <script src="../script/prop-types.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    class PersonInfo extends React.Component {
+      // 建立构造函数的静态属性, 从而对标签 props 进行限制以及实现默认值的功能
+      constructor(props) {
+        console.log(props) // {name: '张三', age: 18, fav: '唱歌'} 传递来的对象示例
+        super(props)
+      }
+      // 1. propTypes react 16+ 需要引入库 全局变量为 PropTypes (以后会使用 ts 这里先知道传统写法)
+      // 挂载到组件 PersonInfo.propTypes
+      static propTypes = {
+        name: PropTypes.string.isRequired,
+        age: PropTypes.number,
+        speak: PropTypes.func,
+        fav: PropTypes.string
+      }
+
+      // 2. 指定属性默认值,挂载到组件 PersonInfo.defaultProps
+      static defaultProps = {
+        age: 1,
+        fav: '没有爱好'
+      }
+
+      render() {
+        const { name, age, fav, speak } = this.props
+        return (<li>
+          <p>姓名 : {name}</p>
+          <p>年龄 : {age}</p>
+          <p>爱好 : {fav}</p>
+          {speak && <button onClick={speak(name)}>speak</button>}
+        </li >)
+      }
+    }
+    const persons = [
+      { name: '李四', age: 20, fav: '跳舞' },
+      { name: '王五', age: 25, fav: '打篮球' },
+    ]
+
+    const sayHi = (name) => {
+      return function () {
+        alert(`Hi,I'am ` + name)
+      }
+    }
+    const vDOM = (
+      <div>
+        <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >组件 Props 值检验以及默认值设置</h1>
+        <ul>
+          <PersonInfo name="张三" age={18} fav="唱歌" />
+          {
+            persons.map((item, index) => {
+              return <PersonInfo {...item} key={index} />
+            })
+          }
+          <PersonInfo name="John Doe" speak={sayHi} />
+        </ul>
+      </div>
+    )
+    ReactDOM.render(vDOM, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

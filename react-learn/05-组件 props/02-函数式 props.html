@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .orange {
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1.container -->
+  <div id="app"></div>
+  <!-- 2.import react  -->
+  <script src="../script/react.development.js"></script>
+  <!-- 3.import react-dom -->
+  <script src="../script/react-dom.development.js"></script>
+  <!-- 3.import babel standalone -->
+  <script src="../script/babel.min.js"></script>
+  <!-- 4.now use babel to convert JSX and create HelloReact -->
+  <script type="text/babel">
+    function PersonInfo(props) {
+      const { name, age, fav } = props
+      // 函数组件 默认会接收 props 的形参
+      return (<li>
+        <p>姓名 : {name}</p>
+        <p>年龄 : {age}</p>
+        <p>爱好 : {fav}</p>
+      </li>)
+    }
+
+
+    const vDOM = (
+      <div>
+        <h1 className="orange" style={{ color: "white", fontSize: '32px' }} >函数组件传递 Props</h1>
+        <ul>
+          <PersonInfo name="张三" age={18} fav="唱歌" />
+        </ul>
+      </div>
+    )
+    ReactDOM.render(vDOM, document.querySelector('#app'))
+
+  </script>
+</body>
+
+</html>

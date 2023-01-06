@@ -470,7 +470,9 @@ git branch -v #  查看所属分支 commit ID message
 
 ```shell
 git branch <name>(分支名) #  创建指定分支
-git branch -d 分支名    #  删除指定分支
+git branch -d 本地分支名 # 删除本地分支
+git push origin --delete 远程分支名 # 删除远程分支 
+git push origin :远程分支 # 推送空分支到远程（删除远程分支另一种实现）
 ```
 
 ## checkout/switch 切换分支
@@ -819,6 +821,24 @@ git fetch --all --prune && git branch -vv | grep gone | awk '{ print $1 }' | gre
 
 1.  **按  T  键， 在项目网页中调出搜索，搜索指定文件**
 2.  **按 "."  键**， 打开github中vscode
+
+
+
+## 记得养成一个良好git发布流程的习惯
+
+```bash
+
+# 分支合并发布流程：
+git add .			# 将所有新增、修改或删除的文件添加到暂存区
+git commit -m "版本发布" # 将暂存区的文件发版
+git status 			# 查看是否还有文件没有发布上去
+git checkout test	# 切换到要合并的分支
+git pull			# 在test 分支上拉取最新代码，避免冲突
+git merge dev   	# 在test 分支上合并 dev 分支上的代码
+git push			# 上传test分支代码
+```
+
+
 
 ## 业务场景（引自知乎）
 

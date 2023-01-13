@@ -472,7 +472,7 @@ git branch -v #  查看所属分支 commit ID message
 git branch <name>(分支名) #  创建指定分支
 git branch -d 本地分支名 # 删除本地分支
 git push origin --delete 远程分支名 # 删除远程分支 
-git push origin :远程分支 # 推送空分支到远程（删除远程分支另一种实现）
+git push origin 远程分支名 # 推送空分支到远程（删除远程分支另一种实现）
 ```
 
 ## checkout/switch 切换分支

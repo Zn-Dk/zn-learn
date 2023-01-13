@@ -6,8 +6,10 @@
       <p>ID: {{ item.id }} - selected: {{ item.id === selected }}</p>
       <p>{{ item.name }}</p>
     </div>
-    <button @click="change">修改其他属性</button>
-    <button @click="changeSelected">修改 selected 属性</button>
+    <button @click="change">修改名字属性(等待 selected 改变更新视图层)</button>
+    <br />
+    <button @click="changeSelected">修改 selected 属性 (v-memo) 标记</button>
+    <p>可以留意到 名字属性的更新是随 selected 所在下标更新的,而不是整体视图更新</p>
   </div>
 </template>
 <script setup>
@@ -49,14 +51,15 @@ const list = reactive([
 let selected = ref(2)
 const change = () => {
   // v-memo 应用的元素及子元素, 如果不修改 selected, 下面值的修改不会触发页面更新
-  list[0].name = '老王'
-  list[2].name = '老张'
+  list[0].name = list[0].name === '小明' ? '老明' : '小明'
+  list[3].name = list[3].name === '小王' ? '老王' : '小王'
   // 打印 reactive 对象, 证明如果先修改了其他属性 这时修改是生效的, 但是不触发视图层更新
   console.log(list)
 }
 
 const changeSelected = () => {
   // 视图更新在这一步发生
-  selected.value = 0
+  selected.value += 1
+  selected.value %= 4
 }
 </script>

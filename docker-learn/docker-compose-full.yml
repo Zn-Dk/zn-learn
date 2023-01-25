@@ -1,0 +1,59 @@
+version: '3'
+
+# 服务名称
+# 下面的每一个 service 最终都会被转换为镜像
+# 比如当前目录是 foo , 某个 service 名是 bar
+# 那么最终 docker-compose 会自动追加横线 构建一个 foo-bar 的镜像
+services:
+  web:
+    # 构建配置
+    build:
+      # 上下文路径
+      context: .
+      # dockerfile
+      dockerfile: Dockerfile
+    # 容器名称
+    container_name: container_web
+    # 配置端口 "宿主机端口:容器暴露端口"
+    ports:
+      - "8080:80"
+    # 配置命令
+    command:
+      # ...
+
+  nginx:
+    # 构建镜像来源
+    image: nginx:1.21.3
+    container_name: nginx
+    environment:
+      # 时区
+      TZ: Asia/Shanghai
+    ports:
+      - "80:80"
+      - "443:443"
+    # 容器映射 (来源)->(容器)
+    volumes:
+      # 证书映射
+      - /docker/nginx/cert:/etc/nginx/cert
+      # 配置文件映射
+      - /docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      # 页面目录
+      - /docker/nginx/html:/usr/share/nginx/html
+      # 日志目录
+      - /docker/nginx/log:/var/log/nginx
+    command: "nginx -c /etc/nginx/nginx.conf"
+
+  mongo:
+    image: mongo:3.6.1
+    container_name: db
+    volumes:
+      - mongodb:/data/db
+      - mongodb_config:/data/db
+    ports:
+      - "27017:20717"
+    command: mongod
+
+# 顶层的 volumes 用于容器间共享的存储 冒号后可以不配置
+volumes:
+  mongodb:
+  mongodb_config:

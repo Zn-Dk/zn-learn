@@ -1,0 +1,19 @@
+version: '2'
+
+# 服务名称
+# 下面的每一个 service 最终都会被转换为镜像
+# 比如当前目录是 foo , 某个 service 名是 bar
+# 那么最终 docker-compose 会自动追加横线 构建一个 foo-bar 的镜像
+services:
+  web:
+    # 构建配置
+    build:
+      # 上下文路径
+      context: .
+      # dockerfile
+      dockerfile: Dockerfile
+    # 容器名称
+    container_name: container_web
+    # 配置端口 "宿主机端口:容器暴露端口"
+    ports:
+      - "8080:80"

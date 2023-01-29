@@ -1,13 +1,18 @@
+
+import { Fragment } from 'vue';
+
 <template>
-  <h1>我是父路由</h1>
-  <main>
-    <aside>
-      <h2>侧边栏</h2>
-    </aside>
-    <article>
-      <router-view></router-view>
-    </article>
-  </main>
+  <div>
+    <h1>我是父路由</h1>
+    <main>
+      <aside>
+        <h2>侧边栏</h2>
+      </aside>
+      <article>
+        <router-view></router-view>
+      </article>
+    </main>
+  </div>
 </template>
 
 <style lang="scss">

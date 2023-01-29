@@ -1,5 +1,5 @@
 <template>
-    <h2>我来组成头部! bbbbbbbbbbbbbbbbbbbbb</h2>
+  <router-view></router-view>
 </template>
 
 <script setup lang="ts">

@@ -4,14 +4,23 @@
   <ul>
     <!-- 命名路由 replace属性 不保留历史-->
     <!-- <router-link :to="{
-      name: 'Details',
-      params: {id:item.id}
-    }" v-for="item in list" :key="item.id"> -->
-    <el-card v-for="item in list" :key="item.id">
-      <img class="pic" :src="item.thumbSrc" :alt="item.title" width="200" height="200">
-      <h3 class="title">{{item.title}}</h3>
-      <p class="desc">{{item.des}}</p>
-      <p class="price"><span class="red">{{item.price}}</span>元起</p>
+        name: 'Details',
+        params: {id:item.id}
+      }" v-for="item in list" :key="item.id"> -->
+    <el-card
+      v-for="item in list"
+      :key="item.id"
+    >
+      <img
+        class="pic"
+        :src="item.thumbSrc"
+        :alt="item.title"
+        width="200"
+        height="200"
+      >
+      <h3 class="title">{{ item.title }}</h3>
+      <p class="desc">{{ item.des }}</p>
+      <p class="price"><span class="red">{{ item.price }}</span>元起</p>
       <!-- 编程式导航 -->
       <el-button @click="goDetail(item.id)">跳转到详情</el-button>
     </el-card>

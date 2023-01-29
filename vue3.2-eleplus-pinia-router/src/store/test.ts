@@ -43,7 +43,7 @@ export default defineStore(Name.test, {
       this.count++
     },
     // 测试异步方法
-    async fetchData(url) {
+    async fetchData(url: string = '') {
       const useMyFetch = createFetch({
         // baseUrl: 'https://my-api.com',
         options: {

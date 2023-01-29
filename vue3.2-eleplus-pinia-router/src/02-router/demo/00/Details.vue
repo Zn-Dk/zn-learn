@@ -4,13 +4,17 @@
   <h3 class="de-title">{{ item.title }}</h3>
   <p class="de-desc">{{ item.des }}</p>
   <p class="de-price red">{{ item.price }}元起</p>
-  <el-image :src="item.thumbSrc" :alt="item.title" :preview-src-list="[item.picSrc]"></el-image>
+  <el-image
+    :src="item.thumbSrc"
+    :alt="item.title"
+    :preview-src-list="[item.picSrc]"
+  ></el-image>
 </template>
 
 <script setup lang="ts">
 import list from '../../../assets/data.json'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
-import { getCurrentInstance } from 'vue'
+
 const route = useRoute()
 const router = useRouter()
 console.log(route)
@@ -27,8 +31,8 @@ onBeforeRouteLeave((to, from, next) => {
   if (flag) {
     next()
   } else {
-    // router.push(1)
-    window.history.pushState('', '', currentUrl) // 使用原生方法避免报错
+    router.back()
+    // window.history.pushState('', '', currentUrl) // 也可以使用原生方法避免报错
   }
 })
 </script>

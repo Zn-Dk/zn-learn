@@ -23,13 +23,13 @@ const option: RouterOptions = {
       name: 'Login',
       path: '/', // 不写path 代表继承父路由的路径
       // 路由懒加载
-      component: () => import('../components/03记录滚动位置/Login.vue'),
+      component: () => import('../demo/03记录滚动位置/Login.vue'),
     },
     {
       name: 'Index',
       path: '/index',
       alias: '/user',
-      component: () => import('../components/03记录滚动位置/Index.vue'),
+      component: () => import('../demo/03记录滚动位置/Index.vue'),
     },
   ],
 }

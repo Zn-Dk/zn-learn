@@ -25,11 +25,13 @@ pinia.use(piniaPersist)
 
 /* -----------------------ROUTER----------------------- */
 
-// import App from '@/02-router/index.vue'
-import App from '@/02-router/components/04breadcrumb/index.vue'
+// 1.router-entry
+import App from '@/02-router/index.vue'
 
-// vue-router
+// 2.router-config 切换以察看不同 demo
 // import router from './02-router/router/index01'
+// import router from './02-router/router/index02'
+// import router from './02-router/router/index03'
 import router from './02-router/router/index04Bread'
 // import router from './02-router/router/index05Dynamic'
 
@@ -37,12 +39,12 @@ import router from './02-router/router/index04Bread'
 
 // import App from './03-elementPlus/index.vue'
 
-// ElementPlus
 // import ElementPlus from 'element-plus' // 自动按需导入 不需要import
 import 'element-plus/dist/index.css'
 
 const app = createApp(App)
 
+/* -----------------------PLUGIN----------------------- */
 // eventBus
 import mitt from 'mitt'
 app.config.globalProperties.$bus = mitt()
@@ -57,13 +59,12 @@ declare module '@vue/runtime-core' {
   }
 }
 
-// VirtualScroller
+// VirtualScroller 虚拟化
 // import VirtualScroller from 'vue-virtual-scroller'
 // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 app
-  // .use(VirtualScroller)
   .use(pinia)
   .use(router)
-  // .use(ElementPlus)
+  // .use(VirtualScroller)
   .mount('#app')

@@ -2,18 +2,34 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-menu class="el-menu-demo" mode="horizontal" default-active="/" router>
-          <el-menu-item v-for="item in nav" :key="item.path" :index="item.path">{{
+        <el-menu
+          class="el-menu-demo"
+          mode="horizontal"
+          default-active="/"
+          router
+        >
+          <el-menu-item
+            v-for="item in nav"
+            :key="item.path"
+            :index="item.path"
+          >{{
             item.name
           }}</el-menu-item>
         </el-menu>
       </el-header>
-      <el-breadcrumb style="padding: 10px 20px" :separator-icon="ArrowRight">
-        <el-breadcrumb-item v-for="item in $route.matched" :to="{ name: item.name }"
-          ><p class="bread-item--title">
-            {{ item.meta?.title ?? '默认标题' }}
-          </p></el-breadcrumb-item
+      <el-breadcrumb
+        style="padding: 10px 20px"
+        :separator-icon="ArrowRight"
+      >
+        <!-- 通过循环 matched 数组 渲染面包屑 -->
+        <el-breadcrumb-item
+          v-for="item in $route.matched"
+          :to="{ name: item.name }"
         >
+          <p class="bread-item--title">
+            {{ item.meta?.title ?? '面包屑' }}
+          </p>
+        </el-breadcrumb-item>
       </el-breadcrumb>
       <el-container>
         <el-aside width="200px">Aside</el-aside>
@@ -42,16 +58,6 @@ const route = useRoute()
 watch(
   () => route.matched,
   newRoute => {
-    // if (breadList.length === 0) breadList.push(...newRoute)
-    // let routeToAdd = newRoute.find(nRoute => {
-    //   let reg: RegExp, hasSame: boolean
-    //   breadList.forEach(route => {
-    //     reg = new RegExp(route.path)
-    //     hasSame = route.name === nRoute.name
-    //   })
-    //   return !hasSame && nRoute.path.match(reg)
-    // })
-    // routeToAdd && breadList.push(routeToAdd)
     console.log(newRoute)
   },
 )
@@ -60,7 +66,8 @@ watch(
 <style lang="scss" scoped>
 .common-layout {
   height: 100%;
-  & > .el-container {
+
+  &>.el-container {
     height: 100%;
   }
 }
@@ -69,6 +76,7 @@ watch(
   line-height: 45px;
   background-color: rgba($color: #468, $alpha: 0.5);
 }
+
 .bread-item--title,
 // :deep 样式穿透
 :deep(.el-breadcrumb__separator.el-icon) {

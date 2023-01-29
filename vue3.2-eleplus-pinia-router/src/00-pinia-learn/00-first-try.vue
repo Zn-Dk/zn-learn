@@ -2,21 +2,29 @@
   <el-button>Hello Element Plus</el-button>
 
   <h2>Test Pinia</h2>
-  <p>Now pinia say: {{store.foo}}, Now pinia count: {{store.count}}</p>
+  <p>Now pinia say: {{ store.foo }}, Now pinia count: {{ store.count }}</p>
 
-  <p>Pinia getter: {{store.getCurrency}}</p>
+  <p>Pinia getter: {{ store.getCurrency }}</p>
 
   <p>Pinia getter with Params:</p>
-  Tax: <input type="text" place="input tax money" v-model.number="tax">
+  Tax: <input
+    type="text"
+    place="input tax money"
+    v-model.number="tax"
+  >
   <span style="color:red; font-weight:bold;">Price:
-    ${{store.getTaxMoney(tax)}}(Tax included: {{tax}})</span>
+    ${{ store.getTaxMoney(tax) }}(Tax included: {{ tax }})</span>
 
   <p>Pinia action - addCount, click the button below this:</p>
   <button @click="store.addMoney">addMoney</button>
 
-  <p>data: {{store.URL}}</p>
+  <p>data: {{ store.URL }}</p>
 
-  <pre class="code-block" v-if="reqData" v-text="reqData" />
+  <pre
+    class="code-block"
+    v-if="reqData"
+    v-text="reqData"
+  />
 </template>
 
 <script setup lang="ts">

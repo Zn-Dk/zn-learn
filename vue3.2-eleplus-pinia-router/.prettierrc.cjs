@@ -18,7 +18,7 @@ module.exports = {
   // 大括号内的首尾需要空格
   bracketSpacing: true,
   // jsx 标签的反尖括号需要换行
-  jsxBracketSameLine: false,
+  bracketSameLine: false,
   // 箭头函数，只有一个参数的时候，需要括号always 不加括号 avoid
   arrowParens: 'avoid',
   // 每个文件格式化的范围是文件的全部内容
@@ -33,5 +33,7 @@ module.exports = {
   // 根据显示样式决定 html 要不要折行
   htmlWhitespaceSensitivity: 'css',
   // 换行符使用 lf
-  endOfLine: 'auto',
-};
+  endOfLine: 'lf',
+  // 标签格式化为一个属性独占一行
+  // singleAttributePerLine: true,
+}

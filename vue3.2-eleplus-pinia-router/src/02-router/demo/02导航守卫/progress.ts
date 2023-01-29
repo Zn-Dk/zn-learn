@@ -1,4 +1,4 @@
-import Progress from '@/02-router/components/02导航守卫/ProgressBar.vue'
+import Progress from '@/02-router/demo/02导航守卫/ProgressBar.vue'
 import { createVNode, render } from 'vue'
 
 // 渲染VNode 到 body 后导出 在 router 内导入

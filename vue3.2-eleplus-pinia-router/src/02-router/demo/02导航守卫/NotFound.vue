@@ -4,7 +4,10 @@
       <h2>页面未找到</h2>
     </template>
     <h3>404 - 你似乎迷路了...</h3>
-    <el-button @click="backToIndex" type="danger">返回首页</el-button>
+    <el-button
+      @click="backToIndex"
+      type="danger"
+    >返回首页</el-button>
   </el-card>
 </template>
 

@@ -67,7 +67,7 @@ const change3 = () => {
 }
 
 let timer: NodeJS.Timeout, inter: NodeJS.Timer
-// 5. 通过 action修改
+// 5. 最合理的方法是通过 action修改
 // 小案例: 按住鼠标数字持续增加
 const addMoney = () => {
   store.addMoney()

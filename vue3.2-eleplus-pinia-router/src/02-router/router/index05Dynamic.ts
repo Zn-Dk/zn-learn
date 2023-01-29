@@ -17,7 +17,7 @@ const options: RouterOptions = {
       meta: {
         title: '登录页面',
       },
-      component: () => import('../components/05动态路由/Login.vue'),
+      component: () => import('../demo/05动态路由/Login.vue'),
     },
     {
       name: 'Index',
@@ -27,7 +27,7 @@ const options: RouterOptions = {
         isAuth: true,
         title: '个人中心',
       },
-      component: () => import('../components/05动态路由/Index.vue'),
+      component: () => import('../demo/05动态路由/Index.vue'),
       children: [
         {
           name: 'User',
@@ -35,7 +35,7 @@ const options: RouterOptions = {
           meta: {
             title: '个人信息维护',
           },
-          component: () => import('../components/05动态路由/User.vue'),
+          component: () => import('../demo/05动态路由/User.vue'),
         },
       ],
     },
@@ -44,7 +44,7 @@ const options: RouterOptions = {
       // Vue3 删除了 * 通配符作为 404 路由
       // 现在必须使用自定义的 regex 参数来定义所有路由(*、/*) , 下面 pathMatch 是参数的名称, 意为 match .* 的任意多个字符
       path: '/:pathMatch(.*)*',
-      component: () => import('../components/NotFound.vue'),
+      component: () => import('../demo/02导航守卫/NotFound.vue'),
     },
   ],
 }
@@ -66,7 +66,7 @@ router.beforeEach((to, from) => {
         name: item.name,
         path: item.path,
         meta: item.meta,
-        component: () => import(`../components/05动态路由/${item.component}`),
+        component: () => import(`../demo/05动态路由/${item.component}`),
       })
     })
   }

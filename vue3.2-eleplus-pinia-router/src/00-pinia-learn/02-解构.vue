@@ -14,14 +14,15 @@ import useTestStore from '@/store/test'
 import { storeToRefs } from 'pinia'
 const store = useTestStore()
 
-// 解构 同时保持响应式
+// store.XXX 是很不美观的代码, 如果将 store 解构呢?
 
 // 普通解构会丢失响应式
 // const { foo, count } = store
 // count++
-// console.log(foo, count)
+// console.log(foo, count) // 不改变
 
-// 使用 api storeToRefs 将整个 store 包装为 ref (其原理跟toRefs 一样给里面的数据包裹一层 toRef)
+// 要同时保持响应式, 使用 api storeToRefs
+// 将整个 store 包装为 ref (其原理跟toRefs 一样给里面的数据包裹一层 toRef)
 const { foo, count, getCurrency } = storeToRefs(store)
 console.log(foo, count)
 </script>

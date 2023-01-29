@@ -1,5 +1,5 @@
 import { createRouter, RouterOptions, createWebHashHistory, createWebHistory } from 'vue-router'
-import Father from '../components/00/Father.vue'
+import Father from '../demo/00/Father.vue'
 // vue-router 4 使用 createRouter 创建路由
 const option: RouterOptions = {
   // 地址栏模式 需要调用 hooks
@@ -21,12 +21,12 @@ const option: RouterOptions = {
           path: '', // 不写path 代表继承父路由的路径
           // 路由懒加载
           // component: ListVue,
-          component: () => import('../components/00/List.vue'),
+          component: () => import('../demo/00/List.vue'),
         },
         {
           name: 'Details',
           path: '/item/:id',
-          component: () => import('../components/00/Details.vue'),
+          component: () => import('../demo/00/Details.vue'),
         },
       ],
     },

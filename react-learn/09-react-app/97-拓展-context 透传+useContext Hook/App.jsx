@@ -1,4 +1,5 @@
 import React from "react";
+import { useContext } from "react";
 import { useRef } from "react";
 import { createContext, useState } from "react";
 
@@ -28,14 +29,24 @@ export default function App() {
   );
 }
 
+// 1. Hooks 使用 useContext 函数提取数据 (扁平化管理 Context 更轻量)
 function Parent() {
+  const { age, name } = useContext(PersonContext);
+  const { color } = useContext(ColorContext);
+
   return (
     <div style={{ backgroundColor: "skyblue", padding: "20px" }}>
-      Parent 组件
+      <h2>
+        Parent 组件 使用 <strong>useContext</strong> 接收属性
+      </h2>
+      <p>{`PersonContext: name${name} | age${age} `}</p>
+      <p>{"ColorContext: " + color}</p>
       <Child />
     </div>
   );
 }
+
+// 2. 使用 Context 上的 Consumer 组件 (多个 Context 时来回嵌套 不方便)
 function Child() {
   const colorPicker = useRef();
   return (

@@ -25,11 +25,14 @@ export default function App() {
   const inputRef = useRef();
   const changeName = () => {
     // 通过 ref.current 获取这个 DOM 元素
-    console.dir(inputRef.current);
     const { value } = inputRef.current;
     if (value) setName(value);
     else alert("输入为空");
   };
+
+  useEffect(() => {
+    console.log("inputRef 发生改变");
+  }, [inputRef.current]);
 
   // 初始化一个 ref 变量 = 123
   const testRef = useRef(123);
@@ -47,9 +50,9 @@ export default function App() {
     setRefresh(true);
   };
 
-  useEffect(() => {
-    console.log("change!");
-  });
+  // useEffect(() => {
+  //   console.log("change!");
+  // });
 
   return (
     <div>
@@ -64,7 +67,7 @@ export default function App() {
       <button onClick={changeName}>改名</button>
       <button onClick={changeTest}>修改Ref属性 Test</button>
       <button onClick={doRefresh}>强制刷新</button>
-      <p>可以看到只有强制渲染Ref才会更新</p>
+      <p>可以看到只有更改非Ref属性,带动视图重新渲染 testRef 值才会更新</p>
       <hr />
       <Child msg="Hello Child">
         {/* 双标签内部的属性被传入 props.children 中 */}

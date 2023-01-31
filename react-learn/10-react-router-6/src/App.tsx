@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import type { FC } from 'react'
 
 // 引入路由表
@@ -13,6 +13,8 @@ import routes from './routes'
 
 import type { MenuProps } from 'antd'
 import { Menu, Col, Row } from 'antd'
+import NotFound from './pages/Home/404'
+import Loading from './components/Loading'
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -37,7 +39,7 @@ const items: MenuItem[] = [
   getItem(<NavLink to={'/about'}>About</NavLink>, 'about'),
 ]
 
-export const App: FC = () => {
+const App: FC = () => {
   // 利用路由表生成视图
   const element = useRoutes(routes)
 
@@ -46,9 +48,10 @@ export const App: FC = () => {
   // 使用 useLocation 获得location对象 并监视
   const location = useLocation()
   useEffect(() => {
-    setSelectedKeys([location.pathname.slice(1)])
+    const rootPath = location.pathname.split('/')[1]
+    setSelectedKeys([rootPath])
     console.log(selectedKeys)
-  }, [])
+  }, [location])
 
   return (
     <>
@@ -61,9 +64,17 @@ export const App: FC = () => {
             items={items}
           />
         </Col>
-        {/* 在此导入路由视图 */}
-        <Col span={18}>{element}</Col>
+        {/*
+          在此放置路由视图 (自动解析成 <Route/> 组件列表)
+          注意: 如果有懒加载的组件且路由表没有预先 Suspense 包裹 需要在此处包裹
+        */}
+        <Col span={18}>
+          {/* <Suspense fallback={<Loading />}>{element}</Suspense> */}
+          {element}
+        </Col>
       </Row>
     </>
   )
 }
+
+export default App

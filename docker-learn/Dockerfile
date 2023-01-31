@@ -12,4 +12,4 @@ RUN npm install
 COPY . /code
 # 运行镜像时触发的指令 (主体, 参数)
 # CMD [ "node",'index.js' ] 这个方法不好用
-CMD node index.js
+CMD node index.js | tee app.log

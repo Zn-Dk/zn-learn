@@ -1,0 +1,104 @@
+{
+    "root": true,
+    // 你的脚本将要运行在什么环境中
+    "env": {
+        "node": true,
+        "commonjs": true,
+        "es6": true
+    },
+    // 额外的全局变量
+    "globals": {
+        "window": false,
+        "context": false,
+        "define": false,
+        "mqq": false,
+        "Vue": true,
+        "application": false,
+        "$": false,
+        "aegis": true,
+        "Swiper": true,
+        "BeaconAction": true,
+        "beacon": true
+    },
+    // 在此引入额外的配置库
+    "extends": [],
+    "parser": "@typescript-eslint/parser",
+    // 解析器选项(比如这里开启了装饰器支持)
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2018,
+        "parser": "@typescript-eslint/parser",
+        "ecmaFeatures": {
+            "legacyDecorators": true
+        },
+        "extraFileExtensions": [
+            ".vue"
+        ]
+    },
+    // 插件(例如 ts-eslint)
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    // rules：开启规则和发生错误时报告的等级
+    // 0或’off’：关闭规则。
+    // 1或’warn’：打开规则，并且作为一个警告（并不会导致检查不通过）。
+    // 2或’error’：打开规则，并且作为一个错误 (退出码为1，检查不通过)。
+    "rules": {
+        "no-param-reassign": [
+            "off"
+        ]
+    },
+    // 额外设置(覆盖)
+    "overrides": [
+        // VUE2 CONFIGS  有关其他, 参考 https://eslint.vuejs.org/
+        {
+            "files": [
+                "*.vue"
+            ],
+            "extends": [
+                "plugin:vue/recommended",
+                "@tencent/eslint-config-tencent",
+                "@tencent/eslint-config-tencent/ts"
+            ],
+            "parser": "vue-eslint-parser",
+            "parserOptions": {
+                "parser": "@typescript-eslint/parser",
+                "ecmaFeatures": {
+                    "legacyDecorators": true
+                }
+            },
+            "rules": {
+                "no-unused-vars": [
+                    "off"
+                ],
+                "vue/require-prop-types": [
+                    "off"
+                ],
+                "@typescript-eslint/no-unused-vars": [
+                    "error"
+                ]
+            }
+        },
+        // TYPESRCIPT CONFIGS
+        {
+            "files": [
+                "*.ts"
+            ],
+            "extends": [
+                "@tencent/eslint-config-tencent/ts"
+            ],
+            "parser": "@typescript-eslint/parser",
+            "rules": {
+                "no-unused-vars": [
+                    "off"
+                ],
+                "@typescript-eslint/no-unused-vars": [
+                    "error"
+                ]
+            },
+            "parserOptions": {
+                "project": "./tsconfig.json"
+            }
+        }
+    ]
+}

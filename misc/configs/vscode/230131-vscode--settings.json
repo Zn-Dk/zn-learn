@@ -1,0 +1,231 @@
+{
+  "editor.fontSize": 16,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.formatOnSave": true, // 保存文件时自动格式化
+  "editor.inlayHints.padding": true,
+  "editor.unicodeHighlight.allowedLocales": {
+    "zh-hant": true
+  }, // 中文标点高亮
+  "editor.suggest.preview": true,
+  "window.commandCenter": false,
+  "terminal.integrated.smoothScrolling": true,
+  "terminal.integrated.fontSize": 16,
+  "files.refactoring.autoSave": false,
+  "typescript.inlayHints.enumMemberValues.enabled": true,
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.workspace.trust.startupPrompt": "never",
+  "security.workspace.trust.banner": "never",
+  "security.workspace.trust.enabled": false,
+  "workbench.editorAssociations": {
+    "*.html": "default",
+    "*.dvb": "default",
+    "git-rebase-todo": "gitlens.rebase"
+  },
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  // 选择高亮背景
+  "workbench.colorCustomizations": {
+    "editor.selectionBackground": "#3368d2b5",
+    "editor.selectionHighlightBackground": "#4885ff5a"
+  },
+  // 主题
+  "workbench.colorTheme": "One Dark Pro Mix",
+  "workbench.iconTheme": "material-icon-theme",
+  "emmet.useInlineCompletions": true,
+  "editor.wordBasedSuggestions": true,
+  "editor.tabSize": 2,
+  "editor.suggestOnTriggerCharacters": true,
+  //清除代码多余空格
+  "files.trimTrailingWhitespace": true,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "editor.linkedEditing": true,
+  "path-intellisense.autoTriggerNextSuggestion": true,
+  //括号颜色
+  "editor.bracketPairColorization.enabled": true,
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.guides.bracketPairsHorizontal": false,
+  "editor.guides.bracketPairs": true,
+  ///////////////////////注释插件////////////////////////////////////////
+  // 头部注释
+  "fileheader.customMade": {
+    // 头部注释默认字段
+    "Author": "Qiu Haoxiang",
+    "Date": "Do not edit", // 设置后默认设置文件生成时间
+    "LastEditTime": "Do not edit", // 设置后，保存文件更改默认更新最后编辑时间
+    "LastEditors": "LastAuthor", // 设置后，保存文件更改默认更新最后编辑人
+    "Description": "",
+    "FilePath": "Do not edit", // 设置后，默认生成文件相对于项目的路径
+    "custom_string_obkoro1": "可以输入预定的版权声明、个性签名、空行等"
+  },
+  // 函数注释
+  "fileheader.cursorMode": {
+    // 默认字段
+    "function": "",
+    "description": "",
+    "param": "",
+    "return": ""
+    // "Date": ""
+  },
+  // 插件配置项
+  "fileheader.configObj": {
+    "autoAdd": false, // 检测文件没有头部注释，自动添加文件头部注释
+    "autoAddLine": 100, // 文件超过多少行数 不再自动添加头部注释
+    "autoAlready": true, // 只添加插件支持的语言以及用户通过`language`选项自定义的注释
+    //"supportAutoLanguage": [], // 设置之后，在数组内的文件才支持自动添加
+    // 自动添加头部注释黑名单
+    "prohibitAutoAdd": ["json", "md"],
+    "prohibitItemAutoAdd": [
+      "项目的全称禁止项目自动添加头部注释, 使用快捷键自行添加"
+    ],
+    "folderBlacklist": ["node_modules"], // 文件夹或文件名禁止自动添加头部注释
+    "wideSame": false, // 头部注释等宽设置
+    "wideNum": 13, // 头部注释字段长度 默认为13
+    "functionWideNum": 0 // 函数注释等宽设置 设为0 即为关闭
+  },
+  /////////////////////////////////////Live Server//////////////////////////////////////////////
+  "liveServer.settings.port": 5500,
+  //liveServer 启动没有DPI缩放的浏览器
+  "liveServer.settings.AdvanceCustomBrowserCmdLine": "chrome --high-dpi-support=1 --force-device-scale-factor=1",
+  "liveServer.settings.file": "liveServer.settings.useBrowserPreview",
+  "liveServer.settings.CustomBrowser": "chrome",
+  "liveServer.settings.donotShowInfoMsg": true,
+  /////////////////////////////////字体
+  "editor.fontFamily": "JetBrains Mono, Microsoft Yahei, Cascadia Code",
+  "editor.fontLigatures": true, // 连字
+  ////////////////////////////// 代码格式化 /////////////////////////////
+  "html.format.wrapAttributes": "force-expand-multiline", // html 属性强制换行
+  "prettier.singleAttributePerLine": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[vue]": {
+    // "editor.defaultFormatter": "esbenp.prettier-vscode"
+    // 由于vue3没有适配像vetur格式化stylus 如果想要格式化stylus可以临时打开vetur 平时使用prettier
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[proto3]": {
+    "editor.defaultFormatter": "zxh404.vscode-proto3"
+  },
+  "terminal.integrated.cursorWidth": 2,
+  "terminal.integrated.env.windows": {},
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "html.format.indentHandlebars": true,
+  //////////////////////////////////// vetur插件设置 /////////////////////////////
+  "vetur.grammar.customBlocks": {
+    "docs": "md",
+    "i18n": "json"
+  },
+  "vetur.completion.scaffoldSnippetSources": {
+    "workspace": "💼",
+    "user": "🗒️",
+    "vetur": "✌"
+  },
+  "vetur.validation.templateProps": true,
+  "vetur.format.styleInitialIndent": true,
+  "vetur.experimental.templateInterpolationService": true,
+  // vetur 格式化选项
+  "vetur.format.defaultFormatter.html": "js-beautify-html",
+  "vetur.format.defaultFormatterOptions": {
+    "js-beautify-html": {
+      "wrap_attributes": "force-expand-multiline", // 强制换行 Wrap attributes to new lines [auto|force|force-aligned|force-expand-multiline]
+      "wrap_line_length": 120, //属性换行
+      "end_with_newline": false //属性换行
+    },
+    "prettyhtml": {
+      "printWidth": 100,
+      "singleQuote": false,
+      "wrapAttributes": false,
+      "sortAttributes": true
+    },
+    // --- css优化 ---
+    "prettier": {
+      "trailingComma": "none", // 末尾禁止添加逗号,这个很重要。找了好久
+      "semi": false, // 去掉代码结尾的分号
+      "singleQuote": true // 使用单引号替代双引号
+    }
+  },
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  /////////////////////////格式化stylus, 需安装Manta's Stylus Supremacy插件 /////////////////////////////
+  "stylusSupremacy.insertColons": false, // 是否插入冒号
+  "stylusSupremacy.insertSemicolons": false, // 是否插入大括号
+  "stylusSupremacy.insertNewLineAroundImports": false, // import之后是否换行
+  "stylusSupremacy.insertNewLineAroundBlocks": "root", // 两个根选择器换行
+  "stylusSupremacy.sortProperties": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  // auto-close/rename 设置
+  "auto-close-tag.disableOnLanguage": ["typescript"],
+  "auto-rename-tag.activationOnLanguage": [
+    "html",
+    "vue",
+    "javascriptreact",
+    "typescriptreact"
+  ],
+  // emmet语法支持
+  "emmet.optimizeStylesheetParsing": false,
+  "emmet.preferences": {
+    "css.valueSeparator": ": "
+  },
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.includeLanguages": {
+    "vue": "html",
+    "vue-html": "html",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "emmet.syntaxProfiles": {
+    "vue-html": "html",
+    "vue": "html"
+  },
+  ////////////////////////////////////////////////////////// volar  /////////////////////////////////////////////////
+  "volar.autoCompleteRefs": true,
+  "volar.codeLens.scriptSetupTools": true,
+  "volar.icon.preview": false,
+  "volar.vueserver.useSecondServer": false,
+  "volar.format.initialIndent": {
+    "html": true
+  },
+  /////////////////////////////////// MISC /////////////////////////////////////////////////
+  "remote.SSH.remotePlatform": {
+    "9.135.14.141": "linux",
+    "devcloud": "linux"
+  },
+  "code-runner.runInTerminal": true,
+  "code-runner.languageIdToFileExtensionMap": {
+    "bat": ".bat",
+    "powershell": ".ps1",
+    "typescript": ".ts"
+  },
+  "less.files": [
+    "/data/home/zndkqiu/web/src/pages/stopWalletService/style/index.less"
+  ],
+  "[css]": {
+    "editor.defaultFormatter": "michelemelluso.code-beautifier"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

@@ -1,0 +1,8 @@
+node_modules
+/docs/
+/dist/
+/coverage/
+coverage-summary
+prettier.config.js
+src/services/*/trpc/**
+src/cdn/*/**

@@ -1,56 +1,39 @@
 {
-  "Print to console": {
-    "prefix": "csl",
-    "body": ["console.log($1);"],
-    "description": "Log output to console"
-  },
-
-  "Vue2 Template": {
-    "prefix": "v2",
-    "body": [
-      "<template>",
-      "    <div>\n",
-      "    </div>",
-      "</template>\n",
-      "<script>",
-      "export default {",
-      "    data() {",
-      "        return {\n",
-      "        };",
-      "    },",
-      "    created() {\n",
-      "    },",
-      "    mounted() {\n",
-      "    },",
-      "    methods: {\n",
-      "    }",
-      "};",
-      "</script>\n",
-      "<style scoped lang=\"${1:stylus}\">\n",
-      "</style>\n"
-    ],
-    "description": "Create vue template"
-  },
-
   "Vue3.2 Template": {
     "prefix": "v3",
     "body": [
       "<template>",
-      "\t<div class=\"\">",
       "\t\t$3",
-      "\t</div>",
       "</template>\n",
       "<script setup ${1:lang=\"ts\"}>",
-      "import {} from 'vue'",
       "\t$2",
       "</script>\n",
-      "<style lang=\"stylus\">",
+      "<style lang=\"scss\">",
       "\t$4",
       "</style>"
     ],
-    "description": "Vue3.2 Template"
+    "description": "Vue3.2 Template(script setup sugar)"
+  },
+  "Vue3.0 Template": {
+    "prefix": "v30",
+    "body": [
+      "<template>",
+      "\t\t$3",
+      "</template>\n",
+      "<script>",
+      "export default {",
+      "\tsetup() {",
+      "\t\t$2",
+      "\t\treturn\t{}",
+      "\t},",
+      "}",
+      "</script>\n",
+      "<style lang=\"scss\">",
+      "\t$4",
+      "</style>"
+    ],
+    "description": "Vue3.0 Template(Option API with setup)"
   }
-
   // Place your snippets for vue here. Each snippet is defined under a snippet name and has a prefix, body and
   // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
   // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the

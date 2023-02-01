@@ -1,12 +1,11 @@
-import React, { lazy, Suspense } from 'react'
+import React from 'react'
 import './index.css'
-import { NavLink, Outlet, Route, Routes, useRoutes } from 'react-router-dom'
-import Loading from '@/components/Loading'
+import { NavLink, Outlet, useRoutes, useNavigate } from 'react-router-dom'
 import routes from '@/routes'
 
 export default function Home() {
   const element = useRoutes(routes)
-
+  let navigate = useNavigate()
   return (
     <div>
       <p>Home 组件</p>

@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+ 
+;Win11
+; 右键：cmd
+[HKEY_CLASSES_ROOT\directory\background\shell\cmdhere]
+@="在此打开终端"
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+ 
+[HKEY_CLASSES_ROOT\directory\background\shell\cmdhere\command]
+@="wt"

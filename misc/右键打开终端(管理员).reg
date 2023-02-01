@@ -1,0 +1,11 @@
+Windows Registry Editor Version 5.00
+ 
+; 右键：cmd（管理员）
+[HKEY_CLASSES_ROOT\Directory\Background\shell\runas]
+@="在此打开终端（管理员）"
+"ShowBasedOnVelocityId"=dword:00639bc8
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+"Extended"=""
+ 
+[HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command]
+@="wt"

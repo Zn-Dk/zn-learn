@@ -1,0 +1,8 @@
+.home-top{
+    display: flex;
+    border-bottom: 1px solid #504a4a;
+}
+
+.home-top a {
+    padding: 4px 10px;
+}

@@ -7,7 +7,7 @@
       "DOM.Iterable",
       "ESNext"
     ],
-    "allowJs": false,
+    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -21,15 +21,16 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "references": [
     {

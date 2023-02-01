@@ -1,20 +1,41 @@
-import React from "react";
+import React from 'react'
 // import { NavLink, Route, Switch, Redirect, } from "react-router-dom";
-import { NavLink, Route, Routes, Navigate } from "react-router-dom";
-import "./App.css";
-import About from "./pages/About";
-import Home from "./pages/Home";
+import { NavLink, Route, Routes, Navigate } from 'react-router-dom'
+import './App.css'
+import About from './pages/About'
+import Home from './pages/Home'
 
 export default function App() {
+  // 自定义函数返回
+  const getActiveClass = ({ isActive }: { isActive: boolean }) => {
+    return (isActive ? 'active' : '') + ' my-class'
+  }
+  const getActiveStyle = ({ isActive }: { isActive: boolean }) => {
+    return { color: isActive ? '#f90' : '#6aa' }
+  }
+
   return (
     <div>
       <h1>react-router-dom</h1>
       <div className="wrap">
+        {/*
+          RouterV6 的改变 如果希望修改默认类名 active
+          不能通过 activeStyle 和 activeClassName 决定样式了
+          应该通过函数返回
+      */}
         <ul>
-          <NavLink to="/home">
+          <NavLink
+            className={getActiveClass}
+            style={getActiveStyle}
+            to="/home"
+          >
             <li>Home</li>
           </NavLink>
-          <NavLink to="/about">
+          <NavLink
+            className={getActiveClass}
+            style={getActiveStyle}
+            to="/about"
+          >
             <li>About</li>
           </NavLink>
         </ul>
@@ -44,11 +65,11 @@ export default function App() {
             */}
             <Route
               path="/"
-              element={<Navigate to={"/home"} />}
+              element={<Navigate to={'/home'} />}
             ></Route>
           </Routes>
         </div>
       </div>
     </div>
-  );
+  )
 }

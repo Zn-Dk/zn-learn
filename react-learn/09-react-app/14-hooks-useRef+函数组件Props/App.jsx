@@ -22,6 +22,15 @@ export default function App() {
 
   // useRef === React.createRef 创建 DOMElement-Ref
   // const inputRef = createRef();
+
+  /*
+    关于 TypeScript :
+    useRef<T>(initialValue: T|null): RefObject<T>
+
+    使用类型约束 并初始 ref 为 null :
+    const ipt = useRef<HTMLInputElement>(null);
+  */
+
   const inputRef = useRef();
   const changeName = () => {
     // 通过 ref.current 获取这个 DOM 元素

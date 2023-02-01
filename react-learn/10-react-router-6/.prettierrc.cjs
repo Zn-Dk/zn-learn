@@ -1,6 +1,6 @@
 module.exports = {
   // 一行最多字符数
-  printWidth: 80,
+  printWidth: 100,
   // 使用 2 个空格缩进
   tabWidth: 2,
   // 不使用缩进符，而使用空格
@@ -35,5 +35,5 @@ module.exports = {
   // 换行符使用 lf
   endOfLine: 'lf',
   // 标签格式化为一个属性独占一行
-  // singleAttributePerLine: true,
+  singleAttributePerLine: true,
 }

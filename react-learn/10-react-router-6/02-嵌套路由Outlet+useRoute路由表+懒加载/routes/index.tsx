@@ -13,6 +13,11 @@ import { Navigate, type RouteObject } from 'react-router-dom'
 
 // lazyComponentFactory
 const lazyComp = (pagePath: string, fallback?: ReactNode) => {
+  // 动态 import 的几项原则 https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
+  // 不能以绝对路径 变量 别名开头
+  // 结尾必须有拓展名
+  // 固定的模块命名方式
+  // 减少过多的变量层级嵌套 /${a}/${b}/${c}
   const LazyElement = lazy(() => import(`../pages/${pagePath}`))
   return (
     <Suspense fallback={fallback ?? <Loading />}>
@@ -42,7 +47,7 @@ export default [
         children: [
           {
             path: 'detail',
-            element: lazyComp('Home/Detail'),
+            element: lazyComp('Home/Shop/Detail'),
           },
         ],
       },

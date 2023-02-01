@@ -10,11 +10,15 @@ export default function Home() {
     <div>
       <p>Home 组件</p>
       {/*
-          使用嵌套路由 只需要在嵌套层级下建立 NavLink-Route 关系即可
-            注意  路由要将之前的路由路径全部匹配进来
-        */}
+         RouterV6使用嵌套路由 只需要在嵌套层级下建立 NavLink 然后使用 Outlet 组件
+         进行嵌套 功能类比 vue-router 的 router-view 组件
+          - 现在支持书写相对路径 ./path 和 path 两种形态了 不一定写绝对路径
+      */}
       <div className="home-top">
-        <NavLink to="/home/news">新闻</NavLink>
+        {/* 三种方式 */}
+        {/* <NavLink to="/home/news">新闻</NavLink> */}
+        {/* <NavLink to="./news">新闻</NavLink> */}
+        <NavLink to="news">新闻</NavLink>
         <NavLink to="/home/shop">商品</NavLink>
       </div>
       <div className="home-view">

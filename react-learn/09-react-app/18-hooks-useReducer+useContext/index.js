@@ -3,10 +3,9 @@
 // import { render } from "react-dom";
 
 // React 18 新写法 (不需要引入 React 本体)
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-
-// import App from "./App";
-import App from "./SearchCommentDemo";
+import App from "./App";
 
 const container = document.querySelector("#root");
 

@@ -13,6 +13,7 @@ import React, { useState } from "react";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
+  // let myCount = 0; // 因为每次渲染函数都会重新执行, 单纯的变量声明无法保持状态
   const [count, setCount] = useState(0);
   const [name, setName] = useState("John");
 

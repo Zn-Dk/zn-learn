@@ -113,7 +113,7 @@ const Child5 = (props) => {
   });
   /*
     useMemo（参数1，参数2）
-
+    ** 完全可以看做是 Vue 的计算属性功能 (定位类似, 随着某个变量的改变而改变) **
     参数1：是一个创建依赖项函数，该函数的返回值就是你想要缓存的数据，形式像useEffect, 实际上两者却存在着很多差异
     参数2：这个是个数组，存放着被依赖的项，意思就是说只有当这个数组里面的变量发生了变化，才会调用参数1的函数，这里同样跟useEffect很像，都是依赖项变了，才会调用前面的参数1的函数
   */
@@ -126,11 +126,11 @@ const Child5 = (props) => {
     <div>
       <h2>Child5 组件</h2>
       <p>
-        memoWord {memoWord}
         {/* 只有修改了 val 才触发更新 */}
         <button onClick={() => setVal("I NEED U")}>CHANGE MEMO</button>
       </p>
       <p>count {count}</p>
+      <p>Computed memo: {memoWord} </p>
     </div>
   );
 };

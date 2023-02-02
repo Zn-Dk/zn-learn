@@ -47,6 +47,13 @@
 		],
 		"description": "Log output to console(Warning)"
 	},
+	"Constant with destruction": {
+		"prefix": "constdest",
+		"body": [
+			"const { ${2:foo} } = ${1:variables}",
+		],
+		"description": "带参数解构的 const 变量声明"
+	},
 	"import with destruction": {
 		"prefix": "impdest",
 		"body": [
@@ -61,13 +68,6 @@
 		],
 		"description": "import function like(async)"
 	},
-	"import type": {
-		"prefix": "imptype",
-		"body": [
-			"import type { $2 } from '${1:bar}'",
-		],
-		"description": "引入类型"
-	},
 	"arrow function": {
 		"prefix": "arwfn",
 		"body": [
@@ -77,15 +77,13 @@
 		],
 		"description": "arrow function statement"
 	},
-	"CommonJS Export": {
-		"prefix": "mexp",
+	"Export Constant": {
+		"prefix": "expconst",
 		"body": [
-			"module.exports = {",
-			"  $1",
-			"}",
+			"export const ${1:first}",
 		],
-		"description": "CommonJS Module Exports"
-	}
+		"description": "Export Constant"
+	},
 	// Place your 全局 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
 	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
 	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is

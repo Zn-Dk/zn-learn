@@ -724,6 +724,25 @@ git stash pop 1 # 弹出储藏 [1] - vscode 叫弹出储藏... <-使用这个
 
 
 
+#### 更常见的场景 : 
+
+**开发了一些内容发现还在master,没切换分支**
+
+```bash
+// 1、将新开发的内容暂存，暂存后git status能看到当前工作台是干净的～
+git stash save 'feature'
+// 2、切换分支
+git checkout -b <yourbranch>  /  git switch <yourbranch> 
+// 3、查看stash中的内容,可以看到暂存的一些内容列表
+git stash list
+// 4、将stash中的内容pop到新的分支上面，pop之后会将缓存在堆栈中的对应stash删除
+git stash pop
+```
+
+
+
+
+
 
 
 

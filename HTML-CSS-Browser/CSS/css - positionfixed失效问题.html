@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html {
+      margin: 20px;
+      border: 1px solid #000;
+      height: 1000px;
+    }
+
+    body {
+      margin: 20px;
+      border: 1px solid red;
+      height: calc(100% - 45px);
+    }
+
+
+    #d {
+      position: absolute;
+      top: 30%;
+      left: 30%;
+      background-color: gray;
+      width: 500px;
+      height: 500px;
+      /* transform: translateX(50px); */
+      /* 一旦有 transform 属性 则会导致子元素 fixed 相对该父元素定位 */
+    }
+
+    #dd {
+      position: fixed;
+      top: 0;
+      left: 10%;
+      width: 400px;
+      background-color: rgba(49, 222, 196, 0.588);
+      font-size: 32px;
+      line-height: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="d">
+    <div id="dd">
+      <p>本例说明了一般情况下position fixed 的定位是根据 viewport 浏览器窗口而非 body 标签</p>
+      <pre>
+        当某元素的position是fixed的时候，且其父元素的样式有以下情况的，fixed的定位会失效：
+
+        1、父元素的transform属性值不为none时
+
+        2、父元素的perspective值不为 none 的元素
+
+        3、在will-change中指定了任意 CSS 属性
+
+        4、移动端设置-webkit-overflow-scrolling属性 控制元素在移动设备上是否使用滚动回弹效果，这样更自然，像是原生效果。值 touch 时使用具有回弹效果的滚动
+
+        场景1：在swiper里面有某个子元素是fixed定位，此时该定位会失效。原因是，swiper组件用的就是tansform进行卡片位置变换的，所以引起定位失效。
+
+        原因所在: 创建了独立的 堆叠上下文 stack context
+
+        - 什么是堆叠上下文？
+        堆叠上下文（Stacking Context）：堆叠上下文是 HTML 元素的三维概念，这些 HTML 元素在一条假想的相对于面向（电脑屏幕的）视窗或者网页的用户的 z 轴上延伸，HTML 元素依据其自身属性按照优先级顺序占用层叠上下文的空间。
+        
+        概念比较抽象，简单理解，就是 生成了 Stacking Context 的元素会影响 该元素的层叠关系与定位关系。
+        总之，按照上面的说法，堆叠上下文的创建，该元素会影响其子元素的固定定位。设置了 position:fixed 的子元素将不会基于 viewport 定位，而是基于这个祖先元素。
+
+        解决方法：
+          因为 -webkit-overflow-scrolling导致fixed基于祖先元素定位，我页面内容没有铺满整个屏幕，
+          导致fixed定位的元素上移，所以可行的解决方法是，设置最外层祖先元素 height：100vh;
+
+        关于transform非none导致的无效：
+          可以查看祖先元素有transform的话要改为 transform：none
+      </pre>
+
+    </div>
+  </div>
+</body>
+
+</html>

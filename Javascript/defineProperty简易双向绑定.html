@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+</head>
+
+<body>
+  <style>
+    ul {
+      list-style: none;
+    }
+  </style>
+  <ul></ul>
+
+  <div class="ctrl">
+    <h3>修改person对象属性(非直接修改 HTML)</h3>
+    年龄：<input
+      type="text"
+      id="age"
+    >
+    <button id="btn">修改</button>
+    <p id="info"></p>
+  </div>
+  <script>
+    const ul = document.querySelector('ul');
+    const person = { sex: '男', age: '25', name: '王大锤', height: 28, weight: 32 };
+    const _render = element => {
+      const str = `<li>姓名：<span>${person.name}</span></li>
+                           <li>性别：<span>${person.sex}</span></li>
+                           <li>年龄：<span>${person.age}</span></li>
+                           <li>身高：<span>${person.height}</span></li>
+                           <li>体重：<span>${person.weight}</span></li>`
+      element.innerHTML = str;
+    }
+    _render(ul);
+    // 补全代码
+    for (const key in person) {
+      let val = person[key]
+      Object.defineProperty(person, key, {
+        get() {
+          return val
+        },
+        set(newV) {
+          if (newV !== val) {
+            val = newV
+            _render(ul)
+          }
+        }
+      })
+    }
+    console.log(person.name)
+
+
+    btn.onclick = () => {
+      person.age = age.value
+      info.innerHTML = `Person 对象: ${JSON.stringify(person)}`
+    }
+  </script>
+</body>
+
+</html>

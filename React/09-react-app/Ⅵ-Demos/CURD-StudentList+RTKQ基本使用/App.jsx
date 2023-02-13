@@ -32,7 +32,7 @@ export default function App() {
       //   return result;
       // },
       // 设置轮询间隔,单位 ms, 默认: 0 表示不轮询
-      // pollingInterval: 10000,
+      pollingInterval: 10000,
       // 是否跳过当前请求(可以在此加判断条件, 如 id 不存在...) 默认 false
       skip: false,
       // 组件挂载或参数改变时重发请求(不使用缓存)

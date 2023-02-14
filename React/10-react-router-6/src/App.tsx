@@ -1,57 +1,123 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
-
-// 引入路由表
-import {
-  NavLink,
-  useHref,
-  useInRouterContext,
-  useLocation,
-  useRoutes,
-} from 'react-router-dom'
+/////////////////////////// router ///////////////////////////////
+import { NavLink, useLocation, useRoutes } from 'react-router-dom'
 import routes from './routes'
 
-import type { MenuProps } from 'antd'
+/////////////////////////// redux ///////////////////////////////
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+
+/////////////////////////// antd Menu ///////////////////////////////
 import { Menu, Col, Row } from 'antd'
-import NotFound from './pages/Home/404'
-import Loading from './components/Loading'
+import type { ItemType } from 'antd/es/menu/hooks/useItems'
 
-type MenuItem = Required<MenuProps>['items'][number]
+import { clearUserState } from './store/slices/auth'
 
-function getItem(
-  label: React.ReactNode,
-  key?: React.Key | null,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-  type?: 'group',
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  } as MenuItem
+// import type { MenuProps } from 'antd'
+// type MenuItem = Required<MenuProps>['items'][number]
+// function getItem(
+//   label: React.ReactNode,
+//   key?: React.Key | null,
+//   icon?: React.ReactNode,
+//   children?: MenuItem[],
+//   type?: 'group',
+// ): MenuItem {
+//   return {
+//     key,
+//     icon,
+//     children,
+//     label,
+//     type,
+//   } as MenuItem
+// }
+
+// 0.定义原始菜单列表, 其中 need_auth - none 任何时候都能被展示 | false 仅对游客展示 | true 仅登录用户展示
+const menulist = [
+  {
+    label: 'Home',
+    path: '/home',
+    key: 'home',
+    need_auth: 'none',
+  },
+  {
+    label: 'Login / Register',
+    path: '/auth/login',
+    key: 'auth',
+    need_auth: false,
+    clickCb: '',
+  },
+  {
+    label: '??的个人中心',
+    path: '/userInfo',
+    key: 'userInfo',
+    need_auth: true,
+    clickCb: '',
+  },
+  {
+    label: '登出',
+    path: '/',
+    key: 'logout',
+    need_auth: true,
+    clickCb: 'logout',
+  },
+]
+// 1.个人中心字段处理 fn
+const getUserMenu = (userName = '') => {
+  const tmpMenu = JSON.parse(JSON.stringify(menulist))
+  tmpMenu[2].label = `${userName}的个人中心`
+  return tmpMenu as typeof menulist
 }
 
-const items: MenuItem[] = [
-  getItem(<NavLink to={'/home'}>Home</NavLink>, 'home'),
-  getItem(<NavLink to={'/about'}>About</NavLink>, 'about'),
-]
-
+/////////////////////////// App ///////////////////////////////
 const App: FC = () => {
-  // 利用路由表生成视图
   const element = useRoutes(routes)
-  
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
+  const dispatch = useAppDispatch()
 
-  // 使用 useLocation 获得location对象 并监视
+  // Menu 第一级菜单高亮, 使用 useLocation 获得location对象 并监视
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const location = useLocation()
   useEffect(() => {
     const rootPath = location.pathname.split('/')[1]
     setSelectedKeys([rootPath])
-    console.log(selectedKeys)
+    // console.log(selectedKeys)
   }, [location])
+
+  // 3.获取用户登录状态 用户信息
+  const {
+    auth: {
+      value: { isLogin, user },
+    },
+  } = useAppSelector(state => state)
+
+  // 4.返回实际菜单列表供 antd Menu 组件渲染
+
+  // 4.3 Menu事件对象
+  const menuEvents = {
+    logout: () => {
+      dispatch(clearUserState())
+    },
+  }
+  type menuEventsKey = keyof typeof menuEvents
+  // 4.4 事件 handler
+  const evtHandler = (name: menuEventsKey) => {
+    typeof menuEvents[name] === 'function' && menuEvents[name]()
+  }
+
+  const realMenu = useMemo(() => {
+    return getUserMenu(user?.username)
+      .filter(({ need_auth }) => need_auth === isLogin || need_auth === 'none') // 4.1 过滤权限列表
+      .map(({ label, path, key, clickCb }) => ({
+        label: (
+          <NavLink
+            to={path}
+            onClick={() => evtHandler(clickCb as menuEventsKey)}
+          >
+            {label}
+          </NavLink>
+        ), // 4.2 包装为 NavLink
+        key,
+      }))
+  }, [isLogin]) as ItemType[]
 
   return (
     <>
@@ -61,7 +127,7 @@ const App: FC = () => {
             style={{ width: '100%' }}
             selectedKeys={selectedKeys}
             mode="inline"
-            items={items}
+            items={realMenu}
           />
         </Col>
         {/*

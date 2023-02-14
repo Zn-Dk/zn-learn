@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { Navigate } from 'react-router-dom'
 
 export default function About() {
   return (
     <div>
-      <h2>This is About Page</h2>
+      <h2>个人信息页</h2>
     </div>
   )
 }

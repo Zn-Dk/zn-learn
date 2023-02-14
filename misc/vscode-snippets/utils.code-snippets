@@ -48,13 +48,32 @@
 		],
 		"description": "Log output to console(Warning)"
 	},
+	/////////////////// typescript ///////////////////
+	"import type": {
+		"scope": "typescript,typescriptreact,vue",
+		"prefix": [
+			"imptype",
+			"impt"
+		],
+		"body": [
+			"import type { $2 } from '${1:bar}'",
+		],
+		"description": "引入 typescript 类型"
+	},
 	/////////////////// definition ///////////////////
-	"Constant with destruction": {
+	"Constant with destruction - Object": {
 		"prefix": "constdest",
 		"body": [
 			"const { ${2:foo} } = ${1:variables}",
 		],
-		"description": "带参数解构的 const 变量声明"
+		"description": "带参数解构的 const 变量声明(对象)"
+	},
+	"Constant with destruction Array": {
+		"prefix": "constdestarr",
+		"body": [
+			"const [ ${2:foo} ] = ${1:variables}",
+		],
+		"description": "带参数解构的 const 变量声明(对象)"
 	},
 	"import with destruction": {
 		"prefix": "impdest",
@@ -93,7 +112,7 @@
 			"us"
 		],
 		"body": [
-			"const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = React.useState(${2:initialState})"
+			"const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState(${2:initialState})"
 		],
 		"description": "Create a regular useState hook"
 	},

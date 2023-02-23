@@ -7,11 +7,11 @@ type options = {
 }
 export const useAntdMessage = () => {
   const [messageApi, contextHolder] = message.useMessage()
-  const msgHandler = (message: string, opts: options = { type: 'error' }) => {
+  const msgHandler = (message: string, opts: options = { type: 'error' }): void => {
     messageApi.open({
       type: opts.type,
       content: message,
     })
   }
-  return [msgHandler, contextHolder]
+  return { msgHandler, contextHolder }
 }

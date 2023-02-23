@@ -5,13 +5,11 @@ import { NavLink, useLocation, useRoutes } from 'react-router-dom'
 import routes from './routes'
 
 /////////////////////////// redux ///////////////////////////////
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector, useMydispatch } from '@/hooks/redux'
 
 /////////////////////////// antd Menu ///////////////////////////////
 import { Menu, Col, Row } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-
-import { clearUserState } from './store/slices/auth'
 
 // import type { MenuProps } from 'antd'
 // type MenuItem = Required<MenuProps>['items'][number]
@@ -44,14 +42,18 @@ const menulist = [
     path: '/auth/login',
     key: 'auth',
     need_auth: false,
-    clickCb: '',
   },
   {
     label: '??的个人中心',
     path: '/userInfo',
     key: 'userInfo',
     need_auth: true,
-    clickCb: '',
+  },
+  {
+    label: 'StudentList',
+    path: '/student',
+    key: 'student',
+    need_auth: 'none',
   },
   {
     label: '登出',
@@ -71,41 +73,47 @@ const getUserMenu = (userName = '') => {
 /////////////////////////// App ///////////////////////////////
 const App: FC = () => {
   const element = useRoutes(routes)
-  const dispatch = useAppDispatch()
-
-  // Menu 第一级菜单高亮, 使用 useLocation 获得location对象 并监视
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
+  const dispatch = useMydispatch()
   const location = useLocation()
+
+  // 2.获取 用户auth store
+  const { expTime, isLogin, user } = useAppSelector(state => state.auth.value)
+  // handler 如果已经登录且登录态过期 需要退出
+  useEffect(() => {
+    if (isLogin && expTime - Date.now() <= 0) {
+      dispatch('clearUserState', () => {
+        console.log('登录态过期,登出...')
+      })
+    }
+  }, [location, expTime])
+
+  // Menu 第一层菜单高亮: 使用 useLocation 获得location对象，保留第一层
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   useEffect(() => {
     const rootPath = location.pathname.split('/')[1]
     setSelectedKeys([rootPath])
     // console.log(selectedKeys)
   }, [location])
 
-  // 3.获取用户登录状态 用户信息
-  const {
-    auth: {
-      value: { isLogin, user },
-    },
-  } = useAppSelector(state => state)
+  // 3.返回实际菜单列表供 antd Menu 组件渲染
 
-  // 4.返回实际菜单列表供 antd Menu 组件渲染
-
-  // 4.3 Menu事件对象
+  // 3.1 Menu事件对象
   const menuEvents = {
     logout: () => {
-      dispatch(clearUserState())
+      dispatch('clearUserState', () => {
+        console.log('登出!')
+      })
     },
   }
   type menuEventsKey = keyof typeof menuEvents
-  // 4.4 事件 handler
+  // 3.2 事件 handler
   const evtHandler = (name: menuEventsKey) => {
     typeof menuEvents[name] === 'function' && menuEvents[name]()
   }
-
+  // 3.3 过滤权限列表
   const realMenu = useMemo(() => {
     return getUserMenu(user?.username)
-      .filter(({ need_auth }) => need_auth === isLogin || need_auth === 'none') // 4.1 过滤权限列表
+      .filter(({ need_auth }) => need_auth === isLogin || need_auth === 'none')
       .map(({ label, path, key, clickCb }) => ({
         label: (
           <NavLink

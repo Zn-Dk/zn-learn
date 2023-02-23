@@ -1,21 +1,30 @@
-import React, { useEffect, useState, type FormEvent } from 'react'
-import { NavLink, useNavigate, useParams } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import type { FC, FormEvent, PropsWithoutRef } from 'react'
+import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom'
 // antd
 import { Button, Card } from 'antd'
 import { useAntdMessage } from '@/hooks/message'
 // rtkq
-import { useLoginMutation, useRegisterMutation } from '@/store/queryAPI'
+import { useLoginMutation, useRegisterMutation } from '@/store/queryAPI/authApi'
+
 // redux
 import { setUserState } from '@/store/slices/auth'
-import { useAppDispatch } from '@/hooks/redux'
+import { useMydispatch } from '@/hooks/redux'
 
-const Auth = () => {
+// myHistory HOOKS
+import useMyHistory from '@/hooks/myhistory'
+
+const Auth: FC<PropsWithoutRef<any>> = () => {
+  // const { state } = useLocation()
+
   const nav = useNavigate()
   const { type } = useParams()
   const isLogin = type === 'login'
   const displayWord = isLogin ? '登录' : '注册'
   const displayOpsWord = isLogin ? '注册' : '登录'
-  const [msgHandler, contextHolder] = useAntdMessage()
+
+  const { msgHandler, contextHolder } = useAntdMessage()
+  const { myHistory } = useMyHistory()
 
   const [formData, setFormData] = useState({
     username: '',
@@ -24,7 +33,7 @@ const Auth = () => {
   })
 
   // redux dispatch hooks(with TS)
-  const dispatch = useAppDispatch()
+  const dispatch = useMydispatch()
   // RTKQuery Mutations
   const [submitReg, { error: regError }] = useRegisterMutation()
   const [submitLogin, { error: loginError }] = useLoginMutation()
@@ -48,25 +57,24 @@ const Auth = () => {
     setTimeout(() => {
       nav('/auth/login')
     }, 1000)
-    // TODO 可以清空表单
   }
 
   // 登录
-  type LoginRes = {
-    data: {
-      jwt: string
-      user: {
-        id: number
-        username: string
-        email: string
-        provider: string
-        confirmed: boolean
-        blocked: boolean
-        createdAt: string
-        updatedAt: string
-      }
-    }
-  }
+  // type LoginRes = {
+  //   data: {
+  //     jwt: string
+  //     user: {
+  //       id: number
+  //       username: string
+  //       email: string
+  //       provider: string
+  //       confirmed: boolean
+  //       blocked: boolean
+  //       createdAt: string
+  //       updatedAt: string
+  //     }
+  //   }
+  // }
   const loginHandler = async () => {
     const res = await submitLogin({
       identifier: formData.username,
@@ -79,17 +87,18 @@ const Auth = () => {
       msgHandler(`登录出错: ${message}`)
       return
     }
-    // 登录完成存储用户状态
-    dispatch(
-      setUserState({
-        token: res.data.jwt,
-        user: res.data.user,
-      }),
-    )
     // Message 展示
     msgHandler(`欢迎您,尊敬的 ${formData.username}`, { type: 'success' })
-    // 跳转回首页
-    nav('/')
+    setTimeout(() => {
+      // 登录完成存储用户状态
+      dispatch('setUserState', {
+        token: res.data.jwt,
+        user: res.data.user,
+      })
+      // 1s 后跳转回之前的页面(location 如有,否则回首页)
+      // nav(state?.from ? state.from.pathname : '/')
+      nav(myHistory.length >= 2 ? myHistory.at(-2) : '/')
+    }, 1000)
   }
 
   return (

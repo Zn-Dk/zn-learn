@@ -1,14 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
-import queryAPI from './queryAPI'
 import auth from './slices/auth'
+import authApi from '@/store/queryAPI/authApi'
+import studentApi from '@/store/queryAPI/studentApi'
 
 const store = configureStore({
   reducer: {
-    [queryAPI.reducerPath]: queryAPI.reducer,
+    [authApi.reducerPath]: authApi.reducer,
+    [studentApi.reducerPath]: studentApi.reducer,
     auth,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(queryAPI.middleware),
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware().concat(authApi.middleware, studentApi.middleware),
 })
 
 setupListeners(store.dispatch)

@@ -1,0 +1,13 @@
+table {
+  min-width: 1360px;
+}
+
+table :is(input, select) {
+  max-width: 180px
+}
+
+table td {
+  line-height: 22px;
+  white-space: normal;
+  vertical-align: middle;
+}

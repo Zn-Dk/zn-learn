@@ -1,7 +1,7 @@
 import Loading from '@/components/Loading'
 import About from '@/pages/About'
 import Home from '@/pages/Home'
-import NotFound from '@/pages/404'
+import NotFound from '@/pages/NotFound'
 
 import { lazy, Suspense, createElement, type ReactNode } from 'react'
 import { Navigate, type RouteObject } from 'react-router-dom'

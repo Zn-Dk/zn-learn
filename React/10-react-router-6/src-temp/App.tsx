@@ -2,19 +2,14 @@ import React, { Suspense, useEffect, useState } from 'react'
 import type { FC } from 'react'
 
 // 引入路由表
-import {
-  NavLink,
-  useHref,
-  useInRouterContext,
-  useLocation,
-  useRoutes,
-} from 'react-router-dom'
+import { NavLink, useHref, useInRouterContext, useLocation, useRoutes } from 'react-router-dom'
 import routes from './routes'
 
 import type { MenuProps } from 'antd'
 import { Menu, Col, Row } from 'antd'
 import NotFound from './pages/Home/404'
 import Loading from './components/Loading'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -42,15 +37,13 @@ const items: MenuItem[] = [
 const App: FC = () => {
   // 利用路由表生成视图
   const element = useRoutes(routes)
-  
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
 
-  // 使用 useLocation 获得location对象 并监视
+  // Menu 第一层菜单高亮使用 useLocation 获得location对象，保留第一层
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const location = useLocation()
   useEffect(() => {
     const rootPath = location.pathname.split('/')[1]
     setSelectedKeys([rootPath])
-    console.log(selectedKeys)
   }, [location])
 
   return (

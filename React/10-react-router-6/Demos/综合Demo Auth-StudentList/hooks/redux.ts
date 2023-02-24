@@ -1,6 +1,6 @@
 import { type TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import type { AuthState, AppDispatch } from '@/store'
-import { clearUserState, setUserState } from '@/store/slices/auth'
+import { clearUserState, setUserState, type UserResp } from '@/store/slices/auth'
 
 // 导出TS兼容的 dispatch 和 selector hooks
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
@@ -20,19 +20,23 @@ const MUTATION = {
 // type W1 = GetActionType<ActionCreatorWithoutPayload, 'clearUserState'>
 
 type TM = keyof typeof MUTATION
+interface IHandler {
+  (type: TM): void // 无参数  无callback
+  (type: TM, callback: VoidFunction): void // 无参数  有callback
+  (type: TM, opts: UserResp, callback?: VoidFunction): void // 有参数 有callback
+}
+
 export const useMydispatch = () => {
   const dispatch = useAppDispatch()
-  function handler(type: TM, opts?: object): void // 无参数  无callback
-  function handler(type: TM, opts?: VoidFunction): void // 无参数  有callback
-  function handler(type: TM, opts?: object, callback?: VoidFunction): void // 有参数 有callback
-  function handler(type: TM, opts?: object, callback?: VoidFunction) {
-    const isOptsFn = typeof opts === 'function'
+
+  const handler: IHandler = (type: TM, opts?: object, callback?: VoidFunction) => {
     const isCbFn = typeof callback === 'function'
-    if (!opts) {
+    const isOptFn = typeof opts === 'function'
+    if (!opts && !isCbFn && !isOptFn) {
       dispatch(MUTATION[type]())
       return
     }
-    if (isOptsFn) {
+    if (isOptFn) {
       dispatch(MUTATION[type]())
       opts()
       return

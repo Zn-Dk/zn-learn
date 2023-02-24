@@ -1,7 +1,7 @@
 import { useAntdMessage } from '@/hooks/message'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 
-type UserResp = {
+export type UserResp = {
   token: string
   user: {
     id: number

@@ -34,4 +34,6 @@ module.exports = {
   htmlWhitespaceSensitivity: 'css',
   // 换行符使用 lf
   endOfLine: 'auto',
-};
+  // html 标签一个属性一行
+  singleAttributePerLine: true,
+}

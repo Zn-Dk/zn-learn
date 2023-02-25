@@ -21,7 +21,8 @@ import { createApp } from 'vue'
 // import App from './18-pxtoviewport-test/Index.vue'
 // import App from './19-v-model-on-comp/Father.vue'
 // import App from './20-nextTick/case0.vue'
-import App from './21-v-memo/index.vue'
+// import App from './21-v-memo/index.vue'
+import App from './22-v-directives/index.vue'
 // import App from './98-environment/EnvTest.vue'
 // import App from './99-revision-playground/Index.vue'
 // 2.1 注册全局组件 自定义
@@ -88,6 +89,10 @@ app.config.errorHandler = function (err: Error, instance, info) {
   console.log('错误发生实例: ', instance)
   console.log('错误发生位置/生命周期钩子: ', info) // 比如: mounted hook / setup function
 }
+
+// 全局注册自定义指令v-focus ,配合 22-v-directives 使用
+import { vFocus } from './22-v-directives/directives/focus'
+app.directive('focus', vFocus)
 
 app
   // 1.3 配置全局变量 页面中使用 inject 接收(推荐)

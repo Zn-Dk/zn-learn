@@ -55,7 +55,17 @@ type A = {
 };
 
 // 满足 K 属于 T 的属性, 并且剔除 K 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+type MyOmit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+// 另一种原始的实现
+// as P extends K ? never : P 的解释 
+// 这一部分称作重映射, 如果取出的 P 满足传入 K 的键, 则通过 never 忽略, 相反则保留
+type MyOmit2<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? never : P]: T[P];
+};
+
+type testMyOmit2 = MyOmit2<A,'foo'>
+
 
 type B = Omit<A, "b">;
 /*

@@ -64,6 +64,7 @@ console.log(add2(new NumObj(2), new NumObj(4))); // 16
 
 // 5.自定义类型保护的类型谓词
 
+// 如果判断函数内不使用 arg is XX 返回, ts 就无法正确推断,依然会显示某 Type 上不存在属性 xx
 function isNumber(x: any): x is number {
   return typeof x === "number";
 }
@@ -72,14 +73,12 @@ function isString(x: any): x is string {
   return typeof x === "string";
 }
 
-function example(foo: any) {
-  if (isString(foo)) {
+function example(foo: number | string) {
+  if (isString(foo)) { // 经过 is 谓词判断后 foo 被正确地推断类型
     console.log("it is a string" + foo);
-    console.log(foo.length); // string function
-    // 如下代码编译时会出错，运行时也会出错，因为经过了类型判断后 foo 是 string 不存在toExponential方法
-    // console.log(foo.toExponential(2));
+    console.log(foo.length); 
+    return;
   }
-  // 编译不会出错，但是运行时出错
   console.log(foo.toExponential(2));
 }
 example("hello world");

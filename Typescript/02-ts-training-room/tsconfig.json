@@ -1,4 +1,5 @@
 {
+  // 编译器选项
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
@@ -50,7 +51,7 @@
     // "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
     // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
     // "outDir": "./",                                   /* Specify an output folder for all emitted files. */
-    // "removeComments": true,                           /* Disable emitting comments. */
+    "removeComments": true,                              /* 删除所有注释 Disable emitting comments. */
     // "noEmit": true,                                   /* Disable emitting files from a compilation. */
     // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
     // "importsNotUsedAsValues": "remove",               /* Specify emit/checking behavior for imports that are only used for types. */
@@ -64,7 +65,7 @@
     // "stripInternal": true,                            /* Disable emitting declarations that have '@internal' in their JSDoc comments. */
     // "noEmitHelpers": true,                            /* Disable generating custom helper functions like '__extends' in compiled output. */
     // "noEmitOnError": true,                            /* Disable emitting files if any type checking errors are reported. */
-    // "preserveConstEnums": true,                       /* Disable erasing 'const enum' declarations in generated code. */
+    "preserveConstEnums": true,                          /* 保留const 枚举的编译 Disable erasing 'const enum' declarations in generated code. */
     // "declarationDir": "./",                           /* Specify the output directory for generated declaration files. */
     // "preserveValueImports": true,                     /* Preserve unused imported values in the JavaScript output that would otherwise be removed. */
 
@@ -99,9 +100,45 @@
     "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true,                            /* Skip type checking all .d.ts files. */
   },
+
+  // 以下几个选项均支持 glob 通配符：
+  // * 匹配 0 或多个字符（不包括目录分隔符）
+  // ? 匹配一个任意字符（不包括目录分隔符）
+  // **/ 递归匹配任意子目录
+  
+  // 指定需要编译的单个文件列表。
+  // 当入口文件依赖其他文件时，不需要将被依赖文件也指定到 files 中，
+  // 因为编译器会自动将所有的依赖文件归纳为编译对象
+  // "files": [
+  //   "./src/main.ts"
+  // ],
+
+  // include 属性作用是指定编译需要编译的文件或目录
+  "include": [
+    // "src" // 会编译src目录下的所有文件，包括子目录
+    "src/*" // 只会编译src一级目录下的文件
+    // "src/*/*" // 只会编译src二级目录下的文件
+  ],
+  
+  // 编译时排除的文件夹
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
-  ]
+  ],
+
+  // 指定依赖的工程
+  // "references": [ 
+  //    {"path": "./common"}
+  // ]
+
+  // 设置自动引入库类型定义文件(.d.ts)相关
+  // enable : 布尔类型，是否开启自动引入库类型定义文件(.d.ts)，默认为 false；
+  // include : 数组类型，允许自动引入的库名，如：[“jquery”, “lodash”]；
+  // exculde : 数组类型，排除的库名。
+  "typeAcquisition": {
+    "enable": false,
+    "exclude": ["jquery"],
+    "include": ["jest"]
+  }
 }

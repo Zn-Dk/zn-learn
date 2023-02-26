@@ -7,6 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
+    body {
+      display: flex;
+    }
+    body>div{
+      flex-basis: 50%;
+    }
     .search-wrap {
       display: flex;
     }
@@ -38,14 +44,19 @@
 </head>
 
 <body>
-  <div class="search-wrap">
-    <input type="text" class="ipt" placeholder="请输入文字"><span>搜索</span>
+  <div class="l">
+    <h3>防抖模拟:</h3>
+    <div class="search-wrap">
+      <input type="text" class="ipt" placeholder="请输入文字">
+    </div>
+    <h4>搜索结果:</h4>
+    <ul>
+    </ul>
   </div>
-  <h3>搜索内容:</h3>
-  <ul>
-
-  </ul>
-  <div class="counter">1</div>
+  <div class="r">
+    <h3>节流 : 实现输入时每隔 1s +1 ↓</h3>
+    <div class="counter">1</div>
+  </div>
   <script>
     // debounce
     const ul = document.querySelector('ul')

@@ -89,30 +89,52 @@
 
   //////////////////////////////////////////////////////////////////////
 
-  // 枚举  使用枚举类型可以为一组数值赋予友好的名字
+  // 枚举
+  // 使用枚举类型可以为一组数值赋予友好的名字
   // 注意内部存的都是字符串值 但是书写的时候不需要加引号
+  // 常规的索引枚举 (默认)从 0 开始依次递增
   enum Fruit {
     apple,
     orange,
     peer,
   }
 
-  // 枚举数值默认从 0 开始依次递增
-  // 根据特定的名称得到对应的枚举数值
-  console.log(Fruit.orange); // 1
-
-  // 可以通过下标获取值
+  // 枚举的取值是双向的
+  // 即根据特定的名称得到对应的枚举数值(索引) 类似对象,有两种取法
+  console.log(Fruit.orange, Fruit["orange"]); // 1 1
+  // 又可以通过下标获取到键值
   console.log(Fruit[1]); // 'orange'
 
-  // 手动赋值 (常见应用)
+
+
+
+  // 枚举也可以手动赋值 枚举值可以混合 (常见应用)
+  // 一旦赋予了初始值 枚举值就不能单独像索引值枚举一样为空
+  // **除非** 这个值跟在一个指定了索引值的成员后面(自动递增)
   enum Color {
+    // default = 1
     red = "Red",
     green = "Green",
     blue = "Blue",
+    default = 1,
+    unknown, //  (后面的成员必须紧跟已经初始化的枚举成员, 且中间没有插入其他初始化字符串成员时,可以省略初始化)
+    foo = 'foo',
+    bar = 10,
+    baz
   }
 
-  console.log(Color.red); // "Red"
   console.log(Color["red"]); // "Red"
+  console.log(Color["unknown"]); // 2
+  console.log(Color["baz"]); // 11
+
+  // enum 的 const 修饰符
+  const enum ConstEnum {
+    a,
+    b,
+  }
+  console.log(ConstEnum.a);
+  // 编译后的 js 变为 console.log(0 /* ConstEnum.a */); , 上面的 enum 不会存在(保证枚举安全性)
+  // 如果希望被编译出来 - 在 tsconfig.json 中 complierOptions 新增 "preserveConstEnums": true,
 
   //////////////////////////////////////////////////////////////////////
 

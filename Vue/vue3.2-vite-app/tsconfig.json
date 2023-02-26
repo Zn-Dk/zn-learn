@@ -8,6 +8,7 @@
     "jsx": "preserve",
     "allowJs": true,
     "sourceMap": true,
+    "allowSyntheticDefaultImports": true, // 允许默认导入为 import A from 'A' 而不是 import * as A from 'A'
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,

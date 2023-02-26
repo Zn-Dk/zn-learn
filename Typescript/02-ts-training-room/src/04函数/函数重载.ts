@@ -16,10 +16,10 @@ function add(x: number | string, y: number | string): number | string {
   if (typeof x === "number" && typeof y === "number") {
     return x + y;
   }
-  return <string>x + <string>y;
+  return <string>x + "-" + <string>y;
 }
 
-console.log(add("1", "2")); // 12
+console.log(add("1", "2")); // 1-2
 
 console.log(add(1, 2)); // 3
 
@@ -32,7 +32,7 @@ function declaredAdd(x: number | string, y: number | string): number | string {
   if (typeof x === "number" && typeof y === "number") {
     return x + y;
   }
-  return <string>x + <string>y;
+  return <string>x + "-" + <string>y;
 }
 // console.log(declaredAdd(1, "2"));
 /*

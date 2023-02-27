@@ -1,7 +1,19 @@
-import React from "react";
+import React, { type FC, type PropsWithoutRef } from "react";
 import "./index.css";
 
-const propsList = [
+type ListItem = {
+  name: keyof LoadingOptions;
+  defaultVal: string;
+};
+
+type LoadingOptions = {
+  bgColor?: string;
+  radius?: string;
+  ringWidth?: string;
+  animationTime?: string;
+};
+
+const propsList: ListItem[] = [
   {
     name: "bgColor",
     defaultVal: "#6cefef",
@@ -19,7 +31,10 @@ const propsList = [
     defaultVal: "0.6s",
   },
 ];
-const Loading = ({ opts = {} }) => {
+
+const Loading: FC<PropsWithoutRef<{ opts?: LoadingOptions }>> = ({
+  opts = {},
+}) => {
   const docEle = document.documentElement;
 
   propsList.forEach((item) => {
@@ -29,7 +44,7 @@ const Loading = ({ opts = {} }) => {
 
   return (
     <div className="loadingWrap">
-      <div className="loading"></div>
+      <div className="loading" />
     </div>
   );
 };

@@ -15,11 +15,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-image: conic-gradient(
-    from 0deg,
-    transparent,
-    var(--loading-bgColor)
-  );
+  background-image: conic-gradient(from 0deg, transparent, var(--loading-bgColor));
   animation: var(--loading-animationTime) linear 0s infinite rotation;
 }
 @keyframes rotation {
@@ -32,7 +28,7 @@
 }
 
 .loading::after {
-  content: "";
+  content: '';
   position: absolute;
   width: calc(100% - var(--loading-ringWidth));
   height: calc(100% - var(--loading-ringWidth));

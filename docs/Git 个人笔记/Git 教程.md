@@ -173,6 +173,8 @@ git remote -v  #  查看远程库状态
 
 (在同时有其他远程库,比如 Gitee Github 共存的时候起好名字区分是有必要的)
 
+
+
 ### 添加远程库
 
 ```shell
@@ -198,6 +200,20 @@ git push github <branch-name> ...
 ```shell
 git remote remove <name>
 ```
+
+
+
+### 更新分支状态
+
+远程仓库分支变动后，如果本地不手动刷新，是看不到最新的分支情况的。
+
+这时候就可以使用 update 子命令来更新远程状态。
+
+```bash
+git remote update origin -p(--prune)
+```
+
+
 
 
 
@@ -277,6 +293,31 @@ OPTIONS
 “加了 -a ，后，会自动把 modified 和 deleted add 到 stage 里，但是新增文件不会受影响。 ”
 
 也就是在 commit 的时候，能帮你省一步 git add ，但只是对**修改和删除**文件有效， 新文件还是要 git add，不然就是 **UNtracked** ！什么是 **UNtracked** ？就是没有跟踪，不在git的代码仓里面，你更改了什么是不会提示你更改的，你提交也是不会提交到远程仓库的。
+
+
+
+### --amend 追加/修改上次commit
+
+适用场景：上一次提交遗漏了一些文件，需要补交，但不想多一次commit，
+
+或者想让提交记录不要那么多，强迫症的福音
+
+```bash
+#修改最近一次提交
+git commit --amend
+
+#进入注释页面，进行修改
+# -  (可以不改 commit msg 直接 :wq 保存, 也可以在这里补充修改你的 commit 信息)
+#修改后保存退出
+
+↓	↓	↓	↓	↓	↓
+
+# 情形 1: 没有 push 到远程
+#因为没推送到远程，不需要做任何事，就当无事发生~
+
+# 情形 2: 已经 push 到远程, 则需要强制推送
+git push -f (git push --force-with-lease)
+```
 
 
 

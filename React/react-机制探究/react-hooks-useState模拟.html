@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script>
+    const root = document.querySelector('#root')
+
+    // 模拟 hook
+    const myHook = () => {
+      // 维持初始状态开关, 使得初始值只有第一次生效
+      let isInit = true
+      // 上级持有 state
+      let state;
+      // 使用队列queue idx 模拟指针(真实代码实现是用列表+batch处理)
+      let queue = [];
+      let idx = 0;
+
+      const useState = (initalState) => {
+        console.log('当前 queue', queue, `当前 idx ${idx}, preState ${state}`)
+        // 首次渲染
+        if (isInit) {
+          queue.push(initalState)
+          state = queue[0]
+          isInit = false
+        } else {
+          // 非首次渲染, 返回队列中最新的值
+          state = queue[idx]
+        }
+        const setState = (newState) => {
+          // 模拟合并处理 判断前后调用的值是否等同(for循环规避)
+          if (Object.is(newState, queue[idx])) {
+            return false
+          }
+          // 使得队列指针后移
+          idx++
+          // 推入队列
+          queue.push(newState)
+          // 触发重新渲染
+          root.innerHTML = App()
+        }
+
+
+        return [state, setState]
+      }
+
+      return { useState }
+    }
+
+    const { useState } = myHook()
+    let timer = 0
+    function App() {
+      console.log('App render')
+      const [count, setCount] = useState(0)
+      // 每次 render 下面所有取 count 的操作都指向第一次返回的 count
+      // 故 setCount / 宏任务 / 微任务 中, 打印的 count 都是起始状态值
+
+
+      // 模拟初次加载
+      if (timer === 0) {
+        timer = setTimeout(() => {
+          console.log('sto-count is: ', count)
+          setCount(count + 1)
+          console.log('sto-count is: ', count)
+        }, 1000);
+      }
+
+      // 模拟 clickHandler
+      root.onclick = () => {
+        for (let i = 0; i < 10; i++) {
+          setCount(count + 1)
+        }
+
+        console.log('onclick-count is: ', count)
+        setCount(count + 1)
+        console.log('onclick-count is: ', count)
+      }
+
+      return `<h1>Count is : ${count}</h1>`
+    }
+
+    root.innerHTML = App()
+  </script>
+</body>
+
+</html>

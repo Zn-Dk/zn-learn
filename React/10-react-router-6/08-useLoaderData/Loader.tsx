@@ -5,6 +5,7 @@ import {
   useLoaderData,
 } from 'react-router-dom'
 
+// MOCK AJAX
 const requestUser = function () {
   return Promise.resolve({
     id: '001',
@@ -13,11 +14,13 @@ const requestUser = function () {
   })
 }
 
+// 1.自定义Loader
 async function loader() {
   const user = await requestUser()
   return user
 }
 
+// 2.路由表定义loader函数
 const router = createBrowserRouter([
   {
     path: '/',
@@ -32,6 +35,7 @@ const router = createBrowserRouter([
   },
 ])
 
+// APP
 function App() {
   return <RouterProvider router={router} />
 }
@@ -45,8 +49,8 @@ function Home() {
   )
 }
 
+// useLoaderData 获取数据
 function Login() {
-  //获取数据
   console.log(useLoaderData()) //{id: '001', name: 'jack', account: '123'}
   return <span>Login</span>
 }

@@ -4,8 +4,4 @@ import App from "./App";
 
 const container = document.querySelector("#root");
 
-createRoot(container).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+createRoot(container).render(<App />);

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>focus-within</title>
+  <style>
+    :where(h3, input, label, button) {
+      font-size: 24px;
+    }
+
+    .form-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 700px;
+      height: 450px;
+      margin: 100px auto;
+      padding: 60px 20px;
+      box-shadow: 0 3px 6px #c1c1c1;
+      border-radius: 8px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 1000px 1000px;
+      background-image: linear-gradient(0deg,
+          rgba(134, 174, 250, 0.309) 0%,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 1) 80%,
+          rgba(134, 174, 250, 0.309) 100%);
+      transition: background .8s;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      row-gap: 20px;
+    }
+
+    .item {
+      width: 500px;
+      display: flex;
+      align-items: center;
+    }
+
+    .item input {
+      width: 300px;
+      line-height: 1.5;
+      outline: none;
+      border: 1px solid #aaa;
+      transition: box-shadow .3s;
+    }
+
+    .item label {
+      width: 100px;
+    }
+
+    .girl {
+      position: absolute;
+      z-index: 1;
+      width: 200px;
+      height: 200px;
+      bottom: 0;
+      right: 0;
+      transition: background .3s;
+      background: url('assets/look.png') center/cover no-repeat;
+    }
+
+    /* 注意 background-image 不支持transition动画 但我们可以通过约定 size 和调整 position 实现 */
+    .form-wrap:focus-within {
+      background-size: 740px 570px;
+    }
+
+    .pw-item:focus-within .girl {
+      background-image: url('assets/close.png');
+    }
+
+    .pw-item:focus-within input {
+      box-shadow: 0 0 3px #f1c;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>
+    <pre>
+      - focus-within 的关键是, 这个元素的内部一旦产生了 focus 事件, 这个选择器就生效
+      - 通过这个我们就能实现 子元素 :focus 传递给父元素 :focus-within
+      - 然后将需要生效的样式进行一个类似事件冒泡的机制
+        - 比如 .girl 这个元素html书写顺序在 pw input 之前(更麻烦的是，甚至没有共同父元素)
+        - 但是通过监听父、祖元素的 focus-within 我们就能让 girl 的背景进行变化
+    </pre>
+  </h3>
+  <div class="form-wrap">
+    <h2 style="line-height: 150px;">CSS3 focus-within 选择器</h2>
+    <form>
+      <div class="item">
+        <label for="user">用户名</label><input id="user" type="text" placeholder="请输入用户名" />
+      </div>
+      <div class="item pw-item">
+        <div class="girl"></div>
+        <label for="pw">密码</label><input id="username" type="password" placeholder="请输入密码" />
+      </div>
+      <button>登录</button>
+    </form>
+  </div>
+
+</body>
+
+</html>

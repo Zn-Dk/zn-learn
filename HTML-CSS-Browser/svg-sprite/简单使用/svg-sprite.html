@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div {
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>使用 Svg Sprites ↓</h3>
+  <div>
+    <svg class="svg-icon">
+      <!--
+        核心 使用 use 命令 并引入 svg
+        xlink:href="file.svg#id"
+      -->
+      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="./svg-list.svg#svg-github"></use>
+    </svg>
+    <svg class="svg-icon2">
+      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="./svg-list.svg#svg-vite"></use>
+    </svg>
+    <svg>
+      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="./svg-list.svg#arrow"></use>
+    </svg>
+    <svg>
+      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="./svg-list.svg#heart"></use>
+    </svg>
+    <style>
+      .svg-icon {
+        /* 使用 fill 属性 还可以设置图标的颜色 */
+        fill: #06c;
+      }
+    </style>
+  </div>
+</body>
+
+</html>

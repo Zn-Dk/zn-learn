@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>focus-within</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      line-height: 100px;
+      background: #212121;
+      color: #fff;
+    }
+
+    .side-nav {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100vh;
+    }
+
+    .button {
+      z-index: 1;
+      position: relative;
+      width: 40px;
+      padding: 40px;
+      cursor: pointer;
+    }
+
+    .icon-bar:nth-of-type(1) {
+      transform-origin: 5px 0;
+    }
+
+    .icon-bar:nth-of-type(3) {
+      transform-origin: 11px 6px;
+    }
+
+    .button:focus .icon-bar:nth-of-type(1) {
+      transform: rotate(45deg);
+    }
+
+    .button:focus .icon-bar:nth-of-type(2) {
+      opacity: 0;
+    }
+
+    .button:focus .icon-bar:nth-of-type(3) {
+      transform: rotate(-45deg);
+    }
+
+    .icon-bar {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: #aaa;
+      transition: .3s;
+    }
+
+    .icon-bar+.icon-bar {
+      margin-top: 5px;
+    }
+
+    .nav-list {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+      border: 1px solid #000;
+      transform: translateX(-100%);
+      transition: all .6s ease-in-out;
+    }
+
+    .nav-list li {
+      font-size: 24px;
+      line-height: 50px;
+      text-align: center;
+      padding: 10px 5px;
+      text-transform: uppercase;
+      transition: color .1s;
+      cursor: pointer;
+    }
+
+    .nav-list li:hover {
+      color: #BF7497;
+    }
+
+    .bg {
+      position: absolute;
+      opacity: 0;
+      width: 100vw;
+      height: calc(100vh - 100px);
+      top: 100px;
+      left: 0;
+      background-color: rgba(0, 0, 0, .3);
+      transition: all .6s;
+    }
+
+    /* 这一步是为了让按钮按下去后, 禁用点击事件 这样点击会穿透到下面自动弹回 */
+    .side-nav:focus-within .button {
+      pointer-events: none;
+    }
+
+    /* 同时伪装一个点击区 */
+    .side-nav:focus-within {
+      cursor: pointer;
+    }
+
+    .side-nav:focus-within .nav-list {
+      transform: none;
+    }
+
+    .side-nav:focus-within .bg {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>Header</header>
+    <div class="side-nav">
+      <div class="button" tabindex="0">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </div>
+      <ul class="nav-list">
+        <li>Lorem i</li>
+        <li>Sum dolo</li>
+        <li>Bit ametctsur</li>
+        <li>Consectetur</li>
+      </ul>
+      <div class="bg"></div>
+    </div>
+    <main>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem non officiis impedit exercitationem reprehenderit
+      eligendi laboriosam nemo neque, corrupti dolore laudantium nihil sequi aperiam qui quaerat excepturi delectus
+      ullam suscipit?
+    </main>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    code {
+      display: block;
+      padding: 10px;
+      margin-bottom: 20px;
+      white-space: pre;
+      background-color: rgba(78, 60, 40, 0.447);
+      line-height: 1.25;
+      color: white;
+    }
+
+    .box {
+      padding: 20px;
+      margin: 20px;
+      box-shadow: 0 0 4px #999;
+    }
+
+    .demo1 li:has(> p) {
+      color: pink;
+    }
+
+    .demo1 a:has(+ p) {
+      color: pink;
+    }
+
+    .demo2 form label:has(+input[required])::before {
+      content: '*';
+      color: red;
+    }
+
+    .demo3 .content {
+      width: 300px;
+    }
+
+    .demo3 .item {
+      position: relative;
+      z-index: 10;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      margin: 5px;
+    }
+
+    .demo3 .thumb {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.16 2.846a.75.75 0 1 0 .75-1.3.75.75 0 0 0-.75 1.3zm0 3.803a.75.75 0 1 0 .75-1.299.75.75 0 0 0-.75 1.3zm4.554-4.453a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0zm0 3.804a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0zm-4.553 4.453a.75.75 0 1 0 .75-1.299.75.75 0 0 0-.75 1.299zm4.553-.65a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0z' fill='%23000'/%3E%3C/svg%3E") center no-repeat;
+      right: 5px;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    .demo3 :is(.item:hover .thumb, .item[dragging] .thumb) {
+      opacity: 1;
+    }
+
+    .demo3 .item:has(.thumb:hover) {
+      -webkit-user-drag: element;
+    }
+
+    .demo4 .case-a div:hover {
+      outline: 4px dashed rebeccapurple
+    }
+
+    .demo4 .case-b div:not(:has(:hover)):hover {
+      outline: 4px dashed rebeccapurple
+    }
+
+    .demo5 star {
+      display: flex;
+    }
+
+    .demo5 star [type="radio"] {
+      appearance: none;
+      width: 40px;
+      height: 40px;
+      margin: 0;
+      cursor: pointer;
+      background: #ccc;
+      transition: .3s;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E %3Cpath d='M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z'%3E%3C/path%3E %3C/svg%3E") center / 80% no-repeat;
+    }
+
+    .demo5 :is([name="star"]:hover,
+      [name="star"]:has(~:hover),
+      [name="star"]:checked,
+      [name="star"]:has(~:checked)) {
+      background-color: gold;
+    }
+
+    .demo6 .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 50px);
+      grid-template-rows: repeat(5, 50px);
+    }
+
+    .demo6 .calendar div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .calendar .select {
+      border: 2px solid purple;
+    }
+
+    .calendar:not(:has(.select~.select)) {
+      /*匹配到没有两个.select的父级*/
+    }
+
+    .calendar:has(.select~.select) .select,
+    .calendar div:hover~div:has(~.select),
+    .calendar .select~div:has(~:hover) {
+      color: #fff;
+      background-color: blueviolet;
+    }
+
+    .calendar:not(:has(.select~.select)) .select,
+    .calendar:not(:has(.select~.select)) div:hover {
+      background-color: transparent;
+      outline: 2px solid blueviolet;
+      outline-offset: -2px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>:has 伪类选择器使用</h1>
+  <div class="box demo1">
+    <h2>选中直接包含 p 元素的 li</h2>
+    <code>li:has(> p)</code>
+    <ul>
+      <li>
+        <p>AAAAAA</p>
+      </li>
+      <li>
+        <p>BBBBB</p>
+      </li>
+      <li>
+        <h3>H3H3H3</h3>
+      </li>
+    </ul>
+    <h2>选中直接紧跟着 p 元素的 a 元素</h2>
+    <code>a:has(+ p)</code>
+    <a href="link">test</a>
+    <p>Hello World</p>
+  </div>
+  <div class="box demo2">
+    <h2>实现在必填项中添加红色星号 *</h2>
+    <code>
+      form label:has(+input[required])::before {
+        content: '*';
+        color: red;
+      }
+    </code>
+    <br>
+    <form action="">
+      <div class="item">
+        <label for="username">用户名</label><input type="text" id="username" required>
+      </div>
+      <div class="item">
+        <label for="password">密码</label><input type="text" id="password" required>
+      </div>
+      <button type="submit">提交</button>
+    </form>
+  </div>
+  <div class="box demo3">
+    <code>
+      .item:has(.thumb:hover) {
+        -webkit-user-drag: element;
+      }
+    </code>
+    <div class="content">
+      <h2>拖拽demo</h2>
+      <div class="item">列表<span class="thumb"></span></div>
+      <div class="item">列表<span class="thumb"></span></div>
+      <div class="item">列表<span class="thumb"></span></div>
+    </div>
+  </div>
+  <div class="box demo4">
+    <h2>多层级hover解决</h2>
+
+    <div class="case-a">
+      <div class="box-1"
+           style="display: flex; align-items: center; justify-content: center; background-color: palegoldenrod;width: 500px; height: 500px;">
+        <div class="box-2"
+             style="display: flex; align-items: center; justify-content: center; background-color: pink; width: 350px; height: 350px;">
+          <div class="box-3" style="background-color: cyan; width: 200px; height: 200px;"></div>
+        </div>
+      </div>
+    </div>
+    <code>
+      /* 让没有已经处在 hover 状态下的 div:hover */
+      div:not(:has(:hover)):hover {
+        outline: 4px dashed rebeccapurple
+      }
+    </code>
+    <p>
+      div:has(:hover)表示有子元素正处于hover的div，比如当hover到box-3时，div:has(:hover)选中的就是除box-3以外的两个父级，然后加上:not就刚好反过来，只选中box-3本身
+    </p>
+    <div class="case-b">
+      <div class="box-1"
+           style="display: flex; align-items: center; justify-content: center; background-color: palegoldenrod;width: 500px; height: 500px;">
+        <div class="box-2"
+             style="display: flex; align-items: center; justify-content: center; background-color: pink; width: 350px; height: 350px;">
+          <div class="box-3" style="background-color: cyan; width: 200px; height: 200px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="box demo5">
+    <code>
+      :is([name="star"]:hover,
+      [name="star"]:has(~:hover),
+      [name="star"]:checked,
+      [name="star"]:has(~:checked)) {
+      background-color: gold;
+    }
+    </code>
+    <h3>
+      <pre>
+        以前，由于只有后置兄弟选择器~，所以必须要将 dom 元素更改顺序, 使用 :has 选择器
+        [type="radio"]:hover选中当前hover的元素
+        [name="star"]:has(~:hover) 即这个选择器选择的元素后面的兄弟元素处于 :hover
+        这样就可以选中当前hover元素之前的所有元素，
+        (checked 同理)
+        只需要纯CSS轻易的实现评分的效果, 而不需要使用js。
+      </pre>
+    </h3>
+    <star>
+      <input name="star" type="radio">
+      <input name="star" type="radio">
+      <input name="star" type="radio">
+      <input name="star" type="radio">
+      <input name="star" type="radio">
+    </star>
+  </div>
+  <div class="box demo6">
+    <div class="calendar">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+      <div>7</div>
+      <div>8</div>
+      <div>9</div>
+      <div>10</div>
+      <div class="select">11</div>
+      <div>12</div>
+      <div>13</div>
+      <div>14</div>
+      <div>15</div>
+      <div>16</div>
+      <div>17</div>
+      <div>18</div>
+      <div>19</div>
+      <div>20</div>
+      <div>21</div>
+      <div>22</div>
+      <div>23</div>
+      <div>24</div>
+      <div>25</div>
+      <div>26</div>
+      <div>27</div>
+      <div>28</div>
+      <div>29</div>
+      <div>30</div>
+      <div>31</div>
+    </div>
+  </div>
+  <script>
+    const calendar = document.querySelector('.demo6 .calendar')
+
+    calendar.addEventListener('click', (e) => {
+      const target = e.target;
+      const currentSelect = calendar.querySelectorAll('.select')
+      if (currentSelect === 2) {
+        currentSelect.forEach(element => {
+          element.classList.remove('select')
+        })
+      }
+      target.classList.add('select')
+    })
+  </script>
+  <script type="module">
+    import 'https://unpkg.com/draggable-polyfill'
+  </script>
+</body>
+
+</html>

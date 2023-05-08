@@ -653,16 +653,110 @@ div:has(>h2>span) {
 
 这里体现的是兄弟结构，精确寻找对应的前置兄元素。
 
-这样，一直以来，CSS 没有实现的父选择器，借由 :has() 开始，也能够做到了。这个选择器，能够极大程度的提升开发体验，解决之前需要比较多 JavaScript 代码才能够完成的事。
 
-上述 DEMO 汇总，你可以戳这里 CodePen Demo -- :has Demo[10]。
 
-### :has() 兼容性，给时间一点时间
+### :has()结合CSS:not()伪类一起使用
 
-比较可惜的是，:has() 在最近的 Selectors Level 4[11] 规范中被确定，目前的兼容性还比较惨淡，截止至 2022-05-04，Safari 和 最新版的 Chrome(V101，可通过开启 Experimental Web Platform features 体验)。
+:has()也可以结合CSS:not()伪类一起使用，例如，下面表示选中不含<p>元素的<li>元素：
 
-![img](https://s9.51cto.com/oss/202205/10/c2d36ab511b35b6db6e674fefce67c923c4b07.png)
+```css
+li:not(:has(p)) {
+    color: red;
+}
+```
 
-> Chrome 下开启该特性需要，1. 浏览器 URL 框输入 chrome://flags，2. 开启 #enable-experimental-web-platform-features。
 
-耐心等待，给给时间一点时间，这么好的选择器马上就能大规模应用了。
+我们还可以将多个选择器作为参数传递，下面表示选中不包含任何<p>或<span>元素的<li>元素：
+
+```css
+li:not(:has(p, span)) {
+    color: red;
+}
+```
+
+### 实例
+
+例如，在下面的表单元素中，用户名的<input>设置了required，表示必填项：
+
+<form>
+    <label>用户名</label>
+    <input required>
+    <label>备注</label>
+    <input>
+</form>
+
+
+通过:has()在必填项的前面加上红色的星号，CSS如下：
+
+```css
+label:has(+input:required)::before {
+    content: "*";
+    color: red;
+}
+```
+
+选中后面紧跟着<input>，且其为required的<label>元素，生成它的::before伪元素。
+![在这里插入图片描述](assets\c44268ed728142a986efd6414ebaf1e9.png)
+
+
+
+列表hover时出现拖拽手柄，点击拖拽手柄进行拖拽操作，HTML如下：
+
+<div class="content">
+    <div class="item">列表<span class="thumb"></span></div>
+    <div class="item">列表<span class="thumb"></span></div>
+    <div class="item">列表<span class="thumb"></span></div>
+</div>
+
+CSS: 
+
+```css
+.content {
+    border: 3px solid #eee;
+    width: 300px;
+}
+
+.item {
+    position: relative;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    margin: 5px;
+}
+```
+
+
+
+关键CSS如下：
+
+```css
+.thumb {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.16 2.846a.75.75 0 1 0 .75-1.3.75.75 0 0 0-.75 1.3zm0 3.803a.75.75 0 1 0 .75-1.299.75.75 0 0 0-.75 1.3zm4.554-4.453a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0zm0 3.804a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0zm-4.553 4.453a.75.75 0 1 0 .75-1.299.75.75 0 0 0-.75 1.299zm4.553-.65a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0z' fill='%23000'/%3E%3C/svg%3E") center no-repeat;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.item:hover .thumb {
+    opacity: 1;
+}
+
+.item:has(.thumb:hover) {
+    -webkit-user-drag: element;
+}
+
+```
+
+首先隐藏`.thumb`，当`.item`触发hover时，显示`.thumb` 拖拽按钮，接着使用`:has()`选中触发了`.thumb`hover的`.item`元素，使其变为可拖拽的元素。
+
+
+
+> 上文部分引自 掘金，源作者版权所有，可参考如下
+>
+> [CSS 有了:has伪类可以做些什么？ - 掘金 (juejin.cn)](https://juejin.cn/post/7143121853853204516)

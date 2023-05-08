@@ -26,7 +26,7 @@ git config --global user.name  "zn_dk"
    # 生成的目录位于  C盘用户文件夹\.ssh
    ```
 
-   
+
 
 2. 复制公钥文件 id_rsa.pub  (id_rsa 为私钥)
 
@@ -34,7 +34,7 @@ git config --global user.name  "zn_dk"
 
 4. done 可以免密提交了
 
-5. 免密的克隆 不使用 HTTPS 可以使用 SSH 链接 
+5. 免密的克隆 不使用 HTTPS 可以使用 SSH 链接
 
 
 
@@ -84,7 +84,7 @@ Linux ssh配置文件路径：`/home/你的用户名/.ssh/config`
 
 使用文本编辑器打开配置文件config加入下列配置：
 
-`ProxyCommand connect -S 代理地址:端口 %h %p`  
+`ProxyCommand connect -S 代理地址:端口 %h %p`
 如果说.ssh文件夹不存在或者config文件不存在就自己创建一个。
 
 配置好了，ssh就会走代理了。
@@ -173,12 +173,10 @@ git remote -v  #  查看远程库状态
 
 (在同时有其他远程库,比如 Gitee Github 共存的时候起好名字区分是有必要的)
 
-
-
 ### 添加远程库
 
 ```shell
-git remote add <name> <url> 
+git remote add <name> <url>
 ```
 
 添加一个 <name> 的远程库, 远程库地址为 <url>
@@ -274,7 +272,7 @@ git add .
 例子  本地文件更新之后 执行的顺序
 
 ```bash
-git add .  
+git add .
 git commit -m "commit的注释写在这里"
 git push origin main
 ```
@@ -346,14 +344,14 @@ git reset --hard <commit>
 - 软回滚(现在已经添加了新文件,**还想保留修改和新增的其他文件**)
 
 ```
-git reset --soft <commit> 
+git reset --soft <commit>
 ```
 
 
 
 ### 示例(硬回滚):
 
-这里做的操作是将版本的 head 指针指向了历史提交树, 可以通过日志 git reflog 进行查看, 示例代码: 
+这里做的操作是将版本的 head 指针指向了历史提交树, 可以通过日志 git reflog 进行查看, 示例代码:
 
 1. 创建了一个 commit 52fb314 添加文件 3.txt 此时指针在本次 commit
 
@@ -388,7 +386,7 @@ git reflog
 
 ```bash
 git reset --hard 52fb314
- 
+
 # HEAD is now at 52fb314 3.txt added
 ```
 
@@ -447,7 +445,7 @@ git reflog
 
 ```bash
 git push origin main
- 
+
 Enumerating objects: 3, done.
 Counting objects: 100% (3/3), done.
 Delta compression using up to 8 threads
@@ -512,7 +510,7 @@ git branch -v #  查看所属分支 commit ID message
 ```shell
 git branch <name>(分支名) #  创建指定分支
 git branch -d 本地分支名 # 删除本地分支
-git push origin --delete 远程分支名 # 删除远程分支 
+git push origin --delete 远程分支名 # 删除远程分支
 git push origin 远程分支名 # 推送空分支到远程（删除远程分支另一种实现）
 ```
 
@@ -533,7 +531,7 @@ git checkout -b dev  #  -b参数表示创建并切换
   git push origin develop:develop
   ```
 
-  
+
 
 - 如果切换回原有 master/main 分支 则新分支的文件会不可见(物理上也是)
 
@@ -659,7 +657,7 @@ pick ded0eee C
 # m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
 ```
 
-- 
+-
 - 提示修改 commit message
 
 ```bash
@@ -701,7 +699,7 @@ git cherry-pick <commit>
 
 - 现有 feature1 feature2 两个分支都由你管理
 - 在 feature1 新建了文件 cherry.txt 并且 commit push 远程
-- 切换到 feature2 分支，此时想要获取这个  cherry.txt 
+- 切换到 feature2 分支，此时想要获取这个  cherry.txt
 - 复制 feature1 的提交号，比如 `git cherry-pick ab9702f8`
 - 此时可以看到  cherry.txt  已经出现在 feature2 分支里面了
 
@@ -752,7 +750,7 @@ stash@{1}: WIP on feature1: 099a42e add feature1.txt
 # 可以看到 对 feature2 的修改位于栈顶，之前 feature1 的暂存在栈底部
 ```
 
-- 选择恢复在 feature1 做的更改 
+- 选择恢复在 feature1 做的更改
 
 ```bash
 git stash pop # 弹出栈顶储藏 - vscode 叫弹出最新储藏
@@ -763,9 +761,27 @@ git stash pop 1 # 弹出储藏 [1] - vscode 叫弹出储藏... <-使用这个
 
 
 
+## 多平台格式问题
 
+**windows：** 默认在提交时把换行符CRLF转换为LF，在拉取代码时将LF转换为CRLF。（git安装时，没有额外设置的，默认使用这个方案）
+**Linux/Unix和Mac OS和Mac OS X：** 默认在提交时将CRLF转换为LF，在拉取时不进行转换。（git安装时，没有额外设置的，默认使用这个方案）
 
-#### 更常见的场景 : 
+```bash
+   // 提交时转换为LF，检出时转换为CRLF（一般设置这个）
+   git config --global core.autocrlf true
+   // 提交时转换为LF，检出时不转换
+   git config --global core.autocrlf input
+   // 提交检出均不转换
+   git config --global core.autocrlf false
+```
+
+如果在 Windows 平台下开发, 会出现 LF 仓库代码拉下来变成 CRLF 进而导致如 ESLint 报错的情况, 这时候我们设置:
+```bash
+   git config --global core.autocrlf input
+   git config --global core.safecrlf true
+```
+
+#### 更常见的场景 :
 
 **开发了一些内容发现还在master,没切换分支**
 
@@ -773,7 +789,7 @@ git stash pop 1 # 弹出储藏 [1] - vscode 叫弹出储藏... <-使用这个
 // 1、将新开发的内容暂存，暂存后git status能看到当前工作台是干净的～
 git stash save 'feature'
 // 2、切换分支
-git checkout -b <yourbranch>  /  git switch <yourbranch> 
+git checkout -b <yourbranch>  /  git switch <yourbranch>
 // 3、查看stash中的内容,可以看到暂存的一些内容列表
 git stash list
 // 4、将stash中的内容pop到新的分支上面，pop之后会将缓存在堆栈中的对应stash删除
@@ -832,7 +848,7 @@ git fetch --all --prune && git branch -vv | grep gone | awk '{ print $1 }' | gre
 提交代码时，务必填写提交日志，日志清晰明了，说明本次提交的目的。同时需要遵循一定的提交规范。
 
 ```text
-<type>(<scope>): <subject>  
+<type>(<scope>): <subject>
 ```
 
 1. Header：包括三个字段：type（必需）、scope（可选）和 subject（必需）。
@@ -867,17 +883,17 @@ git fetch --all --prune && git branch -vv | grep gone | awk '{ print $1 }' | gre
    xxx forks:>n language:java
 3.  将某个文件代码行高亮，编辑 URL 链接（#L行号）。如果多行就是（#L行号-#L行号）
 
-> 例如 
+> 例如
 >
 > ```
 > https://github.com/Zn-Dk/zn-web-learn/blob/master/vue3-learn/jsconfig.json
-> 
+>
 > // 高亮第 7-11 行文本
-> 
+>
 > https://github.com/Zn-Dk/zn-web-learn/blob/master/vue3-learn/jsconfig.json#L7-#L11
 > ```
 >
-> 
+>
 
 1.  **按  T  键， 在项目网页中调出搜索，搜索指定文件**
 2.  **按 "."  键**， 打开github中vscode
@@ -907,17 +923,17 @@ git push			# 上传test分支代码
 如果我们正在开发一个功能，突然告知有线上问题，我们**做了一半的代码如何保存**？
 
 ```bash
-# 缓存本地开发文件  
-git stash 
+# 缓存本地开发文件
+git stash
 
-# 取出最后一条缓存记录并删除 
-git stash pop 
+# 取出最后一条缓存记录并删除
+git stash pop
 
-# 查看所有缓存列表 
-git stash list 
+# 查看所有缓存列表
+git stash list
 
-# 应用某一条缓存 
-git stash apply stash@{index} 
+# 应用某一条缓存
+git stash apply stash@{index}
 ```
 
 1. 使用 `git stash` 可以临时存储本地所有变动的文件，并从当前分支删除修改的代码。
@@ -937,14 +953,14 @@ git stash apply stash@{index}
 - 方法三：使用`git cherry-pick`挑选需要的提交进行合并。
 
 ```bash
-# 把某一次提交应用到当前分支 
-git cherry-pick <commit-hash> 
- 
-# 把某几次提交应用到当前分支 
-git cherry-pick <commit-hash> <commit-hash> 
- 
-# 把某个区间的提交应用到当前分支，注意不包含起始提交 
-git cherry-pick <start-commit>..<end-commit> 
+# 把某一次提交应用到当前分支
+git cherry-pick <commit-hash>
+
+# 把某几次提交应用到当前分支
+git cherry-pick <commit-hash> <commit-hash>
+
+# 把某个区间的提交应用到当前分支，注意不包含起始提交
+git cherry-pick <start-commit>..<end-commit>
 ```
 
 ![img](https://pic2.zhimg.com/80/v2-cd95e46332d05a18bb8f900a5b699039_720w.webp)
@@ -964,7 +980,7 @@ git cherry-pick <start-commit>..<end-commit>
 1. 执行命令，弹出交互式界面
 
 ```text
-git rebase -i 6938e5e0 
+git rebase -i 6938e5e0
 ```
 
 ![img](https://pic4.zhimg.com/80/v2-70edbdae74bc5154dbc4be77dfad13ff_720w.webp)
@@ -1016,11 +1032,11 @@ git rebase -i 6938e5e0
 已知线上分支 `release` 和 功能分支 `feature/order` ，当功能分支开发的同时，`release` 也同步做了修改（hotfix合并进来），此时我们通过 `rebase` 进行**变基**
 
 ```text
-# 切换到功能分支 
-git checkout feature/order 
+# 切换到功能分支
+git checkout feature/order
 
-# 执行变基 
-git rebase release 
+# 执行变基
+git rebase release
 ```
 
 相当于临时保存 `feature/order` 分支代码，从新拉取 `release` 最新代码到本地，然后把 `feature/order` 合并进来，这个过程称之为**变基**，如果中间发生冲突，我们需要正常处理冲突，处理完以后，使用 `git add .`添加到暂存区，使用`git rebase --continue`继续执行，直到所有冲突解决完为止。如果中途想要放弃，可使用 `git rebase --abort` 进行终止。

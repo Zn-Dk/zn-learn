@@ -1,5 +1,5 @@
-import { observable, action, makeAutoObservable } from "mobx";
-import root from "./index";
+import { observable, action, makeAutoObservable } from 'mobx';
+import root from './index';
 
 // 1. 定义 store 仓库
 // observable 定义一个存储 state 的可追踪字段。
@@ -8,7 +8,7 @@ import root from "./index";
 class CounterStore {
   // 定义被观察的对象
   // @observable count = 0;
-  count;
+  count: number;
 
   //  通过 this.rootStore.otherStore 访问其他 store
   constructor(rootStore: typeof root, initalVal = 0) {
@@ -34,13 +34,13 @@ class CounterStore {
 
   // 定义 action
   // @action increment = () => {
-  increment = () => {
+  increment() {
     this.count++;
-  };
+  }
 
   // 定义 computed
   get formattedCount() {
-    return this.count + " 次";
+    return this.count + ' 次';
   }
 
   asyncIncrement(wait: number) {

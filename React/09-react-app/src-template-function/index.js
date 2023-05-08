@@ -1,14 +1,14 @@
-import React from "react";
-import App from "../Ⅵ-Demos/Demo-旋转Loading/App";
+import React from 'react';
+import App from './App';
 
 // 旧写法
 // import { render } from "react-dom";
 // render(<App />, container);
 
 // React 18 新写法
-import { createRoot } from "react-dom/client";
+import { createRoot } from 'react-dom/client';
 
-const container = document.querySelector("#root");
+const container = document.querySelector('#root');
 
 // 新写法
 // 1. 包裹 dom 元素 返回一个 root 对象

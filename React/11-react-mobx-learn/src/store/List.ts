@@ -18,14 +18,14 @@ class ListStore {
     this.rootStore = rootStore;
   }
 
-  *fetch() {
-    const res: Promise<any> = yield fetch(
+  async fetch() {
+    const res = await fetch(
       `https://jsonplaceholder.typicode.com/todos/${this.id}`
     );
 
     // 访问 counterStore
     const counter = this.rootStore.counterStore.count;
-    this.data.push({ ...(yield res.json() as IData), counter });
+    this.data.push({ ...(await res.json() as IData), counter });
     this.id += 1;
     console.log([...this.data]);
   }

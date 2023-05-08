@@ -22,7 +22,7 @@ import { createApp } from 'vue'
 // import App from './19-v-model-on-comp/Father.vue'
 // import App from './20-nextTick/case0.vue'
 // import App from './21-v-memo/index.vue'
-import App from './22-v-directives/index.vue'
+import App from './22-v-directives/v-img-lazy.vue'
 // import App from './98-environment/EnvTest.vue'
 // import App from './99-revision-playground/Index.vue'
 // 2.1 注册全局组件 自定义

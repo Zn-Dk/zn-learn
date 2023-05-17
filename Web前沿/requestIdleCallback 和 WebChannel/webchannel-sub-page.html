@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  INNER
+  <div class="output">...</div>
+  <script>
+    const output = document.querySelector(".output");
+    function onMessage(e) {
+      console.log(e, '@@');
+      output.innerHTML += `${e.data} || \n`;
+      // Use the transfered port to post a message back to the main frame
+      e.ports.length && e.ports[0].postMessage("Message back from the IFrame");
+    }
+    window.addEventListener("message", onMessage);
+  </script>
+</body>
+
+</html>

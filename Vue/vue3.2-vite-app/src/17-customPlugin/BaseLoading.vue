@@ -32,6 +32,7 @@ defineExpose({
   height: 100%;
   display: flex;
   position: absolute;
+  pointer-events: none;
   align-items: center;
   justify-content: center;
 }

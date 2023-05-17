@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>外部样式</div>
+
+  <!-- 使用通过 customElement 定义的组件 -->
+  <!-- 4. 传入属性 -->
+  <my-comp foo="1" bar="bar">
+    <!-- 3.2 使用定义name的插槽 (注意插槽传入的 dom 不在 shallowRoot 内部)-->
+    <button slot="slot" msg="你好">我是插槽传入的按钮</button>
+  </my-comp>
+
+  <!-- 3.定义模板 -->
+  <template id="temp">
+    <style>
+      div {
+        background-color: red;
+        color: #fff;
+      }
+
+      slot :where(div, p) {
+        border: 1px solid #000;
+      }
+    </style>
+    <div>我是自定义组件，与外部通过 shallowRoot 隔离</div>
+    <button id="destroy">销毁组件</button>
+    <!-- 3.1 定义插槽(name 为必须) -->
+    <slot name="slot">
+      <p>默认插槽内容</p>
+    </slot>
+  </template>
+
+
+
+
+  <!-- 组件2 -->
+  <emphasize-words
+    mark-color="#6cf"
+    key-words="ipsum"
+    text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.Lorem ipsum dolor sit amet consectetur adipisicing elit. "></emphasize-words>
+
+  <template id="emphasizeWordsTemplate">
+    <div id="words"></div>
+  </template>
+  <script src="./emphasize-words.js"></script>
+  <script src="./index.js"></script>
+</body>
+
+</html>

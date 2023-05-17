@@ -3,11 +3,12 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "moduleResolution": "Node", // 指定模块解析策略，'node' 用于 Node.js 的 CommonJS 实现
+    "moduleResolution": "node", // 指定模块解析策略，'node' 用于 Node.js 的 CommonJS 实现
     "strict": false,
     "jsx": "preserve",
     "allowJs": true,
     "sourceMap": true,
+    "preserveConstEnums": true, 
     "allowSyntheticDefaultImports": true, // 允许默认导入为 import A from 'A' 而不是 import * as A from 'A'
     "resolveJsonModule": true,
     "isolatedModules": true,

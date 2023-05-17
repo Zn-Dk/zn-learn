@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h3>requestIdleCallback 是什么</h3>
+  <p>
+    RequestIdleCallback 简单的说，判断一帧有空闲时间，则去执行某个任务。
+    目的是为了解决当任务需要长时间占用主进程，导致更高优先级任务(如动画或事件任务)，
+    无法及时响应，而带来的页面丢帧(卡死)情况。故RequestIdleCallback 定位处理的是: 不重要且不紧急的任务。
+  </p>
+
+  <iframe src="http://localhost:5500/index.html" width="500"></iframe>
+  <p>信息往来: </p>
+  <div class="output"></div>
+  <script>
+
+    // var handle = window.requestIdleCallback(callback[, options])
+    // 返回值 一个ID，可以把它传入 Window.cancelIdleCallback() 方法来结束回调。
+    // callback 一个在事件循环空闲时即将被调用的函数的引用。函数会接收到一个名为 IdleDeadline 的参数，这个参数可以获取当前空闲时间以及回调是否在超时时间前已经执行的状态。
+    // options 可选 包括可选的配置参数。具有如下属性：timeout：如果指定了timeout，并且有一个正值，而回调在timeout毫秒过后还没有被调用，那么回调任务将放入事件循环中排队，即使这样做有可能对性能产生负面影响。
+
+    // type Deadline = {
+    //   timeRemaining: () => number // 当前剩余的可用时间。即该帧剩余时间。
+    //   didTimeout: boolean // 是否超时。
+    // }
+    // function (deadline:Deadline) { }
+
+    let isWorkDone = false;
+
+    // 执行时机有两种
+    // 1. 浏览器处理事件 回流重绘 定时器 绘制命令等任务时 按60FPS => 16.67ms 计算 如果有空余时间在这个时间段执行
+    // 2. 无任务处理时浏览器有一个 50ms 空闲时间也会执行
+    /**
+     * @type IdleRequestCallback
+     */
+    const doSth = (deadline) => {
+      console.log(`当前空闲回调被调用, 剩余${deadline.timeRemaining()}, ${deadline.didTimeout}`);
+
+      if (deadline.timeRemaining() > 1 || deadline.didTimeout) {
+        // 走到这里，说明时间有余或者已超时，我们就可以在这里写自己的代码逻辑
+        // 不要做的: 执行 DOM 操作
+        // 最适合在这里做的 :
+        // 1. 数据上报分析
+        // 2. 预加载 (qiankun 就是用这个来预加载 css 和 js)
+        postMsgIframe('idleCallback');
+      }
+      // 走到这里，说明时间不够了，就让出控制权给主线程，下次空闲时继续调用
+      if (!isWorkDone) {
+        requestIdleCallback(doSth);
+      }
+    }
+    const handlerId = requestIdleCallback(doSth, { timeout: 1000 }) // 有可能出现浏览器一直处于繁忙状态, 导致回调一直无法执行, 故配置超时时间 timeout 之后必定执行一次任务
+
+    // 缺点是实验过程实验结论: requestIdleCallback FPS只有20ms，正常情况下渲染一帧时长控制在16.67ms (1s / 60 = 16.67ms)。该时间是高于页面流畅的诉求
+    // 因此 react18 的 fiber 并没有采用这个 API 而是通过 React 团队使用 MessageChannel 自行实现
+    // p.s. react16 使用的是 postMessage + requestAnimationFrame
+
+    // MessageChannel 演示
+    const channel = new MessageChannel();
+    const output = document.querySelector(".output");
+    const iframe = document.querySelector("iframe");
+
+    // Wait for the iframe to load
+    iframe.addEventListener("load", onLoad);
+
+    function onLoad() {
+      // Listen for messages on port1
+      channel.port1.onmessage = onMessage;
+
+      // Transfer port2 to the iframe (将另一个端口传入 iframe, 这会在 iframe onMessage event 对象中的 ports 数组中找到)
+      iframe.contentWindow.postMessage("Hello from the main Page", "*", [channel.port2]);
+    }
+
+    function postMsgIframe(msg = "Hello world") {
+      iframe.contentWindow.postMessage(msg, '*')
+      isWorkDone = true;
+    }
+
+    function onMessage(e) {
+      output.innerHTML = e.data;
+    }
+  </script>
+</body>
+
+</html>

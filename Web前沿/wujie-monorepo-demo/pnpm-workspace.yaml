@@ -1,0 +1,8 @@
+packages:
+  # all packages in direct subdirs of packages(直接子目录 主应用)/
+  - 'main'
+  # all packages in subdirs of components(子应用组件位置)/
+  - 'web/**'
+  - 'common'
+  # exclude packages that are inside test directories
+  - '!**/test/**'

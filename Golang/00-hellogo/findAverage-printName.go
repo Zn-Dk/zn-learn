@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func findAverage(a []int) float64 {
-	count := 4
+	count := len(a)
 	sum := 0
 	for i := 0; i < count; i++ {
 		sum += a[i]

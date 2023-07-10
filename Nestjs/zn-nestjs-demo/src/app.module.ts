@@ -1,24 +1,38 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Logger } from './middleware/logger/logger';
+import { FooService } from './foo.service';
+
+let flag = true;
+const getVal = () => {
+  console.log(11);
+
+  const val = flag ? 'foo' : 'bar';
+  flag = !flag;
+  return val;
+};
 
 @Module({
   imports: [],
   controllers: [AppController],
-  providers: [AppService],
-}) // 实现 NestModule
-export class AppModule implements NestModule {
-  // 配置中间件 调用 configure 方法 并接受一个 consumer 参数
-  configure(consumer: MiddlewareConsumer) {
-    // 使用 apply 调用中间件
-    consumer.apply(Logger).forRoutes('user');
-    // 1. forRoutes string 指定路径
-    // 2. forRoutes 进阶 自定义请求方法
-    // {
-    //   path: string;
-    //   method: RequestMethod; ...get post put delete
-    // }
-    // 3. forRoutes 直接传入 Controller 类
-  }
-}
+  providers: [
+    AppService, // <- 1. 语法糖
+    {
+      provide: 'FooBar', // <- 2. useClass 自定义名称
+      useClass: FooService,
+    },
+    {
+      provide: 'WHITE_LIST', // <- 3. useValue 注入变量
+      useValue: ['foo', 'bar'],
+    },
+    FooService, // 引入变量
+    {
+      provide: 'FooFactory', // <- 4. useFactory 工厂模式
+      inject: [FooService], // <- 注入变量
+      useFactory: async (FooService: FooService) => {
+        return `${FooService.getFoo()} factory`;
+      },
+    },
+  ],
+})
+export class AppModule {}

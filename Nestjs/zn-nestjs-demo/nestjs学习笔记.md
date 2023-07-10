@@ -289,5 +289,337 @@ class Controller {
 
 
 
+## 三. Provider 提供者
+
+   Nest 使用 ioc 模型实现 依赖-注入 的模块化方式，许多基本的 Nest 类可以作为 Provider - `service`,` repository`, `factory`, `helper` 等等.
+
+  在 module 下实现注入。  Provider 只是一个用 `@Injectable()` [装饰器](https://so.csdn.net/so/search?q=装饰器&spm=1001.2101.3001.7020)注释的类。通常我们会使用 nest-cli gen 功能生成一个模块，这其中 Nest 提供了一个语法糖，也就是使用 provides 传入一个 service 类，然后在 controller 中直接使用。
+
+```typescript
+// app.module.ts
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+// app.controller.ts
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
+
+@Controller('/app')
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+```
 
 
+
+我们从零开始编写一个 service 并注入看看其中的运作流程。 首先定义一个模块 Foo :
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable() // 确保模块可以被注入
+export class FooService {
+  getFoo(): string {
+    return 'Hello Foo!';
+  }
+}
+```
+
+到 module 下引入 : 
+
+### 常规注入
+
+```typescript
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService, FooService],
+```
+
+
+
+### useClass 自定义名称
+
+```typescript
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: 'FooBar',
+      useClass: FooService,
+    },
+  ],
+})
+```
+
+自定义名称后 需要通过 `@Inject`  构造函数装饰器在 `controller` 的 `constructor ` 中声明
+
+```typescript
+// app.controller.ts
+
+@Controller()
+export class AppController {
+  constructor(
+    private readonly appService: AppService,
+    @Inject('FooBar') // 注入名称变量 注意装饰器的位置
+    private readonly fooService: FooService,
+  ) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+
+  @Get('/foo')
+  getFoo(): string {
+    return this.fooService.getFoo();
+  }
+}
+
+```
+
+用途示例二: 
+
+```typescript
+const configServiceProvider = {
+  provide: ConfigService,
+  useClass:
+    process.env.NODE_ENV === 'development'
+      ? DevelopmentConfigService
+      : ProductionConfigService,
+};
+
+@Module({
+  providers: [configServiceProvider],
+})
+export class AppModule {}
+```
+
+
+
+### useValue 注入变量
+
+```typescript
+  providers: [
+    AppService,
+    {
+      provide: 'WHITE_LIST', // <- 3. useValue 注入变量
+      useValue: ['foo', 'bar'],
+    },
+  ],
+```
+
+```typescript
+@Controller()
+export class AppController {
+  constructor(
+    @Inject('WHITE_LIST')
+    private readonly whiteList: string[],
+  ) {}
+
+  @Get('/white')
+  getWhiteList(): string[] {
+    return this.whiteList;
+  }
+}
+```
+
+ 访问 /white ，浏览器输出 ['foo', 'bar']
+
+
+
+### useFactory 工厂模式
+
+Example: 模块依赖处理
+
+```typescript
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [
+    FooService, // 引入变量
+    {
+      provide: 'FooFactory', // <- 4. useFactory 工厂模式
+      inject: [FooService], // <- 注入变量 注意首先要在 provider 中引入
+      useFactory: async (FooService: FooService) => { // 工厂函数 可异步
+        return `${FooService.getFoo()} factory`;
+      },
+    },
+  ],
+})
+
+// controller
+export class AppController {
+  constructor(
+    @Inject('FooFactory')
+    private readonly factoryFoo: string,
+  ) {}
+
+  @Get('/fact-foo')
+  getFactoryFoo(): string {
+    return this.factoryFoo; // Hello Foo! factory
+  }
+}
+
+```
+
+
+
+Example: TypeORM 初始化数据库
+
+```typescript
+// database.providers.ts
+import { DataSource } from 'typeorm';
+
+export const databaseProviders = [
+  {
+    provide: 'DATA_SOURCE',
+    useFactory: async () => {
+      const dataSource = new DataSource({
+        type: 'mysql',
+        host: 'localhost',
+        port: 3306,
+        username: 'root',
+        password: 'root',
+        database: 'test',
+        entities: [
+            __dirname + '/../**/*.entity{.ts,.js}',
+        ],
+        synchronize: true,
+      });
+
+      return dataSource.initialize();
+    },
+  },
+];
+
+// module.ts
+import { Module } from '@nestjs/common';
+import { databaseProviders } from './database.providers';
+
+@Module({
+  providers: [...databaseProviders],
+  exports: [...databaseProviders],
+})
+export class DatabaseModule {}
+```
+
+
+
+
+
+## ?. 中间件
+
+### 全局中间件
+
+  全局中间件的使用方式与 express 是一致的，只要在 main.ts 内使用即可
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { NextFunction, Request, Response } from 'express';
+
+// 全局中间件的使用, 同 express 原生
+const WHITE_LIST = [/^\/$/, /hello/, /list/, /user/];
+const globalMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  console.log(`全局中间件, 当前请求路径 ${req.path}`);
+  if (WHITE_LIST.some((item) => item.test(req.path))) {
+    next();
+  } else {
+    res.status(403).send('访问被拒');
+  }
+};
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.use(globalMiddleware);
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+
+
+### 模块局部中间件
+
+1. 定义 中间件
+
+   ```typescript
+   import { Injectable, NestMiddleware } from '@nestjs/common';
+   import { Request, Response, NextFunction } from 'express';
+   import { writeFileSync } from 'fs';
+   import path from 'path';
+   
+   const logPath = path.join(process.cwd(), './src/logs/access.log');
+   
+   @Injectable() // 继承 NestMiddleware 类
+   export class Logger implements NestMiddleware {
+     // 使用类的 use 方法调用 接下来就是熟悉的 express 中间件写法
+     use(req: Request, res: Response, next: NextFunction) {
+       console.log('[logger] - emit');
+       const match = req.originalUrl.match(/^\/user\/(\d+)/);
+   
+       if (match) {
+         const logContext = {
+           method: req.method,
+           path: req.originalUrl,
+           userId: match[1],
+         };
+         this.genLog(logContext);
+         next();
+         return;
+       }
+   
+       next();
+     }
+   
+     genLog(ctx: any) {
+       console.log(process.cwd());
+       writeFileSync(logPath, `[logger]: ${JSON.stringify(ctx)}\n`, {
+         flag: 'a+',
+       });
+     }
+   }
+   ```
+
+2.  模块使用
+
+   ```typescript
+   import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+   import { AppController } from './app.controller';
+   import { AppService } from './app.service';
+   import { Logger } from './middleware/logger/logger';
+   
+   @Module({
+     imports: [],
+     controllers: [AppController],
+     providers: [AppService],
+   }) // 实现 NestModule
+   export class AppModule implements NestModule {
+     // 配置中间件 调用 configure 方法 并接受一个 consumer 参数
+     configure(consumer: MiddlewareConsumer) {
+       // 使用 apply 调用中间件
+       consumer.apply(Logger).forRoutes('user');
+       // 1. forRoutes string 指定路径
+       // 2. forRoutes 进阶 自定义请求方法
+       // {
+       //   path: string;
+       //   method: RequestMethod; ...get post put delete
+       // }
+       // 3. forRoutes 直接传入 Controller 类
+     }
+   }
+   ```
+
+   

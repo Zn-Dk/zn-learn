@@ -3,10 +3,11 @@ interface IObserver {
   notify(args: unknown[]): void;
 }
 
-// 管理订阅者/消息发布者 Punisher
+// 被观察者/消息发布者 Punisher/Subject
 interface IObservable {
   subscribe(observer: Observer): void;
   unsubscribe(observer: Observer): void;
+  // 广播通知订阅者 -> 触发所有订阅者的 notify
   broadcast(args: unknown[]): void;
 }
 

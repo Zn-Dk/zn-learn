@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    h1 {
+      font-size: 48px;
+      background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
+      /* -webkit-text-fill-color: transparent; */
+      color: transparent;
+      -webkit-background-clip: text;
+    }
+
+    .svg-text {
+      font-size: 60px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- webkit 浏览器使用 -->
+  <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid aperiam maiores nulla fugiat iure cupiditate
+    porro magni, iusto dolores provident quibusdam debitis! Cumque, explicabo fugit dolorum ut dolorem voluptatibus
+  </h1>
+
+  <!-- svg 实现方式 -->
+  <svg class="svg-text" width="100%" height="100%">
+    <defs>
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="rgba(2, 0, 36, 0)" />
+        <stop offset="35%" stop-color="rgba(9, 9, 121,0.1)" />
+        <stop offset="100%" stop-color="rgba(0, 212, 255)" />
+      </linearGradient>
+    </defs>
+    <text x="0" y="50%" fill="url(#gradient)">Hello, World!</text>
+  </svg>
+
+</html>

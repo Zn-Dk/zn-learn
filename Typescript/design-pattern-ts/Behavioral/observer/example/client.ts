@@ -14,6 +14,7 @@ const columnGraph = new ColumnGraphView(graphDataModel);
 const pieGraph = new PieGraphView(graphDataModel);
 const tableGraph = new TableGraphView(graphDataModel);
 
+// controller 的 notify 方法操作 model 层带动 view 变化
 graphController.notify();
 /*
   ColumnGraphView drawing graph

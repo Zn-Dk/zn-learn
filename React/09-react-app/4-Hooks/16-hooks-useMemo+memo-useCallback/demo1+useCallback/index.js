@@ -3,21 +3,13 @@
 // import { render } from "react-dom";
 
 // React 18 新写法 (不需要引入 React 本体)
-import { createRoot } from "react-dom/client";
+import { createRoot } from 'react-dom/client';
 
-// import App from "./App";
-// import App from "./SearchCommentDemo";
-import App from "./useMemoDemo2";
+// import App from './useMemoDemo';
+// import App from './React-memo+useCallback';
+import App from './SearchCommentDemo';
 
-const container = document.querySelector("#root");
-
-// 旧写法
-// render(
-//   <StrictMode>
-//     <App />
-//   </StrictMode>,
-//   container
-// );
+const container = document.querySelector('#root');
 
 // 新写法
 // 1. 包裹 dom 元素 返回一个 root 对象

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 /*
   (1). State Hook让函数组件也可以有state状态, 并进行状态数据的读写操作
@@ -15,14 +15,14 @@ import React, { useState } from "react";
 export default () => {
   // let myCount = 0; // 因为每次渲染函数都会重新执行, 单纯的变量声明无法保持状态
   const [count, setCount] = useState(0);
-  const [name, setName] = useState("John");
+  const [name, setName] = useState('John');
 
   const add = () => {
     setCount(count + 1);
     // setCount((count) => count + 1);
   };
   const toggleName = () => {
-    setName(name === "Jack" ? "John" : "Jack");
+    setName(name === 'Jack' ? 'John' : 'Jack');
   };
 
   return (

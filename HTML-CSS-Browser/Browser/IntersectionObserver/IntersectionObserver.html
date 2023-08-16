@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      scroll-behavior: smooth;
+    }
+
+    .list {
+      margin-top: 100vh;
+      padding-bottom: 300px;
+    }
+
+    .img-list {
+      display: flex;
+      flex-direction: column;
+      gap: 100px;
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      list-style-type: none;
+    }
+
+    .box {
+      width: 300px;
+      aspect-ratio: 1/1;
+      background-color: pink;
+    }
+
+    .img-box {
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="wrap">
+    <ul class="list">
+      <li class="box">1</li>
+      <li class="box">2</li>
+      <li class="box">3</li>
+      <li class="box">4</li>
+      <li class="box">5</li>
+    </ul>
+
+    <div class="img-list">
+      <img class="box img-box" data-src="./test.png">
+      <img class="box img-box" data-src="./test.png">
+      <img class="box img-box" data-src="./test.png">
+      <img class="box img-box" data-src="./test.png">
+    </div>
+  </div>
+</body>
+
+<script src="./index.js"></script>
+
+</html>

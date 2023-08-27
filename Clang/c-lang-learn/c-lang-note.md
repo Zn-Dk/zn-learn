@@ -274,6 +274,8 @@ if (!bol)
   // sizeof num: 4 Byte
 ```
 
+- C99 提供 `stdbool.h` 头文件, 让 bool 成为 _Bool 的别名, 并把 true = 1, false = 0, **这样写出来的代码可以与 C++ 兼容**
+
 ### 浮点数
 
 浮点数类型包含
@@ -319,7 +321,7 @@ if (!bol)
     ```c
     float some = 4.0 * 2.0
        // 4.0 2.0 默认会使用 double 进行运算, 这可能造成性能问题
-  
+    
     ---
     /* fix */
     float some_float = 4.0f * 2.0f;
@@ -345,7 +347,9 @@ if (!bol)
 
 - 打印
 
-  - **转换说明** `%f` <- float/double %l
+  - **转换说明** 
+    - `%f` float
+    - `%lf` double 
   - 打印指数计数法的浮点数 `%e`
   - 位数控制: % 符号 + .(有效数字位数) + 标记 如两位有效数字 float `%.2f`
 
@@ -391,25 +395,6 @@ if (!bol)
 如果包含`complex.h`头文件，便可用`complex`代替 `_Complex`，用 `imaginary` 代替 `_Imaginary`，还可以用 `I` 代替-1 的平方根。
 
 > 小结：基本数据类型由 11 个关键字组成：int、long、short、unsigned、char、 float、double、signed、`_Bool`、`_Complex`和 `_Imaginary`。
-
-### sizeof 类型大小
-
-> `sizeof` 是 C 语言的内置运算符，以 **字节** **Byte** 为单位给出指定类型的大小。C99
-> 和 C11 提供 `%zd` 转换说明匹配 `sizeof` 的返回类型
-
-> 一些不支持 C99 和 C11 的 编译器可用 `%u` 或 `%lu` 代替 `%zd`。
-
-> 建议所有的 sizeof 调用都使用圆括号包裹变量 sizeof(...)
-
-**在 32/64 位 的系统上常见的变量 size:**
-
-| 类型               | sizeof (Byte 字节) |
-| ------------------ | ------------------ |
-| char / \_Bool      | 1                  |
-| short              | 2                  |
-| int / long / float | 4                  |
-| double / long long | 8                  |
-| long double        | 16                 |
 
 ### 命名规范
 
@@ -489,6 +474,23 @@ int main(void)
 ![image-20230821130915983](assets\image-20230821130915983.png)
 
 ![image-20230821131014338](assets\image-20230821131014338.png)
+
+### printf 的原则
+
+- 如果内部的转换声明对应的表达式不符合, 输出是不确定的, 如果都是数字类型, 可能出现类型转换,
+
+  如果是完全不同的类型, 可能会导致不输出
+
+- 返回 int 类型, 即 printf 的原表达式实参包含有多少个字符或者说这个表达式的字符串长度 (转义符, 空格也被计入)
+
+  ```c
+  // Example: 
+  printf("%d", printf("a: %d\n", 11));
+  // a: 11
+  // 6 <- 等同于 strlen("a: %d\n")
+  ```
+
+  
 
 ### printf 格式化演示
 
@@ -585,6 +587,25 @@ int main(void)
 
   > & 地址运算符
 
+- scanf **返回读取到目标数据的数量**
+
+  ```c
+  printf("%d", scanf("%lf", &db));
+  
+  // 1. 这里要求输入一个类型 double 的值
+  // 2. 如果输入 数字 类型, 返回 1 (数据符合类型)
+  // 3. 如果输入 其他 类型, 返回 0 (数据不符合类型)
+  ```
+
+  ```c
+  printf("%d", scanf("%lf, %d", &db, &i));
+  // 根据读取到的数量 可以是 0-2
+  ```
+
+  
+
+
+
 ### printf 和 scanf 的 \* 修饰符
 
 - printf
@@ -595,31 +616,31 @@ int main(void)
 
     ```c
     #include <stdio.h>
-  
+    
     int main(void)
     {
         int field;
         int num = 123;
         /**  printf * 修饰符 作用 提供字段宽度 */
-  
+    
         printf("Enter width of field\n");
         scanf("%d", &field);
         // 6
-  
+    
         // * 用于转换宽度 最后变为 %6d
         printf("field: |%*d|\n", field, num);
         // field: |   123|
-  
+    
         float fl = 123.456;
         int   precision;
         printf("Enter width and precision of field\n");
         scanf("%d %d", &field, &precision);
         // 8 2
-  
+    
         // * 按参数位次可以有多个, 例如: 用于打印浮点数
         printf("field: |%*.*f|\n", field, precision, fl);
         // field: |  123.46|
-  
+    
         return 0;
     }
     ```
@@ -700,3 +721,271 @@ and we have 40 bytes to store it.
 如果是 sizeof 则为声明大小
 
 - 依赖原型 `string.h`
+
+
+
+## 运算符、表达式和语句
+
+### 表达式 expression
+
+- 表达式由一个或多个**运算符**和**运算对象**组成
+
+- 每个表达式都有一个值
+
+- 关系表达式返回 `真假值`, C 只有 0 是假值,
+
+  其他都是真值
+
+
+
+### 语句 statement 
+
+- 语句是 C 的基本构建块, **以分号结尾**
+
+- 一条语句相当于完整的计算机指令
+
+  > a = 1 是表达式
+  >
+  > a = 1; 是语句
+
+- 最简单的语句是空语句 `;`
+
+- 语句的种类: 
+
+  > C 标准中声明不是语句, C++ 是
+
+  - 空语句
+
+  - 表达式语句 (赋值/函数)
+
+  - 迭代语句 (while / for)
+
+  - 跳转语句 (return / goto)
+
+  - 符合语句 块(花括号包裹)
+
+    > 比如在 while 中包括的块, 块确保了内部的语句都是一次循环的一部分, 内部的子语句被视为一条语句
+
+- 值得注意的是, 初始化可以在函数外部进行
+
+  ```c
+  #include <stdio.h>
+  
+  const int   MAGIC_NUM = 42;
+  const float PI        = 3.1415926;
+  char        a         = 'A';
+  
+  int main(void)
+  {
+      printf("%d %.6f \n", MAGIC_NUM, PI);
+      printf("a %c \n", a);
+  
+      return 0;
+  }
+  ```
+
+  
+
+
+
+### 运算符
+
+#### 赋值运算符 = 
+
+> 赋值运算符的左侧必须引用一个 **特定的存储(内存)位置** (指向一个指针, 只不过变量名有这样的属性) , C 使用 **可修改的左值** (也就是非 const 的对象, const 的初次赋值称为初始化) 标记那些可赋值的实体.
+
+- 左值 lvalue (标识或定位存储位置的标签)
+  - 也被称为项 - 运算对象(operand) - 运算符操作的对象
+- 右值 rvalue 表达式的值
+
+
+
+####  数学运算符
+
+> 以下运算符只能用于数值表达式的计算
+
+- 加法运算符 +
+- 减法运算符 -
+- 符号运算符 ± 也称一元运算符(只需要一个运算对象)
+- 乘法运算符 *
+- 除法运算符 /
+- 求模运算符 %
+
+> 1. 如果将浮点数和整数一起运算, 则 C 会统一转换为浮点数运算
+>
+> 2. 如果整数相除是浮点数, C 会截断, 留下整数部分
+> 3. 负数的整数除法, 采用 ceil: -3.8 -> -3
+
+#### 递增/递减运算符 ++a a++ a-- --a
+
+前缀模式(先递增再使用)和后缀模式(先使用再递增)
+
+优先级很高, 只比圆括号低一级
+
+**不要滥用, 会让代码可读性和稳定性降低**
+
+- 变量出现在函数的多个参数中, 不要使用
+- 变量多次出现在同一个表达式中, 不要使用
+
+#### sizeof 运算符
+
+> `sizeof` 类型大小是 C 语言的内置运算符，以 **字节** **Byte** 为单位给出指定类型的大小。C99 和 C11 提供 `%zd` 转换说明匹配 `sizeof` 的返回类型
+
+> 一些不支持 C99 和 C11 的 编译器可用 `%u` 或 `%lu` 代替 `%zd`。
+
+> 建议所有的 sizeof 调用都使用圆括号包裹变量 sizeof(...)
+
+**在 32/64 位 的系统上常见的变量 size:**
+
+| 类型               | sizeof (Byte 字节) |
+| ------------------ | ------------------ |
+| char / \_Bool      | 1                  |
+| short              | 2                  |
+| int / long / float | 4                  |
+| double / long long | 8                  |
+| long double        | 16                 |
+
+#### 强制类型转换运算符 cast operator
+
+在值的左侧使用如下格式:
+
+`(type)value` 使得右侧的值转换成括号内的指定类型
+
+```c
+...
+    int i;
+    i = (int)(5.0 * 2.0)
+    printf("%d", i);
+```
+
+```c
+    float a = 1.6, b = 1.7;
+    int   result;
+
+    result = a + b;  // 3.3
+    // 在 printf 中进行自动类型转换, 触发整数的截断
+    printf("%d \n", result);  // 3
+
+    // 提前对两个运算对象进行转换
+    result = (int)a + (int)b;  // 1 + 1
+    printf("%d \n", result);   // 2
+```
+
+一般来说都不太应该混合使用类型导致出现上面这两种类型转换情况, 除非这是个 feature 
+
+
+
+### 关系运算符 
+
+- 相等运算符 `==`
+
+- 不等运算符 `!=`
+
+-  `<` , `<=` ,`>=` ,`>`
+
+  > 在比较浮点数时, 尽量只使用 < 和 >. 因为浮点数有舍入误差
+  >
+  > 比如 1/3 保留小数 6 位,  * 3 乘积是 .999999 != 1
+  >
+  > 可以使用 math.h 的 fabs() 函数比较, 它返回一个浮点值的绝对值
+
+- 示例 比较浮点数
+
+  ```c
+  #include <math.h>
+  #include <stdio.h>
+  int main(void)
+  {
+      const double PI = 3.1415926;
+      double       user_pi;
+  
+      printf("What is PI value in your opinion: ");
+      scanf("%lf", &user_pi);
+      // fabs 比较浮点数 math.h, 返回绝对值
+      while (fabs(user_pi - PI) > 0.0001) {  // 绝对值大于目标精度时, 继续让用户输入
+          printf("Try again! more precisely\n");
+          scanf("%lf", &user_pi);
+      }
+  
+      // 用户输入达到精度要求 结束, 打印
+      printf("Right, PI is about %.8f, your inputs: %lf", PI, user_pi);
+  
+      /*
+        What is PI value in your opinion: 3.14
+        Try again! more precisely
+        3.1415
+        Right, PI is about 3.14159260, your inputs: 3.141500
+      */
+      return 0;
+  }
+  ```
+
+  
+
+
+
+## 控制流程
+
+### while
+
+#### 模式
+
+- 块模式 通用 (单行/复合语句)
+
+```c
+while (condition)
+{
+	// statement(s)...
+}
+```
+- 无括号模式 (单行语句参与循环)
+
+```c
+while (condition)
+    // single statement
+```
+
+#### 循环条件 
+
+- condition != 0 (不为假)
+
+- 每次循环被称为一次迭代(**iteration**)
+
+#### 终止条件
+
+- 上一次循环结束, 本次循环 condition 为假
+- 遇到了 break
+
+#### 注意
+
+```c
+while(...);
+	// code..;
+```
+
+while 本身是一条单独的语句, 如果直接在
+
+判别处**加上分号**, 则循环体就变成了**空语句**,
+
+这个 while 是没有意义的.
+
+> 有时候会有特殊的需求, 比如想跳过输入直到第一个非空字符或数字, 应该这么写:
+
+```c
+while(scanf("%d", &num) == 1)
+    ; // 注释且单独一行, 方便代码可读性和维护
+```
+
+
+
+## 函数
+
+### 形参和实参
+
+formal / actual
+
+argument 和 parameter 都可以,
+
+但是在 C99 规定, 实参应该使用 `argument`
+
+形参是 `parameter`

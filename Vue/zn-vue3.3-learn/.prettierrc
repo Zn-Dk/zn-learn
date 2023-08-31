@@ -1,0 +1,9 @@
+{
+  "singleAttributePerLine": true,
+  "singleQuote": true,
+  "bracketSpacing": true,
+  "printWidth": 100,
+  "jsxSingleQuote": false,
+  "semi": true,
+  "trailingComma": "all"
+}

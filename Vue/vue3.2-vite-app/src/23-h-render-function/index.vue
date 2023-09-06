@@ -60,6 +60,7 @@ const curTheme = ref<ThemeType>('default')
 const makeAlert = () => {
   alert(
     {
+      visible: true,
       theme: curTheme.value,
       text: curText.value,
       size: curSize.value,

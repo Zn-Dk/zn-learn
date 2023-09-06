@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #vid-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+
+    }
+
+    canvas {
+      width: 300px;
+    }
+
+    .frame-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .frame-box p {
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>使用 canvas 截取 video 视频帧</h1>
+  <div id="vid-container">
+
+  </div>
+  <script>
+
+    /**
+     * 将当前视频帧绘制到 canvas 上 (canvas 可以接受一个 HTMLVideoElement 并绘制图象)
+     * @param video HTMLVideoElement
+     * @returns {Promise}
+     */
+    const drawVideo = video => new Promise((resolve, reject) => {
+      // 创建, 设置canvas 画布为视频宽高
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+      resolve(canvas)
+    })
+
+    /**
+     * 截取视频帧
+     */
+    const captureVideoFrame = (video, timestamp = 1, framerate = 24) =>
+      new Promise((resolve, reject) => {
+        // 用视频帧换算视频时间, 将视频跳转至关键帧
+        video.currentTime = timestamp / framerate;
+        video.oncanplay = () => {
+          let frame = drawVideo(video);
+          resolve(frame);
+        }
+      });
+
+    /**
+     * 添加视频帧 handler
+     */
+    const handleAddFrame = async (i, vid, container) => {
+      // 视频容器
+      const frameBox = document.createElement("div");
+      frameBox.classList.add("frame-box");
+      // 时间轴文字
+      const timeText = document.createElement("p");
+      timeText.innerText = `00:${String(i).padStart(2, '0')}`
+      // 帧图像
+      const frame = await captureVideoFrame(vid, i * 100);
+      frameBox.append(frame, timeText);
+
+      container.append(frameBox)
+    }
+
+    // 初始化
+    window.onload = async () => {
+      const container = document.getElementById('vid-container')
+      const vid = document.createElement("video");
+      vid.src = "./file_example_MP4_640_3MG.mp4"
+      vid.muted = true;
+
+      let counter = 0;
+      for (let i = 1; i <= 10; i++) {
+        setTimeout(() => {
+          handleAddFrame(i, vid, container)
+        }, i * 500);
+      }
+    }
+  </script>
+</body>
+
+</html>

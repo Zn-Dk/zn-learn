@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="visible"
+    v-show="visible"
     class="alert"
     :style="currentStyle"
   >
@@ -17,8 +17,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, getCurrentInstance, ComponentInternalInstance } from 'vue'
 import { SizeType, ThemeType } from './type'
-
-const visible = ref(true)
 
 const sizeMap = {
   big: 32,
@@ -42,6 +40,7 @@ const currentStyle = computed(() => ({
 
 const props = withDefaults(
   defineProps<{
+    visible: boolean
     theme?: ThemeType
     size?: SizeType
     text?: string
@@ -57,13 +56,12 @@ const inst = ref<ComponentInternalInstance>();
 onMounted(() => {
   console.log('mount')
   inst.value = getCurrentInstance()
-  
+
   console.log(inst)
 })
 
 const onClose = () => {
   inst.value.vnode.el.remove();
-  visible.value = false
 }
 onUnmounted(() => {
   console.log(123)

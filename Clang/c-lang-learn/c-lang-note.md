@@ -622,7 +622,41 @@ int main(void)
   // 根据读取到的数量 可以是 0-2
   ```
 
-  
+
+### scanf 在循环中的读取处理**
+
+- 编写一个程序，要求用户输入两个浮点数，并打印两数之差除以两数乘积的结果。
+
+  在用户输入非数字之前，程序应循环处理用户输入的每对值
+
+- 下面这个例子, 去掉 getchar() 当用户输入有误时, 程序会一直循环打印中间的 printf 语句
+
+> 解释:
+>
+> - 当你输入一个字符按回车后，你实际上是在缓冲区输入了两个字符，一个是你输入的，一个是回车符本身，这会导致你输入一个字符后就会循环两次
+>
+> - 解决方法是清除缓冲或吃掉那个回车，方法很多，比如用**fflush(stdin)或者getchar()**
+
+```c
+double calc_num(double a, double b);
+
+int main(void)
+{
+    double a, b;
+    do {
+        printf("Enter two double: \n");
+        getchar();  // 加上后可防止读取回车符导致无限循环
+    } while (scanf("%lf %lf", &a, &b) != 2);
+
+    printf("Result %lf", calc_num(a, b));
+    return 0;
+}
+... 
+```
+
+
+
+
 
 
 
@@ -1079,12 +1113,19 @@ for (initialize; test; update)
 
 ## 数组
 
-- 说明
+- 声明
 
   ```c
   type array_name[length]
   ```
 
+- 初始化(动态数组)
+
+  ```c
+  // 声明动态数组并初始化
+  int nums[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  ```
+  
 - 赋值
 
   ```c
@@ -1109,3 +1150,42 @@ argument 和 parameter 都可以,
 但是在 C99 规定, 实参应该使用 `argument`
 
 形参是 `parameter`
+
+
+
+### C 语言的函数基本组成
+
+- 声明函数 **
+
+  - ```c
+    double power(double n, int p)
+    // 这也可以称作函数原型
+    ```
+    
+  - 注意
+
+      > 编译器在首次执行函数前, 需要知道函数的定义
+      >
+      > 必须通过前置声明预先说明函数的**参数和返回类型**
+
+      > 如果函数的定义置于 main **的顶部, 就可以省略**,
+      >
+      > 否则就是必须的, C 的标准风格则是 main 前置,
+      >
+      > 除非引入头文件
+
+- 定义函数
+
+  - 包括函数声明部分和函数体
+
+  - ```c
+    double power(double n, int p)
+    {
+        double result = 1;
+        int i = 0;
+        for(i; i < p; i++) {
+            result *= n;
+        }
+        return result;
+    }
+    ```

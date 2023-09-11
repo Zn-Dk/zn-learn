@@ -2,6 +2,9 @@
   "files.associations": {
     "stdio.h": "c",
     "string.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "my.h": "c",
+    "windows.h": "c",
+    "limits": "c"
   }
 }

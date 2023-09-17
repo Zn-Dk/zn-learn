@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      /* display: none; */
+      height: 10%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    html,
+    body,
+    .container {
+      height: 100%;
+    }
+
+    .container {
+      display: flex;
+      overflow-y: auto;
+      flex-flow: column nowrap;
+      /* 1. 父容器 设置滚动类型
+      确保显示的滚动条属于父 div
+      将父容器的 overflow 行为定义为 scroll
+
+          direction: x | y | both ..
+          type: mandatory
+          强制滚动, 效果最强, 一般也是使用这种
+          type: proximity
+          在滚动到区域边缘时 应用动画 较为温和
+      */
+      scroll-snap-type: y mandatory;
+
+      /** 存在 header 且 header 覆盖滚动区域时 设置 padding */
+      /* scroll-padding-top: 10%; */
+
+    }
+
+    section {
+      /*  2. 滚动子元素 设置滚动对齐方式
+          (重要, 如果不设置 不生效)
+            none 默认 不生效
+            start 顶端对齐
+            end 底部
+            center 中间
+      */
+      scroll-snap-align: start;
+      /**
+          (3) 如果希望在移动设备上避免因用户快速滑动而跳页, 则应设置下面为 always
+      */
+      scroll-snap-stop: always;
+
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      height: 100vh;
+      color: #fff;
+      text-shadow: 0 0 4px #000;
+    }
+
+    h2 {
+      font-size: 6.5vw;
+    }
+
+    p {
+      font-size: 3vw;
+      padding: 30px;
+    }
+
+    .sect1 {
+      background-color: palevioletred;
+    }
+
+    .sect2 {
+      background-color: goldenrod;
+    }
+
+    .sect3 {
+      background-color: orangered;
+    }
+
+    .sect4 {
+      background-color: slateblue;
+    }
+
+    .sect5 {
+      background-color: brown;
+    }
+
+    .sect6 {
+      background-color: seagreen;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    Header
+  </header>
+  <div class="container">
+    <section class="sect1">
+      <h2>Section 1</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magni cupiditate hic molestias accusantium.
+        Necessitatibus quibusdam dolor veniam aliquam odit vitae accusamus! Doloribus suscipit vel iusto eaque facere,
+        repellendus dolor.</p>
+    </section>
+    <section class="sect2">
+      <h2>Section 2</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magni cupiditate hic molestias accusantium.
+        Necessitatibus quibusdam dolor veniam aliquam odit vitae accusamus! Doloribus suscipit vel iusto eaque facere,
+        repellendus dolor.</p>
+    </section>
+    <section class="sect3">
+      <h2>Section 3</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magni cupiditate hic molestias accusantium.
+        Necessitatibus quibusdam dolor veniam aliquam odit vitae accusamus! Doloribus suscipit vel iusto eaque facere,
+        repellendus dolor.</p>
+    </section>
+    <section class="sect4">
+      <h2>Section 4</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magni cupiditate hic molestias accusantium.
+        Necessitatibus quibusdam dolor veniam aliquam odit vitae accusamus! Doloribus suscipit vel iusto eaque facere,
+        repellendus dolor.</p>
+    </section>
+    <section class="sect5">
+      <h2>Section 5</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magni cupiditate hic molestias accusantium.
+        Necessitatibus quibusdam dolor veniam aliquam odit vitae accusamus! Doloribus suscipit vel iusto eaque facere,
+        repellendus dolor.</p>
+    </section>
+    <section class="sect6">
+      <h2>Section 6</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magni cupiditate hic molestias accusantium.
+        Necessitatibus quibusdam dolor veniam aliquam odit vitae accusamus! Doloribus suscipit vel iusto eaque facere,
+        repellendus dolor.</p>
+    </section>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debugger test</title>
+</head>
+
+<body>
+  <h1>禁止用户打开控制台测试</h1>
+  <script>
+    const noConsole = () => {
+      const startTime = Date.now();
+      debugger;
+      const endTime = Date.now();
+      console.log('debugger 执行时间：', endTime - startTime);
+      // 判断依据 如果中途有暂停, 两个执行时间会至少有半秒左右, 这时候直接跳转至 about:blank 空白页
+      if (endTime - startTime > 500) {
+        location.replace ? location.replace('about:blank') : location.href = 'about:blank';
+      }
+      requestAnimationFrame(noConsole);
+    }
+
+    // 加载网页后持续执行任务
+    requestAnimationFrame(noConsole);
+  </script>
+</body>
+
+</html>

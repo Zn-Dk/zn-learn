@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .parallax {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 100px;
+
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      /** 视差滚动关键性步骤 固定背景 */
+      background-attachment: fixed;
+    }
+
+    .parallax h2 {
+      color: #fff;
+      text-shadow: 0 4px 6px #333;
+      font-size: 100px;
+    }
+
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      padding: 40px 80px;
+      color: #f1f1f1;
+      font-size: 24px;
+      background-color: #333;
+    }
+
+    .content span.title {
+      font-size: 48px;
+    }
+
+    .pic1 {
+      background-image: url(https://picsum.photos/1920/1080);
+    }
+
+    .pic2 {
+      background-image: url(https://picsum.photos/1920/1080?blur=2);
+    }
+
+    .pic3 {
+      background-image: url(https://picsum.photos/1920/1080?grayscale=20);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="item">
+    <div class="parallax pic1">
+      <h2>LOREM</h2>
+    </div>
+    <div class="content">
+      <p>
+        <span class="title">Chapter 1.</span>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam aut sunt consequatur placeat quaerat
+        recusandae?
+        Itaque, placeat dignissimos alias repellat minima nesciunt asperiores, amet dolorum quaerat officiis
+        sapiente
+        reiciendis. Molestias!
+      </p>
+    </div>
+  </div>
+  <div class="item">
+    <div class="parallax pic2">
+      <h2>DOLOR</h2>
+    </div>
+    <div class="content">
+      <p>
+        <span class="title">Chapter 2.</span>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam aut sunt consequatur placeat quaerat
+        recusandae?
+        Itaque, placeat dignissimos alias repellat minima nesciunt asperiores, amet dolorum quaerat officiis
+        sapiente
+        reiciendis. Molestias!
+      </p>
+    </div>
+  </div>
+  <div class="item">
+    <div class="parallax pic3">
+      <h2>CONSECTETUR</h2>
+    </div>
+    <div class="content">
+      <p>
+        <span class="title">Chapter 3.</span>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam aut sunt consequatur placeat quaerat
+        recusandae?
+        Itaque, placeat dignissimos alias repellat minima nesciunt asperiores, amet dolorum quaerat officiis
+        sapiente
+        reiciendis. Molestias!
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>

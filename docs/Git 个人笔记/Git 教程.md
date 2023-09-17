@@ -7,14 +7,18 @@
 
 
 
-## 个人信息配置(首次commit 前会询问)
+## Git 工作流概览
+
+![](assets/image-20220905220220-tgb8kb7.png)
+
+
+
+## 个人信息配置(首次 commit 前会询问)
 
 ```bash
-git config --global user.email "qiu5873@gmail.com"
+git config --global user.email "xxxx@gmail.com"
 git config --global user.name  "zn_dk"
 ```
-
-![image](assets/image-20220905220220-tgb8kb7.png)
 
 ## 配置公钥免密推送SSH
 
@@ -1001,15 +1005,15 @@ git rebase -i 6938e5e0
 
 3. 输入 `:wq` 保存后，会进入到从新修改提交日志界面
 
-![img](https://pic2.zhimg.com/80/v2-13948e6432c594351f3491676b26aad5_720w.webp)
+![img](assets\v2-13948e6432c594351f3491676b26aad5_720w.webp)
 
 4. 我们只需要删除这些日志，从新输入我们本次功能开发的日志即可：
 
-![img](https://pic1.zhimg.com/80/v2-b9ccb58aed3801235899118abcd4fee0_720w.webp)
+![img](assets\v2-b9ccb58aed3801235899118abcd4fee0_720w.webp)
 
 \5. 再次输入：`:wq` 保存退出即可，最后查看日志如下：
 
-![img](https://pic4.zhimg.com/80/v2-fe32183295994fc1de1e2f5604fa8d9b_720w.webp)
+![img](assets\v2-fe32183295994fc1de1e2f5604fa8d9b_720w.webp)
 
 这个世界真的很美好！！！
 
@@ -1019,13 +1023,13 @@ git rebase -i 6938e5e0
 
 **现实是这样的？**
 
-![img](https://pic3.zhimg.com/80/v2-247cdd9aa46e4172a0c47dafcbfb14ca_720w.webp)
+![img](assets\v2-247cdd9aa46e4172a0c47dafcbfb14ca_720w.webp)
 
 **使用 `rebase` 变基前后对比**
 
 
 
-![img](https://pic4.zhimg.com/80/v2-85509399b55e86b59322e4534994ddb7_720w.webp)
+![img](assets\v2-85509399b55e86b59322e4534994ddb7_720w.webp)
 
 
 

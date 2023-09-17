@@ -5,6 +5,7 @@
     "stdlib.h": "c",
     "my.h": "c",
     "windows.h": "c",
-    "limits": "c"
+    "limits": "c",
+    "ctype.h": "c"
   }
 }

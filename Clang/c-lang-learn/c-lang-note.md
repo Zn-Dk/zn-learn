@@ -622,8 +622,10 @@ int main(void)
   // 根据读取到的数量 可以是 0-2
   ```
 
+### 在循环中读取清除缓冲区的处理**
 
-### scanf 在循环中的读取处理**
+- 适用于 getchar() scanf() 等输入场景
+- 可参考 [[C语言 getchar()原理及易错点解析](https://blog.csdn.net/weixin_44551646/article/details/98076863)]
 
 - 编写一个程序，要求用户输入两个浮点数，并打印两数之差除以两数乘积的结果。
 
@@ -633,7 +635,7 @@ int main(void)
 
 > 解释:
 >
-> - 当你输入一个字符按回车后，你实际上是在缓冲区输入了两个字符，一个是你输入的，一个是回车符本身，这会导致你输入一个字符后就会循环两次
+> - 当你输入一个字符按回车后，你实际上是在缓冲区输入了两个字符，一个是你输入的，一个是换行符本身，**这会导致你输入一个字符后, 这个换行符还留在缓冲区里**面, 在下次进入循环时, 读取的参数位置就会出问题
 >
 > - 解决方法是清除缓冲或吃掉那个回车，方法很多，比如用**fflush(stdin)或者getchar()**
 
@@ -645,7 +647,8 @@ int main(void)
     double a, b;
     do {
         printf("Enter two double: \n");
-        getchar();  // 加上后可防止读取回车符导致无限循环
+        // getchar();  // 加上后可防止回车符导致无限循环
+        while
     } while (scanf("%lf %lf", &a, &b) != 2);
 
     printf("Result %lf", calc_num(a, b));
@@ -654,9 +657,41 @@ int main(void)
 ... 
 ```
 
+那加入输入的内容带有未知个空格, 总不能每一个字符都清理一次 getchar()
+
+于是有了更完整的形式:
+
+```c
+...  
+while (getchar() != 'y') {
+        printf("now %d\n", ++n);
+		// 通过下面这个 while 读取缓冲区剩余的部分删除缓存
+        // 1. 如果里面不是换行符,也就是多余的部分, 相当于什么都不做
+        // 2. 如果读取了 \n 可以认为这是用户输入的末端
+        // while 不再循环, 缓冲区这个时候也空出来了, 代码继续
+        while (getchar() != '\n')
+            continue;
+    }
+
+    printf("Done\n");
+...
+```
 
 
 
+> https://www.zhihu.com/question/29549162/answer/1363157642
+>
+> 
+>
+> 你输入了ab［enter］ （这里的［enter］为回车键），在缓冲区中有上述输入的3个字符。
+>
+> 在你按下enter时，getchar便开始从缓冲区读取数据。
+>
+> 因为getchar每次只读取一个字符，第一个getchar读取a，执行a中的情况，然后进入到while那一行，然后接下来由于有getchar 要读取一个字符，而a已经被读取，则读取b，b符合while条件，则进行continue。但是由于while里的getchar不像第一个getchar中的值被赋给了ch，那么就相当于什么都不做。（其实即使被赋给了ch，结果也一样的）然后由于continue，则返回到while循环，getchar又要读取一个字符，则读取的是＼n，相当于读取b的时候什么都没做就读取了＼n，而缓冲区中的数据被读取后，则数据可以近似认为消失，那么b就消失了，即丢弃了b。读取＼n的时候，虽然不满足循环条件，但是它是先读取再判断是否符合条件，也即＼n也和b一样消失了，即被丢弃。
+>
+> 此时不再进行循环，退出循环，即此步骤只读取了第一个字符，丢弃其余字符。
+>
+> 此时你再输入新的字符时，因为b和enter被丢弃，下一个读取的不会是b，再下一个也不是enter。此时读取的是你输入的第一个字符。
 
 
 
@@ -727,7 +762,7 @@ int main(void)
 
 ## 字符串
 
-#### 使用数组存储字符串
+### 使用数组存储字符串
 
 ```c
 ...
@@ -768,13 +803,53 @@ and we have 40 bytes to store it.
 1. 'x' 是基本类型 char, "x" 是派生类型 char[]
 2. "x" 实际由两个字符组成, 即 'x' 和 空字符\0(null char)
 
-#### strlen()
+### strlen()
 
-用于给出字符串变量的**实际字符(不含尾部空字符)(Byte)长度**
+- 功能: 用于给出字符串变量的**实际字符(不含尾部空字符)(Byte)长度**
 
-如果是 sizeof 则为声明大小
+- 如果是 sizeof 则为声明大小
 
 - 依赖原型 `string.h`
+
+
+
+### getchar()
+
+- 功能: 从输入队列中返回下一个字符
+
+- 不需要转换声明, 只能处理字符
+
+- Example
+
+  ```c
+  ch = getchar();
+  // 这条语句相当于下面
+  scanf("%c", &ch);
+  ```
+
+  
+
+### putchar()
+
+- 功能: 打印输入参数字符
+
+- 不需要转换声明, 只能处理字符
+
+- Example
+
+  ```c
+  putchar(ch);
+  // 这条语句相当于下面
+  printf("%c", ch);
+  ```
+
+  
+
+
+
+
+
+
 
 
 
@@ -870,63 +945,6 @@ and we have 40 bytes to store it.
 > 2. 如果整数相除是浮点数, C 会截断, 留下整数部分
 > 3. 负数的整数除法, 采用 ceil: -3.8 -> -3
 
-#### 递增/递减运算符 ++a a++ a-- --a
-
-前缀模式(先递增再使用)和后缀模式(先使用再递增)
-
-优先级很高, 只比圆括号低一级
-
-**不要滥用, 会让代码可读性和稳定性降低**
-
-- 变量出现在函数的多个参数中, 不要使用
-- 变量多次出现在同一个表达式中, 不要使用
-
-#### sizeof 运算符
-
-> `sizeof` 类型大小是 C 语言的内置运算符，以 **字节** **Byte** 为单位给出指定类型的大小。C99 和 C11 提供 `%zd` 转换说明匹配 `sizeof` 的返回类型
-
-> 一些不支持 C99 和 C11 的 编译器可用 `%u` 或 `%lu` 代替 `%zd`。
-
-> 建议所有的 sizeof 调用都使用圆括号包裹变量 sizeof(...)
-
-**在 32/64 位 的系统上常见的变量 size:**
-
-| 类型               | sizeof (Byte 字节) |
-| ------------------ | ------------------ |
-| char / \_Bool      | 1                  |
-| short              | 2                  |
-| int / long / float | 4                  |
-| double / long long | 8                  |
-| long double        | 16                 |
-
-#### 强制类型转换运算符 cast operator
-
-在值的左侧使用如下格式:
-
-`(type)value` 使得右侧的值转换成括号内的指定类型
-
-```c
-...
-    int i;
-    i = (int)(5.0 * 2.0)
-    printf("%d", i);
-```
-
-```c
-    float a = 1.6, b = 1.7;
-    int   result;
-
-    result = a + b;  // 3.3
-    // 在 printf 中进行自动类型转换, 触发整数的截断
-    printf("%d \n", result);  // 3
-
-    // 提前对两个运算对象进行转换
-    result = (int)a + (int)b;  // 1 + 1
-    printf("%d \n", result);   // 2
-```
-
-一般来说都不太应该混合使用类型导致出现上面这两种类型转换情况, 除非这是个 feature 
-
 
 
 #### 关系运算符 
@@ -939,7 +957,7 @@ and we have 40 bytes to store it.
 
 - 不等运算符 `!=`
 
--  `<` , `<=` ,`>=` ,`>`
+- `<` , `<=` ,`>=` ,`>`
 
   > 在比较浮点数时, 尽量只使用 < 和 >. 因为浮点数有舍入误差
   >
@@ -978,7 +996,105 @@ and we have 40 bytes to store it.
   }
   ```
 
-  
+
+
+
+#### 递增/递减运算符
+
+-  `++a` `a++` `a--` `--a`
+
+- 分前缀模式(先递增再使用)和后缀模式(先使用再递增)
+
+>  优先级很高, 只比圆括号低一级
+
+>  **不要滥用, 会让代码可读性和稳定性降低**
+>
+> - 变量出现在函数的多个参数中, 不要使用
+> - 变量多次出现在同一个表达式中, 不要使用
+
+
+
+#### 逻辑运算符
+
+- `&&` 与
+- `||` 或
+- `!` 非 
+
+> 优先级:
+>
+> ! 高于算术运算符，同递增运算符，只低于圆括号
+>
+> && || 两个高于赋值运算符, 低于关系运算符
+
+> 使用 iso646.h 可以使用逻辑运算符的备选 and or not
+
+
+
+#### 条件(三元)运算符
+
+```c
+variable = expression ? expression_true : expression_false
+```
+
+
+
+
+
+#### sizeof 运算符
+
+`sizeof` 类型大小是 C 语言的内置运算符，以 **字节** **Byte** 为单位给出指定类型的大小。C99 和 C11 提供 `%zd` 转换说明匹配 `sizeof` 的返回类型
+
+> 一些不支持 C99 和 C11 的 编译器可用 `%u` 或 `%lu` 代替 `%zd`。
+
+> 建议所有的 sizeof 调用都使用圆括号包裹变量 sizeof(...)
+
+**在 32/64 位 的系统上常见的变量 size:**
+
+| 类型               | sizeof (Byte 字节) |
+| ------------------ | ------------------ |
+| char / \_Bool      | 1                  |
+| short              | 2                  |
+| int / long / float | 4                  |
+| double / long long | 8                  |
+| long double        | 16                 |
+
+
+
+#### 强制类型转换运算符 cast operator
+
+在值的左侧使用如下格式:
+
+`(type)value` 使得右侧的值转换成括号内的指定类型
+
+```c
+...
+    int i;
+    i = (int)(5.0 * 2.0)
+    printf("%d", i);
+```
+
+```c
+    float a = 1.6, b = 1.7;
+    int   result;
+
+    result = a + b;  // 3.3
+    // 在 printf 中进行自动类型转换, 触发整数的截断
+    printf("%d \n", result);  // 3
+
+    // 提前对两个运算对象进行转换
+    result = (int)a + (int)b;  // 1 + 1
+    printf("%d \n", result);   // 2
+```
+
+一般来说都不太应该混合使用类型导致出现上面这两种类型转换情况, 除非这是个 feature 
+
+##### char() 转换函数
+
+- 使用此函数可以将一个 int 类型的值转换成字符 char(int)
+
+
+
+
 
 #### 逗号运算符
 
@@ -1111,6 +1227,273 @@ for (initialize; test; update)
 
 
 
+
+
+### if
+
+- 模式
+
+  - 单行(简单)语句
+
+  ```c
+  if ( expression )
+  	statement
+  ```
+
+  - 复合语句
+
+  ```c
+  if ( expression )
+  {
+  	statements
+  }
+  ```
+
+
+
+### if-else-else if
+
+- 模式
+
+  - 单行(简单)语句
+
+  ```c
+  if ( expression )
+  	statementA
+  else
+      statementB
+  ```
+
+  - 复合语句
+
+  ```c
+  if ( expression )
+  {
+  	statementA
+  } else
+  {
+      statementB
+  }
+  ```
+
+  - 复合语句 + 简单语句组合 (这是允许的)
+
+  ```c
+  if ( expression )
+  {
+  	statementA
+  } else
+      statementB
+  ```
+
+#### else if
+
+```c
+int score;
+printf("Enter score(0-100): ");
+
+if (scanf("%d", &score) != 1) {
+    printf("Wrong input");
+}
+else if (score > 100) {
+    printf("Out of score range");
+}
+else {
+    if (score >= 95)
+        printf("A");
+    else if (score >= 80)
+        printf("B");
+    else if (score >= 70)
+        printf("C");
+    else if (score >= 60)
+        printf("D");
+    else
+        printf("E");
+} 
+```
+
+
+
+### if-esle 匹配注意事项*
+
+规则是, 如果没有花括号, **else 与离他最近的 if 匹配**
+
+- 示例1
+
+  ```c
+  // 如果不加花括号, else 其实是 与 n < 12 的 if 匹配
+  if (n > 6) 
+      if (n < 12) 
+          printf("You are right");
+  else
+      printf("You lose");
+  
+  // n = 5 , 无输出
+  // n = 8 , You are right
+  // n = 16 , You lose
+  ```
+
+- 示例2
+
+  ```c
+  // 如果需要让最外层 if else 匹配 必须加上括号(实际也推荐编写代码这样操作)
+   if (n > 6) {
+       if (n < 12) {
+           printf("You are right");
+       }
+   }
+   else
+       printf("You lose");
+  ```
+
+
+
+
+
+### 循环 continue break
+
+- 适用于所有类型循环 while for do while
+
+- continue 跳过本次迭代剩余部分
+
+  > for 循环中执行 continue 后会正常执行迭代后的副作用(比如count++),
+  >
+  > while 则一般没有这种情况(除非判断表达式中做了操作), 只是重复执行代码块
+
+- break 终止循环迭代代码块 和在 switch 语句使用
+
+- 有必要时才使用
+
+  > 如果代码块的判断只有一次, 能够使用多重逻辑序列 比如 && ||,就不需要再后面补充关键字, 避免代码复杂化
+
+
+
+
+
+### switch 
+
+- 模式
+
+  ```c
+  switch (expression)
+  {
+  	case CONST_VAL: // must be a constant value
+      case CONST_VAL2: // (optional) accept multiple values
+  		/* code */
+  		break; // optional, continue to next case
+  	...
+  	default:
+  		/* optional fallback */;
+          break;
+  }
+  ```
+
+- 示例
+
+  ```c
+  int main(void)
+  {
+      char ch;
+  
+      printf("enter a char, # to exit: ");
+      while ((ch = getchar()) != '#') {
+          switch (ch) {
+              case 'a':
+                  printf("this is a\n");
+                  break;
+              case 'b':
+                  printf("this is b\n");
+                  break;
+              // 无 break
+              case 'c':
+                  printf("this is c\n");
+              case 'd':
+                  printf("this is d or c\n");
+                  break;
+              // 多 case
+              case 'e':
+              case 'E':
+                  printf("this is e or E\n");
+                  break;
+              default:
+                  printf("404 not found\n");
+                  break;
+          }
+  
+          // 跳过剩余部分
+          getchar();
+          // while (getchar() != '\n')
+          //     continue;
+  
+          printf("Now Enter another one, # to exit: ");
+      }
+  
+      printf("Goodbye!");
+      return 0;
+  }
+  ```
+
+
+
+
+
+
+
+### goto (不推荐)
+
+- 模式
+
+  ```c
+  if ( ... ) 
+      goto tag_name
+     
+  tag_name:  
+  	// some code
+  ```
+
+- 示例
+
+  ```c
+      char ch = getchar();
+  
+      if (ch == 'X')
+          goto part_x;
+      goto part_nor;
+  
+  part_x:
+      printf("Oh, something happen!\n");
+  part_nor:
+      printf("normal routine finished.\n");
+  ```
+
+> C 语言保留类似 BASIC Fortran 的 goto 能力
+> 因为(旧版本)他们没有 break/continue, 而且不支持 if 后跟块或复合语句, 所以这两种语言逻辑上实现不方便, 
+>
+> C 的 if-else break/continue 相比之, 逻辑更清晰, 结构更先进.(甚至goto 都不用写数字 :笑)
+>
+> 实际上 break/continue 是 goto 的特殊形式, 只不过语义化
+>
+> 教材说: **原则上 根本不要在 C 语言中使用 goto**
+
+- 什么时候使用呢? 
+
+  ```c
+  for(...) {
+  	for (...) {
+  		for(...) {
+  			if (case) 
+  				goto done; // 直接跳出嵌套循环
+  		}
+  	}
+  }
+  
+  done: .... // 对的 这个时候用就比较方便
+  ```
+
+  
+
+
+
 ## 数组
 
 - 声明
@@ -1137,7 +1520,135 @@ for (initialize; test; update)
 
   
 
+## 输入与输出
 
+### 缓冲区
+
+- 英文 `buffer`
+
+- 缓冲输入： 现代计算机系统基本为缓冲输入, 即按下回车之前不会重复打印刚才输入的字符
+
+  输入会被存储到临时缓冲区 `buffer` 内, **按下回车后程序才可以使用。**
+
+- 无缓冲输入可用在游戏对用户操作的响应
+
+<img src="assets/缓冲输入.png" alt="缓冲输入图解" style="zoom: 67%;" />
+
+
+
+### 缓冲分类
+
+- 完全缓冲I/O : 缓冲区填满后刷新
+
+  > 通常出现在文件输入中, 大小取决于系统,
+  >
+  > 512 Bytes / 4096 Bytes
+
+- 行缓冲I/O: 输入出现换行符就刷新
+
+  > 键盘输入通常是行缓冲
+
+- 调用无缓冲的方式?
+
+  在 PC 下, 可以使用 conio.h 
+
+  ```c
+  #include <stdio.h>
+  #include <conio.h>
+  int main(void)
+  {
+      char ch;
+  
+      // 引入 conio.h 实现无缓冲输入
+      // getche() - 回显的无缓冲 getch() - 无回显无缓冲
+      while ((ch = getche()) != '#')
+          putchar(ch);
+  
+      return 0;
+  }
+  ```
+
+  
+
+### 文件结尾
+
+- 利用 Ctrl+Z (^z) 较老的系统
+
+- 利用文件的大小判断
+
+- C 语言在 getchar() / scanf() 读取文件检测到结尾时返回一个特殊的值
+
+  > `EOF` (end of file), 在 `stdio.h` 有定义: `#define EOF -1`
+  >
+  > 至于为什么是 -1, 是因为 char 的范围可能是 0~255, 故 -1 不会
+  >
+  > 代表其他任何字符, 就将其作为文件尾标识。	
+  > 因此, 可以使用: (声明 int ch, 因为 EOF 不存在于 char 当中)
+  >
+  > `while ((ch = getchar()) != EOF)` 判断是否到达文件结尾
+
+- 在 unix 和 linux 可以用 Ctrl+D 实现键盘发送 EOF | PC 则是 Ctrl+Z
+
+  (实测 unix 的 Ctrl+Z 也可以发送 EOF, 但是 PC 用 Ctrl+D 则无效)
+
+
+
+### 重定向
+
+准备如下程序 echo-io.c , 这也是上一节所说的反射io程序, 以这个程序配合操作系统重定向,就可以实现 读取文件内容 和 将用户输入的内容写入文本文件
+
+```c
+// echo-io.c
+#include <stdio.h>
+
+int main(void)
+{
+    int ch;
+
+    while ((ch = getchar()) != EOF)
+        putchar(ch);
+
+    return 0;
+}
+```
+
+
+
+#### 重定向输入 <
+
+模式: `文本读取程序 < 文本文件`
+
+示例: `./echo-io < word.txt` 
+
+结果: 打印 `word.txt` 的内容
+
+#### 重定向输出 >
+
+模式: `文本输入程序(用户输入文本) > 文本文件`
+
+示例: `./echo-io > word.txt`
+
+结果: 输入一段文本, 然后发送 EOF 给命令行, word.txt 内容被**覆写**为刚才的输入
+
+#### 组合重定向
+
+如果希望实现文件拷贝重命名, 还可以这样:
+
+`./echo-io < word > anotherword` 
+
+或者 `/echo-io > anotherword < word `
+
+实现功能与重定向运算符顺序无关, 但是输入输出的文件名不能一致.
+
+有几条原则:
+
+ - 重定向运算符只能连接**一个可执行文件、命令** 和**一个数据文件**
+ - 重定向运算符不能连续读取**多个**文件输入和将输出定向至**多个**文件
+
+#### 其他运算符
+
+- `>>` 用于将数据添加到文件末尾, 而不是覆写
+- `|` 将文件的输出链接到另一个文件的输入 (例如 linux 的  cmd|grep 'xx' )
 
 ## 函数
 

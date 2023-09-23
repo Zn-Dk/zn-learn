@@ -1,6 +1,10 @@
+#include <ctype.h>
 #include <stdio.h>
 
 /*
+    .修改第7章的编程练习8，用字符代替数字标记菜单的选项。用q代替5
+作为结束输入的标记
+
     编写一个程序，提示用户输入一周工作的小时数，然后打印工资总额、税金和净收入。
     做如下假设：
     a.基本工资 = 1000美元/小时
@@ -46,27 +50,28 @@ int main(void)
 
     printf("*****************************************************************\n"
            "Enter the number corresponding to the desired pay rate or action:\n"
-           "1) $8.75/hr  2) $9.33/hr\n"
-           "3) $10.00/hr 4) $11.20/hr\n"
-           "5) quit\n"
+           "a) $8.75/hr  b) $9.33/hr\n"
+           "c) $10.00/hr d) $11.20/hr\n"
+           "q) quit\n"
            "*****************************************************************\n");
 
-    while (1) {
-        scanf("%d", &category);
+    while ((category = getchar()) != '\n') {
+        category = tolower(category);
+
         switch (category) {
-            case 1:
+            case 'a':
                 salary_per_h = LV_1;
                 break;
-            case 2:
+            case 'b':
                 salary_per_h = LV_2;
                 break;
-            case 3:
+            case 'c':
                 salary_per_h = LV_3;
                 break;
-            case 4:
+            case 'd':
                 salary_per_h = LV_4;
                 break;
-            case 5:
+            case 'q':
                 goto done;
                 break;
             // 处理错误输出
@@ -88,8 +93,8 @@ int main(void)
 
         tax = 300 * TAX_R_300 + 150 * TAX_R_150 + (salary - 450) * TAX_R_O;
 
-        printf("Your salary is %.2f in total, tax %.2f, so you earn %.2f", salary, tax,
-               salary - tax);
+        printf("Your salary is %.2f in total, tax %.2f, so you earn %.2f\n", 
+                salary, tax,  salary - tax);
 
         /*
           Enter a weekday work time: 45
@@ -98,7 +103,7 @@ int main(void)
     }
 
 done:
-    printf("Done!");
+    printf("Done!\n");
 
     return 0;
 }
@@ -106,10 +111,7 @@ done:
 void flush_buffer()
 {
     while (getchar() != '\n')
-        break;
+        continue;
 }
 
-float calc_tax(float salary)
-{
-
-}
+float calc_tax(float salary) {}

@@ -1654,13 +1654,11 @@ int main(void)
 
 ### 形参和实参
 
-formal / actual
+- 对应名词, (形式 formal / actual 实际) + (argument / parameter) ,但是在 C99 规定,  形参是 `parameter`, 实参应该使用 `argument`
 
-argument 和 parameter 都可以,
+  因此变为 formal parameter 形参 | actual parameter 实参
 
-但是在 C99 规定, 实参应该使用 `argument`
-
-形参是 `parameter`
+-  缩写 argument -> arg  | parameter -> param
 
 
 
@@ -1668,22 +1666,41 @@ argument 和 parameter 都可以,
 
 - 声明函数 **
 
-  - ```c
-    double power(double n, int p)
-    // 这也可以称作函数原型
-    ```
-    
+  - 也称为函数原型, 指明了返回值和入参, 这些信息也被称为函数的**签名**
+
+       ```c
+        double power(double n, int p);
+        // 这个函数传入两个参数 参数第一位是 double, 第二位是 int
+        // 运行完后 函数将返回 double 类型的值
+       ```
+
   - 注意
 
       > 编译器在首次执行函数前, 需要知道函数的定义
       >
       > 必须通过前置声明预先说明函数的**参数和返回类型**
-
+      >
+      > 并将函数原型**放在 main 函数之前**
+      
       > 如果函数的定义置于 main **的顶部, 就可以省略**,
       >
       > 否则就是必须的, C 的标准风格则是 main 前置,
       >
       > 除非引入头文件
+      
+      > 传入函数的变量是局部变量, 如果没有指针引用, 则内部操作
+      >
+      > 不引起外部的改变
+      
+      > 通过函数声明, 编译器就可以在入参不符合参数规定的情况下做一次
+      >
+      > 强制转换并抛出警告, 比如传入 int 参数的 double 类型值,
+      >
+      > 就会被转换为 int. 而没有函数声明编译器则会根据参数类型
+      >
+      > 做默认处理, 运行不受影响, 但会导致取出错误的栈值.(书P254)
+      
+      > 如果返回的类型和return处传递的类型不一致, 会发生强制转换
 
 - 定义函数
 
@@ -1700,3 +1717,28 @@ argument 和 parameter 都可以,
         return result;
     }
     ```
+
+
+
+
+
+## 地址
+
+### 一元`&`运算符
+
+指针, 用于存储变量的地址. 一元`&`运算符给出变量的指针
+
+#### 打印指针
+
+- 使用 `%p` 转换声明
+
+  ```c
+  {
+      int num = 42;
+  
+      printf("num is %d, its pointer %p", num, &num);
+      // num is 42, its pointer 000000000061FE1C
+  }
+  ```
+
+  

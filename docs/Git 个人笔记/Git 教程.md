@@ -26,19 +26,20 @@ git config --global user.name  "zn_dk"
 
    ```bash
    ssh-keygen -t rsa
+   # 现在官网也推荐这种: ssh-keygen -t ed25519 -C "填入email,可选"
    # 一路回车
    # 生成的目录位于  C盘用户文件夹\.ssh
    ```
 
 
 
-2. 复制公钥文件 id_rsa.pub  (id_rsa 为私钥)
+2.  到 ~/.ssh 复制公钥文件 id_rsa.pub  (id_rsa 为私钥)
 
-3. 复制公钥到 gitee 添加 SSH 公钥
+3. 复制公钥到 gitee/github 添加 SSH 公钥
 
-4. done 可以免密提交了
+4. done, 现在可以使用 ssh 免密提交了
 
-5. 免密的克隆 不使用 HTTPS 可以使用 SSH 链接
+5. ssh免密的git操作下,不需要再输入用户名和密码了, 方便快捷也安全
 
 
 
@@ -84,7 +85,7 @@ git config --global --unset https.proxy
 
 Windows ssh配置文件路径：`C:\Users\你的用户名.ssh\config`
 
-Linux ssh配置文件路径：`/home/你的用户名/.ssh/config`
+Linux ssh配置文件路径：`~/.ssh/config`
 
 使用文本编辑器打开配置文件config加入下列配置：
 

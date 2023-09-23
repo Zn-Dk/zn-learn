@@ -6,6 +6,7 @@ export default function Detail() {
   // 获取 Search(Query) 参数 Hooks - useSearchParams
   // 返回值是类似 useState 的形式
   // 源码就是通过调用浏览器的 URLSearchParams API 故使用方法同
+  // 因为是存储在链接的 query 可以方便的进行状态维持, 分享链接等
   const [URLSearchParams, SetURLSearchParams] = useSearchParams()
 
   // 可以借用 Object.fromEntries 处理成对象

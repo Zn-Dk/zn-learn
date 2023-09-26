@@ -1828,6 +1828,31 @@ val = foo;
 
 >  也称 **解引用运算符**。
 
+> 使用解引用运算符的时候要注意, **不要在未初始化的变量上使用!**
+>
+> ```c
+> // 错误
+> double* pd;
+> *pd = 1.2;
+> ```
+>
+> 创建一个指针时, 系统只分配了储存指针本身的内存, 而未分配存储数据的内存, 所以是先用已分配的地址初始化指针/ 或者进阶地用 malloc() 手动分配内存。
+
+#### 优先级
+
+* `*` 运算符和自增减`++` `--` 运算符的优先级是相同的, 但如果两者同时出现时, 是从右往左结合
+
+  ```c
+  *start++ // 先 start++, 然后 *start, 但指针在取值后才会移动
+  *(start)++ // 这样等价, 但更清楚
+  (*start)++ // 这样是取到值再+1,改变了原变量指向的值,不是递增指针!    
+  *++start // 先移动指针, 再使用移动后的值   
+  ```
+
+  如果还不理解, **参考P294程序清单 10.12**
+
+
+
 ### 声明指针
 
 声明指针变量，需要依赖于所指向的类型，即如果指向 int 就要声明 int 的指针变量
@@ -1880,3 +1905,333 @@ void swap(int* m, int* n)
 }
 ```
 
+
+
+## 数组与指针
+
+### 声明 
+
+`数组类型 变量名[数组大小]`
+
+数组大小的声明可以是符号整型常量 也可以是表达式, (不能是浮点或者非正数)
+
+- 使用变量初始化可能不被允许
+
+```c
+int a1[5*2 + 1];
+int a2[SIZE];
+int a3[sizeof(int) + 1];
+int a4[(int)2.5]; // 强制转换的浮点数, 不强制转换不行
+```
+
+### 初始化
+
+- 使用花括号初始化数组
+
+```c
+int arr[10] = {1,2,3,4,5,6,7,8,9,10}; 
+const int no_mod[3] = {1,2,3}; // 不可更改的数组
+```
+
+- 让编译器自动匹配数组长度 (只能在初始化使用, 不能在声明中使用空括号)
+
+```c
+int arr[] = {1,2,3,4,5,6};
+```
+
+- 指定初始化器写法
+
+```c
+// 传统写法的初始化
+int a[6] = {0, 0, 0, 0, 0, 212};
+// 指定初始化器(可与普通写法混合)
+int b[10] = {1, 2, [4] = 100, [7] = 10, 1234, 5678};
+
+for (int i = 0; i < 10; i++) {
+    printf("b[%d] = %d\n", i, b[i]);
+}
+/*
+    使用混合写法后 在指定下标后出现的值会紧跟前面的指定下标
+    b[0] = 1
+    b[1] = 2
+    b[2] = 0
+    b[3] = 0
+    b[4] = 100
+    b[5] = 0
+    b[6] = 0
+    b[7] = 10
+    b[8] = 1234
+    b[9] = 5678
+
+*/
+```
+
+- 注意事项
+
+  - 对于数值型数组, 如果只进行了部分初始化, 剩余元素都会被初始化为 0;
+
+  - 字符串(字符数组)的部分初始化, 则其他元素为不可打印的字符(应该是内存的一系列垃圾数据)
+
+    ```c
+    
+        char str[10];
+    
+        str[0] = 'a';
+        str[1] = 'b';
+    
+        // printf("|%-10s|", str);
+        // |ab        |
+    
+        for (int i = 0; i < 10; i++) {
+            printf("str[%d]=%d\n", i, str[i]);
+        }
+    
+        /*
+            str[0]=97   <-初始化过的字符
+            str[1]=98   <-初始化过的字符
+            str[2]=-122
+            str[3]=-86
+            str[4]=107
+            str[5]=85
+            str[6]=-4
+            str[7]=127
+            str[8]=0
+            str[9]=0
+         */
+    
+    ```
+
+### 注意事项
+
+- C 的编译器**不检查数组边界**(为了快) 超过数组下标的语句编译器可能不会检查到, 或者会导致错误, 程序异常等等, 使用前要确保下标不越界。（所以推荐使用符号常量声明数组大小）
+
+
+
+### 多维数组
+
+- 声明
+
+  `数组类型 变量名[主数组大小][子数组大小][...子子数组大小][...]`
+
+- 初始化(二维数组示例)
+
+  ```c
+  float statistic[5][12] = {
+      {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2},
+      {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2},
+      {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2},
+      {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2},
+      {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2},
+  };
+  ```
+
+<img src="assets\二维数组初始化的两种情况.jpg" alt="二维数组初始化的两种情况" style="zoom: 67%;display:block;margin:auto" />
+
+
+
+### 数组与指针的关系*
+
+- 声明一个指针变量, 将数组地址指向它.
+- 循环这个数组 打印 （指针 + index）的地址, 探究指针地址与 index 的关系.
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    // 创建数组
+    int nums[] = {1, 2, 3, 4, 5, 6};
+    // 创建数组指针 (赋值的时候不需要加 &)
+    int* pta = nums;
+
+    printf("Pointer address %p, value %d\n", pta, *pta);
+    // Pointer address 0x7ffccd6c1160, value 1
+
+    for (int i = 0; i < sizeof nums / sizeof *pta; i++) {
+        // *(pta + i) == nums[i]
+        // pta + i -> 地址后移 sizeof arr[n] -> sizeof int -> 4
+        printf("Index:%d, Pointer:%p, Value: %d\n", i, pta + i, *(pta + i));
+    }
+
+    /*
+      每次递增 4 位, 也就是 对应 int 所占内存 4 字节
+      Index:0, Pointer:0x7ffccd6c1160, Value: 1
+      Index:1, Pointer:0x7ffccd6c1164, Value: 2
+      Index:2, Pointer:0x7ffccd6c1168, Value: 3
+      Index:3, Pointer:0x7ffccd6c116c, Value: 4
+      Index:4, Pointer:0x7ffccd6c1170, Value: 5
+      Index:5, Pointer:0x7ffccd6c1174, Value: 6
+     */
+
+    return 0;
+}
+```
+
+
+
+- 可以得出两个结论,
+
+  1. 将数组指向指针变量（不用 &）, **该变量指向的值是数组的第一个元素的值**。
+
+  2. **数组的指针每加 1, 就递增它是指向类型的大小（Byte）** 或者说**指针变量的**
+
+     **变动（自身地址的值）= 有符号整数 * 数组类型大小**, 比如：
+     
+     - 声明的是 short 数组, 每递增一个元素,地址后移 2 位; 
+     
+     - 声明的是 double 数组, 每递增一个元素, 地址后移 8 位。
+     
+     - 数组定义 `arr[n]` 其实就类似 `*(arr + n)`, 
+     
+       意味为: 到内存的 arr 地址, 移动 n 个单元, 查找这个单元下的值。
+     
+     ```c
+     ptr_arr + 2 == &arr[2] // 相同的地址;
+     *(ptr_arr + 2) == arr[2] // 相同的值; 
+     // 注意不要使用 *ptr_arr + 2, 这就成了取第一个元素的值再 + 2
+     ```
+
+- 还可以引申出来几个结论
+  1. 指针的自增减或者减去某个整数**就是回退数组下标**
+  2. 两个**来自指向相同数组的**指针求差值，**返回的就是相隔元素的数量**  （不相同的不能保证，可能报错）
+  3. 可以用关系运算符比较两个指针的值
+
+
+
+### 函数数组形参*
+
+有了上面数组与指针的关系, 我们在函数中使用数组形参就可以通过指针来进行
+
+- 首先声明函数, 可以是以下几种**等价**形式
+
+  ```c
+  int fn(int* arr, int size); <- 可用于声明和定义
+  int fn(int* , int);  <- 仅声明，函数定义中不能省略
+  // ---
+  int fn(int arr[], int size); <- 可用于声明和定义
+  int fn(int [], int); <- 仅声明，函数定义中不能省略
+  ```
+
+- 指针形式(`int* arr`)和 `int arr[]` 形式, 都**表示 arr 是指向 int 的指针**, 但 `int arr[]` 这种形式**只能用在函数做形参**使用, 不过在**语义上更好**,这告诉我们这个形参是个 int 类型的数组。
+
+### 通过宏定义获取数组长度*
+
+很可惜 C 语言如果希望快捷获取数组的长度, 并没有 len(arr) arr.len 这种办法, 
+
+因为函数只能接收 arr 的指针变量, 无法得到函数的实际大小.
+
+**但是, 通过定义宏, 我们也可以实现获取数组长度**
+
+```c
+#define ARR_SIZE(arr) sizeof arr / sizeof(arr[0])
+
+int main(void) {
+    int nums[] = {1, 2, 3, 4, 5, 6};
+
+    printf("length of nums: %zd\n", ARR_SIZE(nums));
+    // length of nums: 6
+    
+    return 0;
+}
+```
+
+### 示例：函数数组参数表示法
+
+```c
+#include <stdio.h>
+
+// 声明一个统计数组之和的函数 以下两种等价
+// unsigned sum(int* arr, int size);  // 指针形式
+unsigned sum(int arr[], int size);  // 数组形参形式
+
+int main(void)
+{
+
+    int nums[] = {1, 2, 3, 4, 5, 6};
+
+    printf("Sums of nums array: %u", sum(nums, 6));
+    // Sums of nums array: 21
+    return 0;
+}
+
+// 由外部传入函数长度
+unsigned sum(int arr[], int size)
+{
+    unsigned sum;
+    printf("Array pointer has sizeof %zd Bytes\n", sizeof arr);
+    printf("Array's value has sizeof %zd Bytes\n", sizeof *arr);
+    // Array pointer has sizeof 8 Bytes <- 指针变量的大小是 8 字节
+    // Array's value has sizeof 4 Bytes <- 这是一个 int/long
+
+    for (int i = 0; i < size; i++) {
+        // 已知 *(arr + i) == arr[i] 所以可以直接使用
+        sum += arr[i];
+    }
+
+    return sum;
+}
+```
+
+
+
+### 示例：函数数组指针表示法
+
+> C 确保数组指针在 start+SIZE 即刚好超过数组末尾的第一个位置时有效。
+
+```c
+#include <stdio.h>
+
+#define SIZE 6
+
+unsigned sum_pt(int* start, int* end);
+
+int main(void)
+{
+    int nums[SIZE] = {1, 2, 3, 4, 5, 6};
+    // 数组指向指针 为数组第一位元素 (注意数组整体赋值指针变量时, 不需要 &)
+    int* ptr_start = nums;
+    //  注意index 是从 0开始的, 将指针指向实际的数组结尾的后一位
+    int* ptr_end = ptr_start + SIZE;
+
+    printf("Total of array nums: %u", sum_pt(ptr_start, ptr_end));
+    // Total of array nums: 21
+
+    return 0;
+}
+
+// 因为 start end 都指向同一数组, 我们不再需要传递数组变量
+// 只需要移动指针就可以遍历数组的值
+unsigned sum_pt(int* start, int* end)
+{
+    unsigned sum = 0;
+
+    // 指针地址本身也可以做关系运算
+    while (start < end) {
+        // sum += *start;
+        // start++;
+
+        // 进一步简化
+        // sum += *start++; 等价
+        sum += *(start++);
+    }
+
+    return sum;
+}
+```
+
+
+
+
+
+### 总结指针的相关操作
+
+> 详细参阅P296-297
+
+- 可赋值 （数组名、地址运算符&变量名、另一个指针的值 三种）
+- 解引用 （*运算符）
+- 取址 （&ptr + %p 转换声明）
+- 指针整数相加,右移 （== +sizeof type * int)
+- 指针整数相减,左移 （== -sizeof type * int)
+- 指针自递增递减
+- 同指向的指针求差 (得到地址的单位差值int)
+- 同指向的指针比较运算

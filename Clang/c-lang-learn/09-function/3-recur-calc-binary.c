@@ -47,10 +47,16 @@ void to_binary(unsigned long n)
 /** 十进制转任意进制 */
 void radix_convert(unsigned long n, int radix)
 {
-    char ch;
-    if (n / radix)
-        radix_convert(n / radix, radix);
-    char str[3];
-    sprintf(str, "%d", n % radix);
-    printf("%s", str);
+    if (radix < 2 || radix > 10) {
+        printf("Invalid input, retry.");
+        return;
+    }
+
+    if (n < radix) {
+        printf("%d", n % radix);
+        return;
+    }
+
+    radix_convert(n / radix, radix);
+    printf("%d", n % radix);
 }

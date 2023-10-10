@@ -764,7 +764,7 @@ while (getchar() != 'y') {
     }
     ```
 
-## 字符串
+## 字符串入门
 
 ### 使用数组存储字符串
 
@@ -797,8 +797,23 @@ and we have 40 bytes to store it.
 ```
 
 - C 语言**没有**专门用于储存字符串的变量类型
+
 - 空字符（null character），**C 语言用它标记字符串的结束**。空字符不是数字 0，它是非打印字符，其 ASCII 码值是（或等价于）0。
+
 - **C 中的字符串一定以空字符结束**，这意味着数组的容量必须至少比待存储字符串中的字符数**多 1**。
+
+- 字符串**未被使用的元素**将会被初始化为 `\0` 空字符。
+
+- 声明字符串时, 为了方便, 可以不固定长度, 让编译器自动计算
+
+  ```c
+  const char str[] = "This is a string";
+  
+  printf("string: %s, length = %d", str, strlen(str));
+  // string: This is a string, length = 16
+  ```
+
+  
 
 #### 字符串与字符 "x" 与 'x'
 
@@ -2096,6 +2111,8 @@ int main(void)
   2. 两个**来自指向相同数组的**指针求差值，**返回的就是相隔元素的数量**  （不相同的不能保证，可能报错）
   3. 可以用关系运算符比较两个指针的值
 
+> 此外, 指针的运算**只影响其指向元素的地址**: `ptr`; 而非这个指针变量被分配的内存地址: `&ptr`
+
 
 
 ### 函数数组形参*
@@ -2235,3 +2252,444 @@ unsigned sum_pt(int* start, int* end)
 - 指针自递增递减
 - 同指向的指针求差 (得到地址的单位差值int)
 - 同指向的指针比较运算
+
+### 保护数组数据
+
+#### 形参使用 const
+
+```c
+int sum(const int arr[], int size)
+// 告诉编译器 函数不能修改数组 arr 的元素, 如果在函数中改变元素的值, 编译器会报错
+// 形参的约束不代表要求原数组是 const 常量, 一般如果这个函数不修改数组元素, 建议加上标识
+```
+
+#### const 指针
+
+```c
+int nums[6] = {1,2,3,4};
+const int locked_nums[6] = {1,2,3,4};
+const int* ptr = nums; // ✔️const 指针可以指向数组 (不限制数组是否 const)
+int* n_ptr = locked_num; // ❌不能把 const 数组的地址赋给普通指针;
+ptr++; // ✔️const 指针可以移动
+*ptr = 3; // ❌ const 指针不允许修改值
+nums[2] = 3; //✔️ 通过下标修改值, 因为原数组并未被 const 约束
+```
+
+```c
+// 函数形参使用
+int for_each_arr(const int* start, const int* end)
+```
+
+> 这样的规则有效地保护了数据,
+>
+> - **对于不改变数组值的 const* 形参, 我们可以传入非 const 和 const 数组**
+>
+> - **对于可改变数组值的 普通* 形参, 我们只可以传入非 const 数组**
+
+#### const 声明的不同位置影响
+
+```c
+const int* pt = &nums[2]; // 只读 const 指针, 可以移动, 不能修改值
+
+int* const pt = &nums[2]; // 固定 const 指针, 不能移动, 能修改值
+
+const int* const p4 = &nums[2]; // 固定只读 const 指针, 不能移动, 不能修改值
+```
+
+
+
+### 多维数组指针
+
+
+
+#### 指针在多维数组中的含义*
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    // 声明 二维数组
+    int table[4][2] = {{1, 3}, {5, 7}, {2, 4}, {6, 8}};
+
+    // 打印探究指针的关系
+
+    printf("table = %p, table[0] = %p\n", table, table[0]);
+    // table = 0x7ffcca0c40e0, table[0] = 0x7ffcca0c40e0
+    // 结论1. table 的地址指向 table 的第一个元素 (含两个int的数组), *table == table[0]
+
+
+    printf("*table = %p, *table + 1 = %p, table + 1 = %p\n", *table, *table + 1, table + 1);
+    // *table = 0x7ffcca0c40e0, *table + 1 = 0x7ffcca0c40e4, table + 1 = 0x7ffcca0c40e8
+    printf("table[0] = %p, table[0] + 1 = %p\n", table, table[0] + 1);
+    // table[0] = 0x7ffcca0c40e0, table[0] + 1 = 0x7ffcca0c40e4
+    // 结论2. *table + 1 是第一维下移动到第二维数组的 + 1位元素, table + 1 是移动到下一个二维数组
+
+
+    printf("table[0] + 2 = %p, *table + 2 = %p\n", table[0] + 2, *table + 2);
+    // table[0] + 2 = 0x7ffcca0c40e8, *table + 2 = 0x7ffcca0c40e8
+    printf("*(table[0] + 2) = %d, *(*table + 2) = %d\n", *(table[0] + 2), *(*table + 2));
+    // *(table[0] + 2) = 5, *(*table + 2) = 5
+    // 结论3. 指针递增超过数组容量, 地址移向下一个数组的首位(验证多维数组在内存分配的连续性)
+
+
+    printf("*table[0] = %d, table[0][0] = %d, **table = %d\n", *table[0], table[0][0], **table);
+    // *table[0] = 1, table[0][0] = 1, **table = 1
+    // 结论4. 对*table[0] 进行解引用 就得到了第二维数组的首位
+    // 结论5. **table 两次解引用和 table[0][0] 作用相同, 都是到了第二维数组的首位
+
+
+    printf("table[2][1] = %d, *(*(table + 2) + 1) = %d", table[2][1], *(*(table + 2) + 1));
+    // table[2][1] = 4, *(*(table + 2) + 1) = 4
+    // 上面演示了如何用指针取得 二维数组的值
+    return 0;
+}
+```
+
+**通解和示意图**
+
+`table` <-二维数组首元素的地址, 即内含的第 1 个(一维数组)地址
+
+`table + 2`  <- 二维数组的第 3 个元素(一维数组)的地址
+
+`*table + 2`  <- 二维数组打平, 为整体第 3 个元素(非数组元素)的地址
+
+`*(table + 2)` <- 二维的第三个元素(一维数组)的第 1 个元素的地址
+
+`*(table + 2) + 1` <- 二维的第三个元素(一维数组)的第 2 个元素的地址
+
+`*(*(table + 2) + 1)`<- 二维的第三个元素(一维数组)的第 2 个元素的值
+
+
+
+![多维数组指针的指向](./assets/多维数组指针的指向.jpg)
+
+
+
+
+
+
+
+#### 创建指向多维数组的指针
+
+如果语句为: 
+
+```c
+int* pax[2];
+```
+
+`[]` 优先级高于 `*`, `[]` 表明 `pax` 为含有两个元素的数组, 然后 `*` 表示这个数组包含两个指针对象, 最后这个指针的指向类型是 `int` 类型, **所以并非是声明指针, 而是声明了指针数组**。
+
+
+
+**如果要声明指向多维数组的指针, 需要使用圆括号:**
+
+```c
+int (* pax)[2];
+```
+
+此时 * 和 pax 先结合, 声明的是一个指向数组(含两个 int 类型的值)的指针, 这就是多维数组指针。
+
+
+
+指针的数组表示法与上面数组的表示法一致, 既可以用指针表示数组, 也可以用数组本身的地址表示:
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    int table[4][2] = {{1, 3}, {5, 7}, {2, 4}, {6, 8}};
+
+    // 创建一个指向二维数组的指针
+    // 需要先将*与变量用圆括号包裹, 否则是声明数组
+    int(*ptr)[2];
+
+    ptr = table;
+
+    printf("ptr = %p, table = %p \n", ptr, table);
+    // ptr = 0x7fff7799df10, table = 0x7fff7799df10
+
+    printf("*ptr = %p, *table = %p , table[0] = %p \n", *ptr, *table, table[0]);
+    // *ptr = 0x7fff7799df10, *table = 0x7fff7799df10 , table[0] = 0x7fff7799df10 
+
+    printf("ptr = %p, ptr + 1 = %p \n", ptr, ptr + 1);
+    // ptr = 0x7fff7799df10, ptr + 1 = 0x7fff7799df18 
+
+    printf("*ptr = %p, *ptr + 1 = %p \n", *ptr, *ptr + 1);
+    // *ptr = 0x7fff7799df10, *ptr + 1 = 0x7fff7799df14 
+
+    printf("**ptr = %d, *ptr[0] = %d, ptr[0][0] = %d, table[0][0] = %d\n", **ptr, *ptr[0],
+            ptr[0][0], table[0][0]);
+    // **ptr = 1, *ptr[0] = 1, ptr[0][0] = 1, table[0][0] = 1
+    
+    printf("ptr[1][1] = %d, *(*(ptr + 1) + 1) = %d\n", ptr[1][1], *(*(ptr + 1) + 1));
+    // ptr[1][1] = 7, *(*(ptr + 1) + 1) = 7
+    return 0;
+}
+```
+
+
+
+### 多维数组函数处理
+
+#### 形参声明
+
+```c
+void foo(int (*pt)[4]); // 传递二维指针 
+void foo(int pt[][4]); // 等价, 只不过只能在函数形参用(可联想下之前一维数组的例子)
+
+void foo(int pt[][COLS], int rows); // 使用常量和形参传递 行/列参数
+void foo(int pt[ROWS][COLS], int rows); // 有效, 但 ROWS 多余, 会被忽略
+void foo(int pt[][], int rows); // 错误的, 因为编译器无法知道指针指向内含的元素数量
+
+
+// N 维数组, 只能省略最左边的方括号
+int sum4d(int arr[][1][2][3][4], int rows)
+```
+
+
+
+### VLA 变长数组
+
+C99 新增, 允许使用变量表示数组的维度, 直接看下面的程序示例:
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    // 变长数组
+    // 限制1. 无法在声明中初始化
+    // 限制2. 无法实现 static 和 extern 说明符
+    // 限制3. 变长数组只是可以在声明使用变量, 而非创建后修改维度
+    int rows = 2;
+    int cols = 2;
+
+    int arr[rows][cols];  // 声明变长数组
+    int(*ptr)[cols];
+    ptr       = arr;
+    arr[1][0] = 1;
+    arr[1][1] = 2;
+
+    printf("arr[1]: {%d, %d}\n", arr[1][0], arr[1][1]);
+    rows      = 3;
+    cols      = 3;
+    arr[1][2] = 3;
+    // 这是个不能被编译器检查出来的问题, 其实就相当于 *(*(ptr + 1) + 2) = 3 ,
+    // 数组没有变化, 因为数组值在内存上是连续的, 你只不过是覆盖了第二个二维数组的第一个值, 不信你解开试试下面的语句;
+    // *(*(ptr + 1) + 2) = 3;
+    printf("Now, change VLA arr to %d rows, %d cols, and let 'arr[1][2] = 3' \n", rows, cols);
+
+    printf("arr[1][2] = %d, arr[2][0] = %d\n", arr[1][2], arr[2][0]);
+    // arr[1][2] = 3, arr[2][0] = 3
+    // 打印的结果, 也表明了 VLA 在声明后 数组本身没有改变
+
+    printf("In conclusion: VLA doesn't mean you can change the dimension\n"
+           "of the array after initialization, but to use a variable to define it.");
+    return 0;
+}
+```
+
+
+
+### VLA 用于函数形参
+
+在此之前我们好像只能通过形参传入 rows 
+
+```c
+void foo(int pt[][COLS], int rows); 
+```
+
+有了 VLA 声明后, 函数参数传递动态大小的数组就变为有效了:
+
+```c
+// 先写 row col 变量形参, 然后再写数组参数
+    
+// 根据逗号运算符从左往右的顺序, 这种写法是错误的
+// int sum2d(int arr[row][col], int row, int col)
+int sum2d(int row, int col, int arr[row][col])
+{
+  int sum = 0;
+
+  for(int i = 0; i < row; i++)
+    for(int j = 0; j < col; j++)
+      sum += arr[i][j];
+
+  return sum;
+}
+
+```
+
+
+
+### 复合字面量
+
+通过声明复合字面量常数, 我们能够直接声明字面量数组并使用他们。
+
+#### 格式   
+
+- 带长度参数: `(int[SIZE]) {1,2,3,4}`
+- n 维数组同函数形参, 只能省略第一维长度 `(int[][3][4]){1,2,3,4,5,6}`
+- 动态: `(int[]) {1,2,3,4}`
+
+#### 示例
+
+```c
+#include <stdio.h>
+
+#define SIZE 3
+
+void show(const int ar[], int n) {
+  for (int i = 0; i < n; i++)
+    printf("%d ", ar[i]);
+
+  putchar('\n');
+}
+
+void show2(int row, int col, const int ar[row][col]) {
+  for (int i = 0; i < row; i++) {
+    for (int j = 0; j < col; j++)
+      printf("%d ", ar[i][j]);
+    putchar('\n');
+  }
+  putchar('\n');
+}
+
+int main(void) {
+  // 一维数组
+  show((int[SIZE]){1, 2, 3}, SIZE);
+  show((int[]){8, 3, 9, 2}, 4);
+
+  // 二维数组
+  show2(2, 3, (int[2][3]){1, 2, 3, 4, 5, 6}); // 允许
+  show2(2, 3, (int[][3]){1, 2, 3, 4, 5, 6});  // 允许
+
+  // show2(2, 3, (int[][]){1,2,3,4,5,6}); // 错误
+
+  // n 维数组
+  // show_n(2, (int[][3][4]){1,2,3,4,5,6});
+
+
+  // 复合字面量赋值给指针变量
+  float *ptr;
+
+  ptr = (float[]){1.2f, 2.4f};
+
+  printf("%.3f", *(ptr + 1));
+
+
+  return 0;
+}
+```
+
+
+
+
+
+
+
+## 字符串详解
+
+### 与指针的关系
+
+因为字符串实际是字符数组组成的, 了解了数组之后, 我们不难得出以下
+
+```c
+char ch1[] = "Helvolta";
+// 等价声明: char* ch1 = "Helvolta";
+
+printf("ch1 = %p, &ch1[0] = %p\n", ch1, &ch1[0]); // pt ch1 == &ch1[0]
+printf("*ch1 = %c, ch1[0] = %c, ch1 = %s\n", *ch1, ch1[0], ch1);
+// *ch1 = H, ch1[0] = H, ch1 = Helvolta
+
+
+printf("*(ch1 + 3) = %c, ch1[3] = %c\n", *(ch1 + 3), ch1[3]);
+// *(ch1 + 3) = v, ch1[3] = v
+
+*(ch1 + 3) = 'z';
+
+printf("*(ch1 + 3) = %c, ch1[3] = %c\n", *(ch1 + 3), ch1[3]);
+// *(ch1 + 3) = v, ch1[3] = z
+
+```
+
+### 数组字符串和指针的区别
+
+- **数组**声明的字符串是**常量**, **指针**声明的字符串是**变量**
+
+  ```c
+  // 1. ✔️ 数组表示 两者相同
+  printf("ar_str[0] = %c, pt_str[0] = %c\n", ar_str[0], pt_str[0]);
+  
+  // 2. ✔️ 加减运算 两者相同
+  printf("*(ar_str + 2) = %c, *(pt_str + 2) = %c\n", *(ar_str + 2), *(pt_str + 2));
+  
+  // 3. 自加减运算 数组不允许自身移动
+  // printf("*(ar_str++) = %c", *(ar_str++)); 报错
+  printf("*(pt_str++) = %c\n", *(pt_str++));
+  
+  pt_str--;
+  // 因此只有指针形态的允许这样遍历
+  while (*(pt_str) != '\0')
+  	putchar(*(pt_str++));
+  // Helvolta
+  
+  // 4. 因为数组名（非const数组元素是变量）是常量, 指针是变量
+  pt_str = ar_str;  // 指针指向数组, 成立
+  // ar_str = pt_str;  // 数组不能被赋值
+  ```
+
+- 指针引用的字符串字面量在内存中是统一的
+
+  ```c
+   // 探讨 字符串字面量, 指针引用字面量的区别
+  
+      char* pt_ch   = "STR";
+      char  ar_ch[] = "STR";
+  
+      printf(" \"STR\"= %p, define RDM = %p \n", "STR", RDM);
+      // "STR"= 0x402010, define RDM = 0x402010
+      printf("pt_ch = %p, ar_ch = %p \n", pt_ch, ar_ch);
+      // pt_ch = 0x402010, ar_ch = 0x7fff27b78ffc
+  ```
+
+  是否非常神奇, 可以这么解释: 
+
+  - 当一个文件中声明了一模一样的字符串字面量时, 编译器只会使用一个内存地址存储
+
+  - 字面量是在初始化时存储在静态存储区中的, 而数组声明的字符串其右值的字符串字面量也会经历这个过程, 但只有在运行时才会为数组分配内存, 此时才把字符串拷贝到数组中
+  - 这样一来字符串有两个副本, 一个是静态内存的字符串字面量, 另一个是储存在 ar_ch 的字符串.
+
+> **需要注意的:**
+>
+> ```c
+> pt_ch[0] = 'K';
+> ```
+>
+> 这种写法语法检查可能不会报错, 但是可能会在运行导致内存错误
+>
+> 如果编译器允许这样修改, 则影响所有使用这个字面量的代码! STR -> KTR
+>
+> 
+>
+> **推荐写法**
+>
+> ```c
+> const char* pt_ch_const = "STR";
+> ```
+>
+> 
+>
+> 因为数组是获得字符串副本, 则不会有这个问题
+>
+> ```c
+>   ar_ch[0] = 'A';
+> 
+>   printf("ar_ch = %s, pt_ch = %s", ar_ch, pt_ch);
+> 
+>   // ar_ch = ATR, pt_ch = STR
+> ```
+
+> 总结: **如果不修改字符串, 不要用指针指向字符串字面量**
+

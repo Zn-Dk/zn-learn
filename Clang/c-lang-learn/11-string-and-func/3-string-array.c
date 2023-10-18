@@ -32,7 +32,7 @@ int main(void)
     // 字符串数组
 
     // 1. 数组形式
-    // 我们无法这样声明一个字符串数组: st_array[SIZE][], 让元素数量固定而值的长度不定
+    // 我们无法这样声明一个字符串数组: st_array[SIZE][], 即只限定元素数量而不限定值的长度
     // 因此所有数组形式的字符串数组都是矩形数组, 元素长度相同
     char st_array[SIZE][LEN] = {
         "aaa",
@@ -42,6 +42,8 @@ int main(void)
     };
 
     print_arr(SIZE, LEN, st_array);
+    printf("sizeof st_array is %u\n", sizeof st_array);
+    // sizeof st_array is 80 -> 4 * 20
 
     // 2. 指针形式
 
@@ -54,6 +56,7 @@ int main(void)
         "d",
     };
     print_pt_arr(SIZE, pt_str);
-
+    printf("sizeof pt_str is %u\n", sizeof pt_str);
+    // sizeof pt_str is 32 -> 8(sizeof *pt) *4
     return 0;
 }

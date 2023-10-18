@@ -611,6 +611,17 @@ int main(void)
 
   > & 地址运算符
 
+- 限制读入字符串的数量, 可以使用数字作为修饰符
+
+  ```c
+  scanf("%5s", word);
+  // abcdefghi
+  printf("%s", word);
+  // abcde
+  ```
+
+  
+
 - scanf **返回读取到目标数据的数量**
 
   ```c
@@ -1886,6 +1897,16 @@ double* pi;
 
 
 
+### 空指针* NULL
+
+C 语言用 `NULL` 标识(存储在 stdio.h中)空指针, 这个值不与任何数据有效地址对应,
+
+后面遇到的很多函数(如字符串 `fgets`)的返回值, 用 `NULL` 标识 `EOF` 或者未成功的情况
+
+与空字符不同, 空字符是整数, 值为 0 的 char, 占 1 字节; 而**空指针是地址, 通常占 4 字节.**
+
+
+
 ### 示例:改变主调函数的变量
 
 ```c
@@ -2591,6 +2612,32 @@ int main(void) {
 
 ## 字符串详解
 
+### 几种使用字符串的方式
+
+```c
+// 1. define 常量 字面量字符串
+#define STR "Hello World"
+
+int main(void) {
+  // 2. 数组声明
+  char word[20] = "Professional";
+
+  // 3. 指针表示
+  char *p_str = "The C Programming Language";
+
+  // 4 连续或者空白字符隔开的字符串常量也会被串联
+  char longstr[50] = "This "  "is a "
+                     "long string "
+                     "and break "
+                     "word "
+                     "down";
+    
+    return 0;
+}
+```
+
+
+
 ### 与指针的关系
 
 因为字符串实际是字符数组组成的, 了解了数组之后, 我们不难得出以下
@@ -2654,12 +2701,24 @@ printf("*(ch1 + 3) = %c, ch1[3] = %c\n", *(ch1 + 3), ch1[3]);
       // pt_ch = 0x402010, ar_ch = 0x7fff27b78ffc
   ```
 
+  ```c
+      char* str = "TheString";
+      char* copy;
+      copy = str;
+  
+      printf("str- value = %s, &str = %p, *str = %p\n", str, &str, *str);
+      // str- value = TheString, &str = 0x7ffc881ac3c8, *str = 0x54
+      printf("copy- value = %s, &copy = %p, *copy = %p\n", copy, &copy, *copy);
+      // copy- value = TheString, &copy = 0x7ffc881ac3c0, *copy = 0x54
+  ```
+
   是否非常神奇, 可以这么解释: 
 
-  - 当一个文件中声明了一模一样的字符串字面量时, 编译器只会使用一个内存地址存储
+  - 当一个文件中声明了**一模一样**的字符串字面量时, 编译器只会**使用一个内存地址存储**
+  - 将一个指针字符串赋值给另一个指针字符串, **他们的值也指向同一个**字面量内存地址
 
-  - 字面量是在初始化时存储在静态存储区中的, 而数组声明的字符串其右值的字符串字面量也会经历这个过程, 但只有在运行时才会为数组分配内存, 此时才把字符串拷贝到数组中
-  - 这样一来字符串有两个副本, 一个是静态内存的字符串字面量, 另一个是储存在 ar_ch 的字符串.
+  - 字面量是在初始化时存储在静态存储区中的, 而数组声明的字符串其右值的字符串字面量也会经历这个过程, 但只有在**运行时**才会为数组分配内存, 此时才把**字符串拷贝到数组中**
+  - 这样一来**数组声明的字符串**有**两个副本**, 一个是静态内存的字符串字面量, 另一个是储存在 ar_ch 的字符串.
 
 > **需要注意的:**
 >
@@ -2692,4 +2751,297 @@ printf("*(ch1 + 3) = %c, ch1[3] = %c\n", *(ch1 + 3), ch1[3]);
 > ```
 
 > 总结: **如果不修改字符串, 不要用指针指向字符串字面量**
+
+
+
+### 声明字符串数组
+
+- 数组形式
+
+  - 我们无法这样声明一个字符串数组: `st_array[SIZE][]`, 即只限定元素数量而不限定值的长度
+  - 因此所有数组形式的字符串数组都是矩形数组, 元素长度相同
+  - 数组形式的字符串数组 sizeof = 各维度的乘积(1char = 1Byte)
+
+  ```c
+  
+  void print_arr(int row, int col, char (*arr)[col])
+  {
+      for (int r = 0; r < row; r++)
+          puts(*arr++);
+  
+      putchar('\n');
+  }
+  
+  int main(void)
+  {
+      char st_array[SIZE][LEN] = {
+          "aaa",
+          "bbb",
+          "ccc",
+          "ddd",
+      };
+  
+      print_arr(SIZE, LEN, st_array);
+      printf("sizeof st_array is %u\n", sizeof st_array);
+      // sizeof st_array is 80 -> 4 * 20
+  
+  ```
+
+  > 小结: 数组形式的数组是**矩形数组**
+
+- 指针形式
+
+  - 指针形式非常灵活高效, 能够声明不同长度的字符串数组
+  - 本质上是用 SIZE 个指针变量存储字符串字面量
+  - 指针形式的字符串数组 sizeof = SIZE * 8(1 pointer size)
+
+  ```c
+  void print_pt_arr(int size, char** arr)
+  {
+      char* pt;
+      for (int i = 0; i < size; i++) {
+          // pt = *arr;
+          // while (*pt != '\0')
+          //     putchar(*pt++);
+          // *arr++;
+          // putchar('-');
+          puts(*arr++);
+      }
+  
+      putchar('\n');
+  }
+  // ....
+  char* pt_str[SIZE] = {
+          "aaa",
+          "bbbbbb",
+          "cc",
+          "d",
+      };
+      print_pt_arr(SIZE, pt_str);
+      printf("sizeof pt_str is %u\n", sizeof pt_str);
+      // sizeof pt_str is 32 -> 8(sizeof *pt) *4
+  
+  ```
+
+  
+
+### 字符串函数
+
+#### puts
+
+- 接收一个字符串地址, 一直读取到`\0` 空字符处(必须有, 不能读取字符数组)
+- puts 函数**仅用于输出字符串**
+- puts 函数打印字符串的结尾会**自动生成一个换行符**
+- 可以**通过预先的指针偏离, 数组下标进行字符串截取**(本质就是将指针的位置改变)
+
+示例:
+
+```c
+#define STR "Hello World"
+
+int main(void) {
+  char word[20] = "Professional";
+
+  char *p_str = "The C Programming Language";
+
+  char longstr[50] = "This "  "is a "
+                     "long string "
+                     "and break "
+                     "word "
+                     "down";
+
+  puts(word);
+  puts(p_str);
+  puts(STR);
+  puts(longstr);
+  puts("Lexius formantic");
+    
+  puts("Now use index or ptr + n to slice a string: \n");
+  // 提前移动指针, 以实现 slice 截断输出. 打印从下标/指针开始(即包含当前) 到字符串末尾的值
+  puts(&word[4]); 
+  puts(p_str + 4);
+
+  // Professional
+  // The C Programming Language
+  // Hello World
+  // This is a long string and break word down
+  // Lexius formantic
+    
+  // Now use index or ptr + n to slice a string:
+  // esskonal
+  // C Programming Language
+    
+  char no[] = {'N', 'O', '!'};
+  puts(no);
+  // NO!This is a long string and break word down
+  // 不能这样用! 因为puts不知道打印到哪结尾
+  // 他从相邻的位置中取到了另一个字符串的空字符作为结尾, 并打印了出来   
+    
+  return 0;
+}
+```
+
+
+
+#### ❌gets
+
+- 生成一个换行符并读取输入直至换行符并丢弃, 存储为字符串
+- 接受一个**确定长度的数组字符串变量**;
+
+> C11 中已经废弃: **不要使用**, 这个函数不会检查数组能不能容纳你的输入, 导致缓冲区移除, 造成程序安全问题!
+
+
+
+#### fgets 和 fputs
+
+这两个函数更安全, 但使用也更麻烦, 也常用于读取文件
+
+1. `fgets`
+
+   `fgets(char* words, int LEN, FILE)`
+
+- 第1个参数: 字符串变量 ✔
+
+- 第2个参数: 限制字符数, 解决溢出问题
+
+  **如果值为 n, 将读入 n-1 个字符**(留一位给`\0`)
+
+  或读到第一个换行符(**小于 n-1 个字符时**, 有效的字符串最后一位是换行符 `\n`)
+
+- 第3个参数: **表明要读入的文件**，如果读取键盘输入， 需要用 `stdin` 参数
+
+- 返回值:  fgets 返回指向 char 的指针
+
+  - **如果读取成功, 返回第一个参数的指针**
+  - 如果读取文件/文字流读到 **EOF**, 返回空指针 null pointer, 用 `NULL` 作为标识
+
+示例:
+
+```c
+#define SIZE 10
+char word[SIZE];
+    
+fgets(word, SIZE, stdin);
+puts(word);
+// Enter a string: 
+// 1234567898765
+// 123456789
+```
+
+```c
+fgets(word, SIZE, stdin);
+printf("%d", word[strlen(word) - 1] == '\n');
+// Enter a string: 
+// 123 - 提前回车, 读毕
+// 1 - 表明最后一位是换行符
+```
+
+```c
+#include <stdio.h>
+#define SIZE 10
+
+int main(void)
+{
+    char word[SIZE];
+
+    puts("Enter a string(empty line to exit)");
+    while (fgets(word, SIZE, stdin) != NULL && word[0] != '\n')
+        // 即便输入的字符串超出了SIZE, 会从缓冲区取出剩余的数据直到
+        // 数组第一位元素是 \n(用户直接回车)
+        fputs(word, stdout);
+
+    puts("Done!");
+
+    return 0;
+}
+```
+
+
+
+2. `fputs`
+
+`fputs(char* words, FILE)`
+
+ 与 `fgets` 搭配使用, 有两个参数
+
+- 第1个参数 字符串变量
+- 第2个参数 **表明要写入的文件**，如果输出至显示器， 需要用 `stdout` 参数
+- **不会在末尾添加空行**, 如果字符串使用 `fputs` 使得末尾添加了换行符, 不会像 `puts` 默认再打印一个换行符导致重复换行.
+
+示例
+
+```c
+#define SIZE 10
+
+char word[SIZE];
+
+puts("string logout: puts then fputs");
+    puts(word);
+    fputs(word, stdout);
+    // string logout: puts then fputs
+    // abc  <- 实际是 abc\n\0 , puts 又补充了一个 \n 
+
+    // abc
+
+
+    puts("enter again");
+    fgets(word, SIZE, stdin);
+    puts("string logout: puts then fputs");
+    puts(word);
+    fputs(word, stdout);
+    puts("done!");
+    /* 
+        enter again
+        abcdefghijklmn
+        string logout: puts then fputs
+        abcdefghi
+        abcdefghiDone! // <- 这里也印证了
+     */
+```
+
+
+
+#### gets_s
+
+`gets_s(char* words, int LEN)` C11 新增
+
+- 读取一个字符串,直到遇到换行符或文件结束(EOF)为止
+- 第一个参数和第二个参数 fgets 一致, 但没有第三个 file 参数, 只接受 stdin
+- 遇到换行符丢弃而不是存储
+- 如果读到最大字符数还未遇到换行, 则
+  1. 目标数组首字符置为空字符
+  2. 丢弃后面的输入, 返回空指针
+  3. 调用依赖特殊的处理函数, **可能使程序终止**
+
+> 相比起来, 还是 fgets 更加灵活, 目前GCC中还没有完全实现此标准，Clang里暂时没有增加对 gets_s 的支持
+
+
+
+#### 自己实现 sgets
+
+我们可以通过 fgets 实现超出截断, 和替换换行符, 来存储字符串
+
+```c
+#include <stdio.h>
+
+char* sgets(char* str, int size)
+{
+    char* pt;
+    int   i = 0;
+    pt      = fgets(str, size, stdin);
+    if (pt)  // pt != NULL
+    {
+        while (pt[i] != '\n' && pt[i] != '\0')
+            i++;
+        if (pt[i] == '\n')
+            pt[i] == '\0';
+        else
+            while (getchar() != '\n')
+                continue;
+    }
+
+    return pt;
+}
+
+```
 

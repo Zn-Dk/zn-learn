@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AbortController</title>
+</head>
+
+<body>
+  <button onClick="useFetchWithAbortController(2000)">Fetch Data!</button>
+  <script>
+    const useFetchWithAbortController = async (maxDelay) => {
+      const controller = new AbortController(); // 原生 API 用于终止 fetch 请求
+      try {
+        // Promise.all 保证在超时之前的请求可以被返回(可以用于填充部分数据)
+        // 超时之后 reject, 后续的请求会全部被 reject
+        await Promise.all([
+          // 传递 signal 可以是同一个 controller , 这个无所谓, 一般我们不会单独管理各请求的中止
+          fetch('http://localhost:3000/wait/3000', { signal: controller.signal })
+            .then(() => console.log('fetched 3s')),
+          fetch('http://localhost:3000/wait/1000', { signal: controller.signal })
+            .then(() => console.log('fetched 1s')),
+          fetch('http://localhost:3000/wait/5000', { signal: controller.signal })
+            .then(() => console.log('fetched 5s')),
+          fetch('http://localhost:3000/wait/4000', { signal: controller.signal })
+            .then(() => console.log('fetched 4s')),
+          // [关键] 我们在此定义一个最大超时时间
+          new Promise((_, reject) => setTimeout(reject, maxDelay)),
+
+        ]);
+      } catch (error) {
+        // 一旦超时, 我们将未完成的其他请求全部终止
+        console.log('the rest request aborted!');
+        controller.abort();
+      }
+    };
+
+  </script>
+</body>
+
+</html>

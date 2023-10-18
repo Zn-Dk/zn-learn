@@ -6,6 +6,10 @@
     "my.h": "c",
     "windows.h": "c",
     "limits": "c",
-    "ctype.h": "c"
+    "ctype.h": "c",
+    "sget.h": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c"
   }
 }

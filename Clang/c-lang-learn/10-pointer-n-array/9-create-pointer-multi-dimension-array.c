@@ -6,7 +6,7 @@ int main(void)
 
     // 创建一个指向二维数组的指针
     // 需要先将*与变量用圆括号包裹, 否则是声明数组
-    int(*ptr)[2];
+    int (*ptr)[2];
 
     ptr = table;
 

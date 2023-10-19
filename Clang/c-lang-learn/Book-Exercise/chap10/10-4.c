@@ -4,22 +4,27 @@
 // 个简单的程序中测试该函数
 int max_index(int* ar, int len)
 {
-    int max, idx;
+    // int  max, idx;
+    int max_idx;
 
     for (int i = 0; i < len; i++, ar++) {
-        if (*ar > max) {
-            max = *ar;
-            idx = i;
+        // if (*ar > max) {
+        //     max = *ar;
+        //     idx = i;
+        // }
+        // 使用 指针记录下标
+        if (*(ar + i) > *(ar + max_idx)) {
+            max_idx = i;
         }
     }
-    return idx;
+    return max_idx;
 }
 
 int main(void)
 {
     int test[6] = {1, 3, 6, 2, 13, 4};
 
-    printf("index of max number in test is %d", max_index(test, 6));
+    printf("index of max number in test is [%d]", max_index(test, 6));
 
     return 0;
 }

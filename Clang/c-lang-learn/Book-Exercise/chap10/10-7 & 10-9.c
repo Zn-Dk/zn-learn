@@ -26,6 +26,15 @@ void copy_ar(double* target, const double* source, int len)
     }
 }
 
+/*
+    10-9 的编程练习与本例函数达到的目的相同:
+    编写一个程序，初始化一个double类型的3×5二维数组，使用一个处理
+    变长数组的函数将其拷贝至另一个二维数组中。
+    还要编写一个以变长数组为形参的函数以显示两个数组的内容。
+    这两个函数应该能处理任意N×M数组
+    （如果编译器不支持变长数组，就使用传统C函数处理N×5的数组）。
+ */
+
 void copy_2d(int row, int col, double source[row][col], double target[row][col])
 {
     for (int r = 0; r < row; r++)

@@ -3045,3 +3045,1145 @@ char* sgets(char* str, int size)
 
 ```
 
+
+
+#### strlen
+
+- 用途: 统计字符串长度
+
+- 形式: `size_t strlen(const char *_Str)`
+
+  - 参数 _Str 字符串
+
+- 注意事项: 
+
+  - 在**遇到空字符时**, 停止计数
+
+- 示例 `strlen.c`
+
+  ```c
+  #include <stdio.h>
+  #include <string.h>
+  
+  /** 截断函数, 原理: 通过给 str 提前加入 \0 空字符 */
+  void fit(char* str, unsigned int limit)
+  {
+      if (strlen(str) > limit)
+          str[limit] = '\0';
+  }
+  
+  int main(void)
+  {
+      char str[] = "testStringWonder.";
+  
+      printf("Before: %s\n", str);
+      // Before: testStringWonder.
+  
+      fit(str, 10);
+      printf("After: %s\n", str);
+      // After: testString
+  
+      puts(str + (strlen(str) + 1));  // strlen(str) + 1 = 10 + 1
+      printf("Rest of string counts: %d", strlen(str + 11));
+      // onder.
+      // Rest of string counts: 6
+      // 移动指针, 我们可以把剩余的部分打印出来
+      // 注意原来 [10] 的 W 被替换成了 \0
+  
+      return 0;
+  }
+  ```
+
+#### strcat
+
+- 用途: 拼接字符串
+
+- 形式 `char *strcat(char *_Dest, const char *_Source)`
+
+  - 参数 _Dest 被拼接的字符串(会变)
+  - 参数 _Source 拼接字符串(不变)
+  - 返回值  _Dest 的指针
+
+- 注意事项: 
+
+  - 无法检查**第一个字符串是否能容纳**第二个字符串, 导致多余字符溢出到其他存储字符串的内存
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  #include <string.h>
+  
+  #define SIZE 50
+  
+  int main(void)
+  {
+      char msg[] = ",welcome to my program!";
+      char full_msg[SIZE];
+  
+      puts("What is your name? ");
+  	// 自己实现的 sgets
+      if (sgets(full_msg, SIZE)) {
+          strcat(full_msg, msg);
+          puts(full_msg);
+          puts(msg);
+      }
+  
+      /*
+          What is your name?
+          Founkder Strien
+          Founkder Strien,welcome to my program!
+          ,welcome to my program!
+       */
+     
+      /*
+          如果 SIZE 调整为 20
+          What is your name?
+          abcdefgihjklmn
+          abcdefgihjklmn,welcome to my program!
+          gram!  <-- 留意这里
+       */
+      return 0;
+  }
+  ```
+
+  
+
+#### strncat
+
+- 用途: 拼接字符串, **增加了参数限制最大添加数**保证安全性
+
+- 形式 `char *strcat(char *_Dest, const char *_Source, size_t _Count)`
+
+  - 参数 _Dest 被拼接的字符串(会变)
+  - 参数 _Source 拼接字符串(不变)
+  - 参数 **_Count 能够容纳的最大字符添加数**
+  - 返回值  _Dest 的指针
+
+- 注意事项: 
+
+  - **算上结尾空字符** _Count 参数应该考虑为至少 `strlen(_Source) + 1`
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  #include <string.h>
+  
+  #define SIZE 50
+  #define BUG_SIZE 20
+  
+  int main(void)
+  {
+      char msg[] = ",welcome to my program!";
+      char full_msg[SIZE];
+      char bug_msg[BUG_SIZE];
+      int  available;
+  
+      puts("What is your name? ");
+  
+      if (sgets(full_msg, SIZE)) {
+          available = SIZE - strlen(full_msg) - 1;
+          strncat(full_msg, msg, available);
+          puts(full_msg);
+      }
+  
+      puts("What is your name? (Bug size) ");
+      if (sgets(bug_msg, SIZE)) {
+          available = BUG_SIZE - strlen(bug_msg) - 1;
+          strncat(bug_msg, msg, available);
+          puts(bug_msg);
+      }
+  
+      /*
+          What is your name?
+          Lucky Star
+          Lucky Star,welcome to my program!
+          What is your name? (Bug size)
+          Lucky Star
+          Lucky Star,welcome
+  
+       */
+  
+      return 0;
+  }
+  ```
+
+  
+
+#### strcmp
+
+- 用途: 比较两个字符串是否相等
+
+- 形式 `int strcmp(char *_str1, const char *_str2)`
+
+  - 参数 _str1 _str2 两个比较的字符串
+  - 返回值整型 int
+    - 两个值**相同时, 为 0**
+    - 不同是**返回非零值**
+
+- 注意事项: 
+
+  对于不等的两个字符串, 可能返回的是 ASCII 码的差值
+
+  -  为正值代表前面参数比后面顺序的ASCII码大或者更长, 为负值则反之
+  -  注意 ASCII 大写字母在小写字母前面
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  #include <string.h>
+  
+  #define ANS "John Doe"
+  #define SIZE 30
+  int main(void)
+  {
+      /**
+       *  strcmp 比较两个字符串是否相等
+       *  返回值 0 - 相等  非零 - 不相等(ASCII 差值)
+       */
+  
+      char input[SIZE];
+  
+      puts("who stolen the key?");
+      do {
+          if (sgets(input, SIZE)) {
+              puts("wrong answer, try again!");
+          }
+      } while (strcmp(input, ANS));
+  
+      puts("your are right!");
+      /*
+        who stolen the key?
+        Kevin
+        wrong answer, try again!
+        John Doe
+        wrong answer, try again!
+        your are right!
+       */
+  
+      printf("strcmp(\"A\", \"B\" = %d)\n", strcmp("A", "B"));
+      printf("strcmp(\"B\", \"A\" = %d)\n", strcmp("B", "A"));
+      printf("strcmp(\"ab\", \"abc\" = %d)\n", strcmp("ab", "abc"));
+      printf("strcmp(\"abc\", \"Ab\" = %d)\n", strcmp("abc", "Ab"));
+      printf("strcmp(\"aba\", \"abD\" = %d)\n", strcmp("aba", "abD"));
+      /*
+        strcmp("A", "B" = -1)
+        strcmp("B", "A" = 1)
+        strcmp("ab", "abc" = -1)
+        strcmp("abc", "Ab" = 1)
+        strcmp("aba", "abD" = 1)
+       */
+      return 0;
+  }
+  ```
+
+
+
+#### strncmp
+
+- 用途: 比较两个字符串, 可以传入第三个参数限定比较的字符数
+
+  ​	  (也就是 string.startsWith)
+
+- 形式: `int strncmp(char *_str1, const char *_str2, size_t _MaxCount)`
+
+  - 参数 _str1 _str2 两个比较的字符串
+  - 参数 _MaxCount 最大比较字符数
+  - 返回值整型 int
+    - 两个值**相同时, 为 0**
+    - 不同是**返回非零值**
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  #include <string.h>
+  
+  #define ROW 10
+  #define SIZE 30
+  
+  #define PREFIX "astro"
+  int main(void)
+  {
+      char data[ROW][SIZE] = {
+          "astrol", "astroid", "autocue", "astro", "astoria", "assorted",
+      };
+  
+      for (int i = 0; i < ROW; i++) {
+          if (!strncmp(data[i], PREFIX, strlen(PREFIX)))
+              printf("Found data[%d] = %s, starts with prefix \"%s\"\n", i, data[i], PREFIX);
+      }
+      /*
+          Found data[0] = astrol, starts with prefix "astro"
+          Found data[1] = astroid, starts with prefix "astro"
+          Found data[3] = astro, starts with prefix "astro"
+       */
+  
+      return 0;
+  }
+  ```
+
+  
+
+#### strcpy
+
+- 用途: 拷贝一个字符串到另一个字符串中
+
+  ​	  (已知: 在初始化之后不能直接赋值字符串字面量给字符串指针,
+
+   且 str1 = str2, 只是拷贝了指针)
+
+- 形式: `char *strcpy(char *_Dest, const char *_Source)`
+
+  - 参数 _Dest 目标, _Source 源字符串 (用**赋值的顺序记忆**)
+  - 返回值 char* _Dest 第一个参数的指针
+
+- 注意事项
+
+  因为是通过指针进行复制操作, 源字符串和目标字符串都可以自定义指针
+
+  位置, 也就不局限于数组的起始
+
+  **于是实现 splice/slice 只需要这一个函数!**
+
+  ```c
+  char target[20] = "HELLO";
+  char source[10] = "WELOVEYOU";
+  strcpy(target + 4, source + 2);
+  // 从源[2]剪切, 粘贴覆盖目标[4]
+  puts(target); 
+  // HELLLOVEYOU
+  ```
+
+  - 注意返回值是 `target + 4`, 而不是 `target`
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  #include <string.h>
+  
+  #define SIZE 30
+  #define MSG "HELLO WORLD"
+  int main(void)
+  {
+      char  str1[SIZE] = MSG;
+      char  str2[SIZE];
+      char* pt;
+  
+      strcpy(str2, str1);
+      puts(str2);
+      // HELLO WORLD
+  
+      strcpy(str2, str1 + 6);  // 从下标5开始复制
+      puts(str2);
+      // WORLD
+  
+      strcpy(str2, str1);               // 先原样复制
+      pt = strcpy(str2 + 3, str1 + 6);  // 从源字符串(下标5)剪切到目标字符串(下标3)
+      puts(str2);
+      // HELWORLD
+      puts(pt);
+      // 函数返回的指针是 str2 + 3 因此打印 WORLD
+  
+      char target[20] = "HELLO";
+      char source[10] = "WELOVEYOU";
+  
+      pt = strcpy(target + 4, source + 2);
+      // 从源[2]剪切, 粘贴覆盖目标[4]
+      puts(target);
+      // HELLLOVEYOU
+      puts(pt);
+      // 函数返回的指针是 target + 4 因此打印 LOVEYOU
+  
+      return 0;
+  }
+  ```
+
+  
+
+#### strncpy
+
+- 拷贝字符串, 也是通过加入第三参数 Count 实现更安全的拷贝, 一般设置为 `DATA_SIZE - 1`,手动补`\0` 因为**输入**字符串 SIZE **可能大于存储** SIZE
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  #include <string.h>
+  
+  #define ROW 2
+  #define INPUT_SIZE 30
+  #define DATA_SIZE 10
+  
+  #define PREFIX "astro"
+  
+  void print_str_arr(int row, int size, char str_ar[row][size])
+  {
+      putchar('[');
+  
+      for (int i = 0; i < row; i++) {
+          fputs(str_ar[i], stdout);
+          if (i != row - 1)
+              printf(", ");
+      }
+  
+      putchar(']');
+  }
+  
+  int main(void)
+  {
+      char data[ROW][DATA_SIZE];
+      char temp[INPUT_SIZE];
+      int  idx = 0;
+  
+      printf("Enter up to %d rows of word, start with prefix: \"%s\"\n", ROW, PREFIX);
+  
+      while (idx < ROW && sgets(temp, INPUT_SIZE)) {
+          if (strncmp(temp, PREFIX, strlen(PREFIX)))
+              printf("Your entered: %s, is not qualified. try again!\n", temp);
+          else {
+              // strcpy(data[idx], temp); 不够安全
+              // 使用 strncpy
+              // 手动补上 \0, 因为输入 INPUT_SIZE 大于 DATA_SIZE,
+              // 如果是 DATA_SIZE, temp[DATA_SIZE] 最后一位可能是非空字符导致溢出
+              strncpy(data[idx], temp, DATA_SIZE - 1);
+              data[idx][DATA_SIZE] = '\0';
+              idx++;
+          }
+      }
+  
+      print_str_arr(ROW, DATA_SIZE, data);
+      /*
+          Enter up to 5 rows of word, start with prefix: "astro"
+          astrol
+          astroid
+          autocue
+          Your entered: autocue, is not qualified. try again!
+          astro
+          astroia
+          astrolen
+          [astrol, astroid, astro, astroia, astrolen]
+      */
+      return 0;
+  }
+  ```
+
+
+
+#### sprintf
+
+- 用途: 格式化地存储字符串 (可以像使用 printf 格式化组成一串字符串)
+
+- 形式: `int sprintf(char * _Dest, const char *_Format, ...)`
+
+  - 参数 _Dest 目标, _Format 格式化的字符串
+  - 返回值 int 读取成功的标识
+
+- 注意事项: 函数的声明在 **stdio.h**, 而不是 string.h
+
+- 示例
+
+  ```c
+  #include "sget.h"
+  #include <stdio.h>
+  
+  #define MSG_SIZE 50
+  #define SIZE 20
+  
+  int main(void)
+  {
+      char   message[MSG_SIZE];
+      char   fname[SIZE];
+      char   lname[SIZE];
+      double salary;
+  
+      printf("First Name: ");
+      sgets(fname, SIZE);
+  
+      printf("Last Name: ");
+      sgets(lname, SIZE);
+  
+      printf("Salary: ");
+      scanf("%lf", &salary);
+      putchar('\n');
+  
+      sprintf(message, "[INFO] %s %s, Salary: $%.2lf", fname, lname, salary);
+      puts(message);
+      /*
+      First Name: John
+      Last Name: Doe
+      Salary: 12000.50
+  
+      [INFO] John Doe, Salary: $12000.50
+       */
+      return 0;
+  }
+  ```
+
+
+
+#### atoi
+
+- 用途: 将字符串转为整型int  (个人理解这个函数名是 ascii to int)
+
+- 引用头文件 `stdlib.h`
+
+- 形式: `int atoi(const char *str)`
+
+- 返回值:  (parseInt - 类比 js)
+
+  - **遇到非数字形式的字符串返回 0**
+  - 数字开头的非纯数字, 读取直至出现第一个非数字 `1234.5 -> 1234` `500M -> 500`
+
+- 示例
+
+  ```c
+      char* num  = "1234.67";
+      char* dist = "500Miles";
+  
+      printf("atoi num=\"%s\" -> %d\n", num, atoi(num));
+      // atoi num="1234.67" -> 1234
+      printf("atoi dist=\"%s\" -> %d\n", dist, atoi(dist));
+      // atoi dist="500Miles" -> 500
+  ```
+
+> 转换 long 还有一个函数是 atol
+
+#### atof
+
+- 用途: 将字符串转为浮点  (ascii to float, 实际是 double)
+
+- 引用头文件 `stdlib.h`
+
+- 形式: `double atof(const char *str)`
+
+- 返回值:  (parseFloat - 类比 js)
+
+  - **遇到非数字形式的字符串返回 0**
+  - 数字开头的非纯数字, 读取直至出现第一个非数字 `1234.5 -> 1234` `500M -> 500`
+
+- 示例
+
+  ```c
+      char* num  = "1234.67";
+      char* dist = "500Miles";
+  
+      printf("atof num=\"%s\" -> %.2lf\n", num, atof(num));
+      // atof num="1234.67" -> 1234.67
+      printf("atof dist=\"%s\" -> %.2lf\n", dist, atof(dist));
+      // atof dist="500Miles" -> 500.00
+  ```
+
+  
+
+#### strtol / strtoul / strtod
+
+- 字符串转 long / unsigned long /double
+
+- 这三个函数可以报告字符串首字符是否是数字
+
+- `strtol` 和 `strtoul` 可以指定进制数从 **2-36 进制**
+
+- 形式如: `long strtol(const char* strptr, char** endptr, int radix)`
+
+  - strptr 待转换字符串指针
+  - endptr 标识数字结束处的指针
+    - 程序会自动返回给你什么是分割点, 只是作为存储用
+    - 如果是纯数字字符串, 就是指向空字符(最后一位)
+    - **如果是大于 10 进制的, 就要考虑 'a'~'z' 作为数字了**
+  - radix 以何进制写入数字 
+
+- 示例
+
+  ```c
+  char* atom = "10Atom";
+  char* end;
+  long  val;
+  
+  val = strtol(atom, &end, 10);
+  printf("\"10Atom\" strtol to radix 10 -> %ld\n", val);
+  printf("\tstrtol end at %s(%d)\n", end, *end);
+  // "10Atom" strtol to radix 10 -> 10
+  //         strtol end at Atom(65)
+  // end 指向 'a' 字符, 打印 puts(end) -> "atom"
+  
+  val = strtol(atom, &end, 16);
+  printf("\"10Atom\" strtol to radix 16 -> %ld(%X)\n", val, val);
+  printf("\tstrtol end at %s(%d)\n", end, *end);
+  // "10Atom" strtol to radix 16 -> 266(10A)
+  //         strtol end at tom(116)
+  // end 指向 'b' 字符, 打印 puts(end) -> "tom"
+  
+  /** 转换成浮点数 */
+  double dbl = strtod("123.34 folks", &end);
+  printf("\"123.34 folks\" strtod to double -> %.2lf\n", dbl, dbl);
+  printf("\tstrtol end at %s(%d)\n", end, *end);
+  // "123.34 folks" strtod to double -> 123.34
+  //         strtol end at  folks(32)
+  ```
+
+  
+
+
+
+
+
+#### 更多字符串函数..
+
+参考书本 11.5.7 节 Page 357 页, 比如: 
+
+- 📌**用于查找字符串内某个字符的指针(idx):** 
+
+  - `strchar(char* s1, char* s2)`  <- findIndex 
+  - `strrchar(char* s1, char* s2)`  <- findLastIndex
+
+- `strpbrk(char* s1, char* s2)` 
+
+  - s1 是否包含 s2 内的任意字符 (**只是包含**不是要求符合字符串的格式)
+  - 是则返回 s1 否则返回空字符
+
+- 📌**`strstr(char* s1, char* s2)`** 
+
+  - s1 是否包含 s2 的字符串** (**要求符合字符串格式**)
+  - 是则返回 s1 否则返回空字符
+
+  
+
+## 短节: 命令行参数
+
+ 命令行参数 `command line arguments`
+
+ C 程序可通过 `main` 函数读取输入命令行的参数, 带空格的参数可以使用双引号括起.
+
+ 下标[0]位是程序名(含执行路径), 实参从 [1] 开始.
+
+通常开头会写成
+
+```c
+int main(int argc, char* argv[])
+// 参数 1 int , 常称作 argc (argument count) 第一位是程序名称, 所以是接收参数的个数 + 1
+// 参数 2 char* argv[] , 字符串数组, 常称作 argv (argument value) 接收参数的值
+```
+
+典型示例:
+
+```c
+#include <stdio.h>
+
+int main(int argc, char* argv[])
+{
+    int ct;
+    printf("Your program has %d actual arguments\n", argc - 1);
+
+    for (int ct = 0; ct < argc; ct++)
+        printf("[%d]: %s\n", ct, argv[ct]);
+    putchar('\n');
+
+    /*
+      执行: ./cli-arguments foo=1 bar=2 -t -D "Hello World"
+      
+      Your program has 5 actual arguments
+      [0]: /path/to/program/cli-arguments
+      [1]: foo=1
+      [2]: bar=2
+      [3]: -t
+      [4]: -D
+      [5]: Hello World
+     */
+    return 0;
+}
+```
+
+## 存储/链接和内存管理
+
+### 作用域
+
+
+
+#### 块级作用域
+
+最常见的作用域, 用花括号标识起止
+
+```c
+#include <stdio.h>
+
+/** C 中的块级作用域 */
+int main(void)
+{
+    int i;
+    for (int i = 0; i < 10; i++) {
+        int j = i + 1;  // j 作用域开始, 仅这个作用域和子作用域
+
+        if (i > 5) {
+            int k = 3;  // k 作用域开始
+            printf("i=%d,j=%d,k=%d\n", i, j, k);
+        }  // k 作用域结束
+
+        printf("i=%d,j=%d\n", i, j);
+        // identifier "k" is undefined
+
+    }  // j 作用域结束
+
+    printf("i=%d\n");
+    // identifier "j" "k" is undefined
+
+    return 0;
+}
+```
+
+
+
+> for & while 循环 & if 语句的声明变量直到 C99 才被允许, 如 `for(int i = 0 ..)`
+>
+> 所以这些代码也算是循环块级作用域的一部分.
+
+> 如果在内层作用域声明了同名变量, **内层变量覆盖外层变量定义**, 直至退出内层作用域 (对于 while for 如果初始化位置有同名变量, 是使用的外层)
+
+#### 函数作用域
+
+仅用于 `goto` 语句的标签
+
+#### 函数原型作用域
+
+用于函数原型的形参名 `int foo(int bar, char baz[])`
+
+
+
+#### 文件作用域
+
+在函数外面定义的变量具有文件作用域, 从定义到文件结尾均为域空间,
+
+这个变量也叫全局变量
+
+```c
+#include <stdio.h>
+// 文件作用域(或者是外部链接文件作用域)
+int val = 1;
+void foo(void);
+int main(void)
+{
+    ..
+}
+void foo(void)
+{
+    ..
+}
+```
+
+
+
+### 链接
+
+C变量有三种链接属性: **外部链接**,**内部链接**和**无链接**
+
+块作用域/函数/原型作用域都是**无链接变量**(属于他们的内部变量)
+
+文件作用域变量可以是外部或内部链接变量.
+
+外部链接变量可在多文件程序使用, 内部链接变量只能在一个翻译单元中使用.
+
+> 判断外部/内部链接, 查看定义中是否使用 `static` 标识符
+
+```c
+#include <stdio.h>
+int val = 1; // 外部链接 文件作用域(可被引用)
+static int secret = 42; // 内部链接 文件作用域(仅当前文件)
+```
+
+
+
+### 存储期(生命周期)
+
+- 静态存储期
+
+  - 程序执行时一直存在(如文件作用域)
+
+  - 块作用域变量也可声明(static)
+
+- 线程存储期
+
+- 自动存储期
+
+  - 一般块作用域变量默认都是, 进入退出时会自动分配/释放内存
+
+  - 变长数组的存储期是从声明处直至块结尾, 不是块的开始到结尾
+
+![存储类别存储期和链接](assets\存储类别存储期和链接.jpg)
+
+
+
+### 自动变量
+
+自动存储期变量都有自动存储期, 默认情况下声明块变量
+
+```c
+int val;
+auto int val; // 同等效力, 只是显式声明了 auto
+```
+
+>  C++ 和 C 的 auto 关键字含义不一样, 为了兼容性不要随意用 auto
+
+
+
+### 寄存器变量
+
+寄存器变量储存在内存中, 访问速度最快, 使用存储类别说明符 register 声明:
+
+```c
+register int mem_number;
+```
+
+> 与其是声明, 这里实际只是**请求**计算机存储变量到内存里, 有可能被拒绝~
+
+> 函数声明也可以加上该关键字
+
+
+
+#### 块作用域的静态变量
+
+在块作用域中使用 static 声明静态变量, 代表变量的内存地址不变,不是值不变,
+
+有静态存储期 (**在函数中声明,有点闭包的意思**), 但仍然具有块作用域和无链接属性
+
+> 函数形参不能使用 static
+
+演示如下:
+
+```c
+#include <stdio.h>
+
+void print_var(void);
+
+int main(void)
+{
+    int i = 0;
+    while (i++ < 3)
+        print_var();
+
+    /*
+    var=1, immutable=1
+    var=1, immutable=2
+    var=1, immutable=3
+     */
+
+    return 0;
+}
+void print_var(void)
+{
+    int var = 1;
+    // 只在函数编译的时候初次声明, 再次执行会跳过这个语句
+    static int immutable = 1;
+    printf("var=%d, immutable=%d\n", var++, immutable++);
+}
+```
+
+### 外部链接的静态变量
+
+在文件头函数外声明, 函数中引用时, 内部有个隐式的声明使用 `extern` 标识符
+
+- **可以跨文件使用**
+- extern 使用的范围也包含函数
+- 实际更推荐使用 const 做保护**, 或者不在多处改变未可知的外部变量**
+
+```c
+int Val = 1;
+
+int main()
+{
+    extern int Val; // 隐式的一个声明, 一般不写
+    int Val; // ❌这是创建一个自动变量, 覆盖外部文件作用域的变量
+    printf("%d", Val);
+}
+```
+
+>外部变量因为是静态编译, 所以必须是一个**常量或者常量表达式 ** 
+>
+>例如 `int Val = 2 * x;` (假设 x 是上方的外部静态变量), 是不可以的
+
+
+
+联合编译的例子:
+
+```c
+// head.h
+int fn_a(void);
+int fn_b(void);
+
+// main.c 
+#include "head.h"  // 引入头文件声明 fn_a fn_b
+#include <stdio.h>
+
+int global_var;  // main 里定义一个全局变量, 不加 static
+
+int main(void)
+{
+    global_var = 20;
+    printf("At start, main.c global_val %d\n", global_var);
+    fn_a();
+    fn_b();
+    printf("Finally, main.c global_val %d\n", global_var);
+
+    return 0;
+}
+
+// a.c
+#include <stdio.h>
+extern int global_var;  // 注入外部链接变量
+
+int fn_a(void)
+{
+    printf("a.c global_val %d\n", global_var);
+    global_var = 30;
+    printf("now, a.c global_val %d\n", global_var);
+
+    return 0;
+}
+
+// b.c
+#include <stdio.h>
+extern int global_var;  // 注入外部链接变量
+
+int fn_b(void)
+{
+    printf("b.c global_val %d\n", global_var);
+    global_var = 10;
+    printf("now, b.c global_val %d\n", global_var);
+
+    return 0;
+}
+
+///////////////////// 编译
+$ gcc .\a.c .\b.c .\main.c -o test
+///////////////////// 输出
+At start, main.c global_val 20
+a.c global_val 20
+now, a.c global_val 30
+b.c global_val 30
+now, b.c global_val 10
+Finally, main.c global_val 10
+```
+
+
+
+### 内部链接的静态变量
+
+也在文件作用域, 使用 `static` 标识符声明, 不能跨文件使用**(包含函数)**
+
+```c
+// a.c
+static int secret_var_a = 42;
+
+// main.c
+extern int secret_var_a;  // 内部链接, 联合编译时报错
+```
+
+
+
+
+
+### 随机数函数和时间种子
+
+- rand() - stdlib.h - 生成 `0~INT.MAX`  的整数
+- srand(int seed) - stdlib.h 在文件维度上输出随机数, 使得每次运行程序的 rand 结果不同
+- time() - time.h - 返回时间戳(秒单位) - 一般传入 0 返回当前时间
+- 生成随机数种子 `srand(time(0));`
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+/**
+ * 赛博骰子
+ * @param sides 面数, 如 6 面生成 1~6
+ */
+int cyber_dice(int sides)
+{
+    int roll;
+    roll = rand() % sides + 1;
+    return roll;
+}
+
+int main(void)
+{
+    srand(time(0));  // 必须 随机种子 time() 需要引入 time.h
+    printf("%d", cyber_dice(6));
+
+    return 0;
+}
+```
+
+
+
+
+
+### malloc
+
+- 用途 给用户手动分配变量内存 (一般是指针变量)
+
+- 参数 `size_t(unsigned ll/ unsign long) Size`  需要分配的字节数
+
+- 返回 void* 通用指针(ANSI C, 提高兼容性), 即分配内存块的首字节地址, 失败时为空指针
+
+  (使用时为了提高可读性, **应坚持写明强制类型转换, 特别是在 C++ 中这是必须的**)
+
+- 示例
+
+  ```c
+  double* ptd;
+  ptd    = (double*)malloc(30 * sizeof(double));  // 手动分配一个 double 数组空间
+  ptd[0] = 1.1;
+  ptd[1] = 1.2;
+  printf("ptd[0] = %.2f, ptd[1] = %.2f, ptd[2] = %.2f\n", ptd[0], ptd[1], ptd[2]);
+  // ptd[0] = 1.10, ptd[1] = 1.20, ptd[2] = 0.00
+  
+  char* ptc = (char*)malloc(50 * sizeof(char));  // 分配 50 size 的字符串
+  strcpy(ptc, "Alphabet");
+  puts(ptc + 2); 
+  // phabet
+  ```
+
+> 因为 C99 之前不允许 VLA 变长数组的写法 arr[n], 传统的做法即是使用 malloc 声明动态数组
+
+
+
+### free
+
+- 用途: 与 malloc() 配合使用, 用于释放 malloc 分配的内存
+- 参数: `void* Memory` 即调用 malloc 返回的地址(**必须是当初返回的首位地址指针**)
+
+```c
+double* ptd = (double*)malloc(30 * sizeof(double)); 
+// ptd++; ❌ 如果移动了指针再free则会报错 munmap_chunk(): invalid pointer
+free(ptd); // ✅
+```
+
+> free的重要性:  
+>
+> malloc 动态分配的内存不会被 C 自动回收, 除非用 free 释放, 如果在长循环里使用时忘记 free, 且没有储存其中产生的指针变量, 极有可能造成内存泄漏(memory leak)!
+
+
+
+### calloc 
+
+- 用途: 与 malloc 类似, 也用于动态分配内存, 只是参数不同(更有可读性)
+- 参数: `size_t NumOfElements` 元素个数, `size_t SizeOfElements` 元素大小
+- 额外特性: 把块中所有位设置为 0
+
+
+
+### 动态分配与VLA的区别
+
+- 变长数组VLA 和 malloc/calloc 动态分配数组的功能基本类似
+
+- 不同的, VLA 具有**块级作用域自动存储类型**, 这意味着离开作用域就会被销毁, 而 malloc 不会
+
+  > 基于以上, 我们可以实现 malloc 在子函数中分配一个指针变量, 处理后返回这个指针变量, 在外部访问使用后再 free
+	```c
+	// 翻转字符串
+	char* to_reverse(const char* str)
+	{
+    char* temp = (char*)malloc(strlen(str) * sizeof(char));
+    for (int i = 0; i < strlen(str); i++) {
+	      temp[i] = str[strlen(str) - i - 1];
+    }
+  
+    return temp;
+	}
+  // main 使用, 最后释放
+	int main(void)
+	{
+	    char* str = "The Hello World";
+	    char* tmp;
+	
+	    tmp = to_reverse(str);
+	
+	    puts(tmp);  // dlroW olleH ehT
+	
+	    free(tmp);
+	
+	    return 0;
+	}
+	```
+
+
+- 多维数组用 VLA 创建更方便, 如下
+
+  ```c
+  int n = 5;
+  int m = 6;
+  // VLA
+  int ar[n][m]; 
+  // 不支持 VLA 时, 使用 malloc
+  int (*p2)[6]; 
+  p2 = (int (*)[6])malloc(n * 6 * sizeof(int)); // n * 6 数组
+  ```
+
+  
+
+### 不同类型变量的存储区域
+
+我们可以通过打印不同类型变量的地址了解他们储存在地址的位置, 从而得出:
+
+- 静态内存区域: 文件作用域静态变量, 字符串常数
+- 自动变量区域: 一般的自动变量
+- 动态内存区域: malloc 分配的数据(通常被称为自由堆或者自由内存)
+
+
+
+### ANSI C 类型限定符
+
+#### 限定符幂等
+
+C99 新增了类型限定符幂等, 即可以在一条声明中多次使用同一个限定符, 多余的会被忽略:
+
+```c
+const const const int n = 1;  // == const int n = 6;
+typedef const int _my_type; // 自定义类型
+const _my_type foo = 42; // 相当于 const int...
+```
+
+#### const 限定符
+
+- 限定值不能通过通过赋值/递增、递减修改 （初始化是可以赋值的）
+
+- 普通变量和数组即照字面意思理解
+
+- 指针变量比较复杂：
+
+  - `const float* pf` 指向 pf 的值不能改变, 不影响指针本身改变指向
+
+    ```c
+        int  ar[] = {1, 2, 3, 4};
+        const int* nums = (int*)calloc(5, sizeof(int));
+    	nums[1] = 2; // ❌
+    	nums++; // ✅
+        nums = ar;  // ✅ 这个指针变量改变指向, 只是不能改变指向的值
+    ```
+
+  - `float* const pf` 指针 pf 不能改变(即指针不能递增递减), 不影响指针指向的值进行赋值
+
+    ```c
+        int* const nums2 = (int*)calloc(5, sizeof(int));
+        // nums2++;  // ❌
+        nums2[2] = 42;  // ✅
+        printf("%d\n", nums2[2]);
+    ```
+
+  - `float const * pf` 与 `const float* pf` 相同
+  - `const float * const pf` 指针和指针指向的值都不可变
+
+> 理解: 
+>
+> const 放 * 左侧任意位置, 代表指针指向的数据不可改变
+>
+> const 放 * 右侧任意位置, 代表指针本身不可改变

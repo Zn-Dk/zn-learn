@@ -11,6 +11,14 @@
     "array": "c",
     "string": "c",
     "string_view": "c",
-    "functional": "c"
+    "functional": "c",
+    "stdalign.h": "c",
+    "stdbool.h": "c",
+    "sstream": "c",
+    "*.tcc": "c",
+    "unordered_map": "c",
+    "time.h": "c",
+    "diceroll.h": "c",
+    "crtdefs.h": "c"
   }
 }

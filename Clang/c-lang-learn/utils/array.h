@@ -16,6 +16,20 @@ void print_arr(double target[], int len)
     putchar(']');
 }
 
+/** 打印字符串数组 */
+void print_str_arr(int row, int size, char str_ar[row][size])
+{
+    putchar('[');
+
+    for (int i = 0; i < row; i++) {
+        fputs(str_ar[i], stdout);
+        if (i != row - 1)
+            printf(", ");
+    }
+
+    putchar(']');
+}
+
 void copy_ar(double target[], const double source[], int len)
 {
     for (int i = 0; i < len; i++)

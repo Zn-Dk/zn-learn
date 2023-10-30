@@ -1,20 +1,38 @@
 #include <stdio.h>
+#include <string.h>
 
 char* sgets(char* str, int size)
 {
-    char* pt;
+    char* ret;
     int   i = 0;
-    pt      = fgets(str, size, stdin);
-    if (pt)  // pt != NULL
+    ret     = fgets(str, size, stdin);
+    if (ret)  // ret != NULL
     {
-        while (pt[i] != '\n' && pt[i] != '\0')
-            i++;
-        if (pt[i] == '\n')
-            pt[i] == '\0';
+        while (*ret != '\n' && *ret != '\0')
+            ret++;
+        if (*ret == '\n')
+            *ret = '\0';
         else
             while (getchar() != '\n')
                 continue;
     }
 
-    return pt;
+    return ret;
+}
+
+char* s_gets(char* str, int size)
+{
+    char *ret, *return_ptr;
+    ret = fgets(str, size, stdin);
+    if (ret) {
+        // 通过 strchr 判断, 清除换行符
+        return_ptr = strchr(str, '\n');
+        if (return_ptr)
+            *return_ptr = '\0';
+        else
+            while (getchar() != '\n')
+                continue;
+    }
+
+    return ret;
 }

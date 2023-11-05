@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title> 巧用 box-shadow 阴影 </title>
+  <style>
+    pre {
+      font-size: 18px;
+    }
+
+    code {
+      display: block;
+      width: 80vw;
+      white-space: pre;
+      margin: 20px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .show {
+      padding: 30px;
+    }
+
+    .show:nth-of-type(1) {
+      background: #222;
+      width: 300px;
+      height: 300px;
+    }
+
+    .new-moon {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      box-shadow: -20px -10px 5px yellow inset;
+    }
+
+    .show:nth-of-type(2) {
+      display: flex;
+      background: skyblue;
+      width: 300px;
+      height: 300px;
+    }
+
+    .cloud {
+      width: 100px;
+      height: 60px;
+      margin: auto;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow:
+        -50px 5px 0 #fafafa,
+        60px 10px 0 #fafafa,
+        45px -10px 0 #fafafa,
+        0px -30px 0 #f1f1f1;
+    }
+
+    .show:nth-of-type(3) {
+      display: flex;
+      background: peachpuff;
+      width: 300px;
+      height: 300px;
+    }
+
+    .circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-color: purple;
+      box-shadow:
+        100px 0 0 #f90,
+        100px 0 0 orangered inset;
+    }
+
+    .show:nth-of-type(4) {
+      display: flex;
+      position: relative;
+      background: #222;
+      width: 300px;
+      height: 300px;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      border: 30px solid #F90;
+      border-left: 30px solid transparent;
+      border-top: 30px solid transparent;
+      transition: filter 0.3s;
+      cursor: pointer;
+    }
+
+    .arrow:hover {
+      /* box-shadow: 0 0 6px #f90; */
+      filter: drop-shadow(2px 5px 8px #f90);
+    }
+
+    .arrow::after {
+      content: '';
+      position: absolute;
+      top: -17px;
+      left: -94px;
+      width: 118px;
+      height: 38px;
+      border-radius: 50%;
+      box-shadow: -29px 5px 0 #f90 inset;
+    }
+
+    .show:nth-of-type(5) {
+      display: flex;
+      position: relative;
+      background: #555;
+      width: 300px;
+      height: 300px;
+    }
+
+    .pointer {
+      width: 150px;
+      height: 50px;
+      background-color: brown;
+      filter:
+        drop-shadow(0 0 .5px #fff) drop-shadow(0 0 .5px #fff) drop-shadow(0 0 .5px #fff) drop-shadow(0 0 .5px #fff);
+    }
+
+    .pointer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -72px;
+      border: 50px solid brown;
+      border-right: 22px solid transparent;
+      border-top: 25px solid transparent;
+      border-bottom: 25px solid transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>巧用 box-shadow阴影</h1>
+  <h2>
+    可以说 box-shadow 不仅仅可以用来产生阴影
+    这个属性也是最方便快捷不依赖多元素的复制原有图形轮廓的办法
+    而且还要了解到:
+    - 阴影可以是多重的
+    - 阴影的动画
+  </h2>
+  <code>
+    // DEMO1
+    .new-moon {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      // 无需设置 元素本身的颜色 使用 inset 内阴影画出月亮
+      box-shadow: -20px -10px 5px yellow inset;
+    }
+  </code>
+  <div class="show">
+    <div class="new-moon"></div>
+  </div>
+  <code>
+    // DEMO2 用阴影绘制云朵
+    .cloud {
+      width: 100px;
+      height: 60px;
+      margin: auto;
+      background: #fff;
+      border-radius: 50%;
+      // 阴影是可以多重的
+      box-shadow:
+        -50px 5px 0 #fafafa,
+        60px 10px 0 #fafafa,
+        45px -10px 0 #fafafa,
+        0px -30px 0 #f1f1f1;
+    }
+
+  </code>
+  <div class="show">
+    <div class="cloud"></div>
+  </div>
+  <code>
+    // 单元素纯 CSS 实现以下效果
+    .circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-color: purple;
+      box-shadow:
+        100px 0 0 #f90,
+        100px 0 0 orangered inset;
+    }
+  </code>
+  <div class="show">
+    <div class="circle"></div>
+  </div>
+  <code>
+    // 使用 filter: drop-shadow() 整块阴影
+    .arrow {
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      border: 30px solid #F90;
+      border-left: 30px solid transparent;
+      border-top: 30px solid transparent;
+      transition: filter 0.3s;
+      cursor: pointer;
+    }
+
+    .arrow:hover {
+      // 无法使用 box-shadow 透明边框也会出现阴影
+      /* box-shadow: 0 0 6px #f90; */
+      // drop-shadow 会识别图形实际可见的部分实现加阴影
+      filter: drop-shadow(2px 5px 8px #f90);
+    }
+
+    .arrow::after {
+      content: '';
+      position: absolute;
+      top: -17px;
+      left: -94px;
+      width: 118px;
+      height: 38px;
+      border-radius: 50%;
+      box-shadow: -29px 5px 0 #f90 inset;
+    }
+  </code>
+  <div class="show">
+    <div class="arrow"></div>
+  </div>
+  <code>
+    // drop-shadow 模拟不规则边框
+    .pointer {
+      width: 150px;
+      height: 50px;
+      background-color: brown;
+      filter:
+      // 四次叠加
+        drop-shadow(0 0 .5px #fff)
+        drop-shadow(0 0 .5px #fff)
+        drop-shadow(0 0 .5px #fff)
+        drop-shadow(0 0 .5px #fff);
+    }
+
+    .pointer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -72px;
+      border: 50px solid brown;
+      border-right: 22px solid transparent;
+      border-top: 25px solid transparent;
+      border-bottom: 25px solid transparent;
+    }
+  </code>
+  <div class="show">
+    <div class="pointer"></div>
+  </div>
+</body>
+
+</html>

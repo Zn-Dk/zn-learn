@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>margin的几种妙用</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  pre {
+    font-size: 18px;
+  }
+
+  code {
+    display: block;
+    white-space: pre;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(231, 220, 177, 0.689);
+    font-size: 18px;
+  }
+
+  .show {
+    padding: 30px;
+  }
+
+  #demo1 {
+    width: 500px;
+    height: 500px;
+    display: flex;
+    border: 1px solid #000;
+  }
+
+  .box {
+    width: 300px;
+    height: 300px;
+    background-color: #000;
+    margin: auto;
+  }
+
+
+  #demo2 {
+    width: 100%;
+    height: 400px;
+    border: 1px solid #000;
+  }
+
+  #demo2 ul {
+    display: flex;
+    color: #fff;
+    background-color: cadetblue;
+  }
+
+  #demo2 li {
+    width: 10%;
+    font-size: 20px;
+    line-height: 40px;
+  }
+
+  #demo2 .login {
+    margin-left: auto;
+  }
+</style>
+
+<body>
+  <h1>margin的几种妙用</h1>
+  <pre>
+    Demo 1 (最快的水平垂直居中)
+      - 任意**给定宽高**的父容器中
+        1.容器启用 flex / grid / inline-flex / inline-grid 任意布局
+        2.子元素设置 margin : auto;
+
+      原理: 在 flex 格式化上下文中, 通过 justify-content / align-items
+      设置排列方式之前, 任何空闲的空间都会分配到该方向的自动 margin 里去,
+      结果就是实现了水平垂直居中
+
+    Demo 2 (不是所有时候都需要space-beteeen)
+      - 在 flex 布局中, 绘制导航条 ,经常会遇到要将登录框放置在最右端的情况
+        但是设置space-betwwen 又要包裹一层元素
+        这时候最方便的操作就是 在那个希望靠右的元素设置 margin-left: auto;
+        (且这个元素如果之后还有元素,会跟着一起靠右)
+  </pre>
+  <code>
+    ////////////////////// demo1
+      #demo1 {
+        width: 500px;
+        height: 500px;
+        display: flex;
+        // grid, inline-...;
+        border: 1px solid #000;
+      }
+
+      .box {
+        width: 300px;
+        height: 300px;
+        background-color: #000;
+        margin: auto;
+      }
+
+    ////////////////////// demo2
+      #demo2 ul {
+        display: flex;
+        color: #fff;
+        background-color: cadetblue;
+      }
+
+      #demo2 li {
+        width: 10%;
+        font-size: 20px;
+        line-height: 40px;
+      }
+
+      #demo2 .login {
+        margin-left: auto;
+      }
+
+      // HTML structure
+        -nav#demo2
+          -ul
+            -li
+            ...
+            -li.login
+            ...
+    </code>
+  <div class="show">
+
+    <div id="demo1">
+      <div class="box"></div>
+    </div>
+
+    <nav id="demo2">
+      <ul>
+        <li>AA</li>
+        <li>AA</li>
+        <li>AA</li>
+        <li>AA</li>
+        <li class="login">Login</li>
+        <li>CC</li>
+      </ul>
+    </nav>
+  </div>
+
+  </div>
+</body>
+
+</html>

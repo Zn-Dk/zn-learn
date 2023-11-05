@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>Document</title>
+  <style>
+    .container {
+      display: flex;
+      /* 设置 min-height 刚好容纳底部footer */
+      min-height: calc(100vh - 100px);
+      flex-direction: column;
+    }
+
+    main {
+      /*
+        随着 main变高 会自然覆盖footer
+        而 main 不够高的时候 footer 又会吸附
+      */
+      height: 400px;
+      background: forestgreen;
+    }
+
+    footer {
+      margin-top: auto;
+      height: 100px;
+      background: red;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- footer 位于 container 外部 -->
+  <div class="container">
+    <main></main>
+  </div>
+  <footer></footer>
+</body>
+
+</html>

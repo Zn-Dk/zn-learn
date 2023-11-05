@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>cqw和cqh</title>
+  <style>
+    code {
+      display: block;
+      width: 60%;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .btn {
+      font-size: 24px;
+      margin: 30px 0;
+      padding: 20px;
+      line-height: 1.5;
+      border-radius: 8px;
+      color: #f90;
+      border: 1px solid;
+      box-shadow: 1px 1px 6px;
+      cursor: pointer;
+    }
+
+    .show {
+      padding: 30px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 100vh;
+      background-image: linear-gradient(to bottom, rgba(0, 255, 191, 0.415) 0%, rgba(55, 94, 186, 0.492) 100%);
+    }
+  </style>
+</head>
+
+<body>
+  <!--
+    为了解决 100vh 在移动端会因浏览器工具栏和状态栏而最终超过可显示容器高度
+    而出现进度条问题, 推出了新的容器单位 Contain query width/height
+    1cqw	= 1% of a query container's width  1cqw = 容器宽度 1%
+    1cqh	= 1% of a query container's height 1cqh = 容器高度 1%
+  -->
+  <h1>实验性的长度单位__cqw和cqh</h1>
+  <h2>在移动端使用非app内置的浏览器(Chrome/Edge)检查以获得更好效果</h2>
+  <p><strong>注意观察是否出现滚动条</strong></p>
+  <p><strong>目前兼容性情况: Chrome 104+ | Safari 16+ | Firefox unsupported</strong></p>
+  <p><strong>因为 100vh 的表现问题 建议使用 height: 100%; 更保险</strong></p>
+  <button
+    class="btn"
+    id="toggle"
+  >切换 100vh 和 100cqh</button>
+  <p class="display">100vh</p>
+
+  <script>
+    const body = document.querySelector('body')
+    const toggle = document.querySelector('#toggle')
+    const display = document.querySelector('.display')
+
+    let flag = true
+    toggle.onclick = () => {
+      body.style.height = flag ? '100cqh' : '100vh'
+      flag = !flag
+      display.innerText = body.style.height
+    }
+  </script>
+</body>
+
+</html>

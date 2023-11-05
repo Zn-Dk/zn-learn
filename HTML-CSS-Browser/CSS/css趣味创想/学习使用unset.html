@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title> unset </title>
+  <style>
+    pre {
+      font-size: 18px;
+    }
+
+    code {
+      display: block;
+      white-space: pre;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .show {
+      padding: 30px;
+    }
+
+    .box {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border: 2px solid blue;
+    }
+
+    .box::before,
+    .box::after {
+      content: "<";
+      position: absolute;
+      top: 130px;
+      left: 20px;
+      line-height: 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .box::after {
+      content: ">";
+
+      left: unset;
+      right: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>学习使用 unset</h1>
+  <pre>
+    unset
+    1. 如果这个属性本来有从父级继承的值,则将该属性重新设置为继承的值
+    2. 如果没有继承父级样式,则将该属性重新设置为初始值
+    典型的使用场景:
+    重置 box-sizing: border-box => content-box
+    轮播图按钮(见下)
+  </pre>
+  <code>
+    // 设置轮播图按钮
+    .box::before,
+    .box::after {
+      content: "<";
+      position: absolute;
+      top: 130px;
+      left: 20px;
+      line-height: 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      text-align: center;
+      cursor: pointer;
+    }
+    // 为了调整右箭头, 之前的代码(因为left被定义了 移动到右边就要重新计算 很麻烦)
+    .box::after {
+      content: ">";
+      left: calc(100% - 60px);
+    }
+
+    // 如果我们使用 unset 一切变得很清晰明了
+    .box::after {
+      content: ">";
+      /* 这里的 unset 就是 left: auto; 所以 auto 也可以 */
+      left: unset;
+      right: 20px;
+    }
+  </code>
+  <div class="show">
+    <div class="box"></div>
+  </div>
+</body>
+
+</html>

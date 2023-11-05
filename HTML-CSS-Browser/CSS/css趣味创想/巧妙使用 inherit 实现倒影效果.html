@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title> 巧妙使用 inherit 实现倒影效果 </title>
+  <style>
+    pre {
+      font-size: 18px;
+    }
+
+    code {
+      display: block;
+      white-space: pre;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .show {
+      padding: 30px;
+    }
+
+    .reflect {
+      width: 500px;
+      height: 300px;
+      background: url('https://interactive-examples.mdn.mozilla.net/media/examples/lizard.png') center/cover;
+    }
+
+    .reflect::before {
+      display: block;
+      content: '';
+      width: inherit;
+      height: inherit;
+      background: inherit;
+      transform: rotateX(180deg) translateY(-300px);
+      mask: linear-gradient(transparent, #000);
+      -webkit-mask: linear-gradient(transparent, #000);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>巧妙使用 inherit 实现倒影效果</h1>
+  <code>
+    .reflect {
+      width: 500px;
+      height: 300px;
+      background: url('https://interactive-examples.mdn.mozilla.net/media/examples/lizard.png') center/cover;
+    }
+
+    // 宽高和背景图像直接使用继承值
+    .reflect::before {
+      display: block;
+      content: '';
+      width: inherit;
+      height: inherit;
+      background: inherit;
+      transform: rotateX(180deg) translateY(-300px);
+      -webkit-mask: linear-gradient(transparent, #000);
+    }
+  </code>
+  <div class="show">
+    <div class="reflect"></div>
+  </div>
+</body>
+
+</html>

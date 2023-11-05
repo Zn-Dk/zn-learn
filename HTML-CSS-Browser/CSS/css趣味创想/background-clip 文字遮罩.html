@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>background-clip 文字遮罩</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  pre {
+    font-size: 18px;
+  }
+
+  code {
+    display: block;
+    white-space: pre;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(231, 220, 177, 0.689);
+    font-size: 18px;
+  }
+
+  .show {
+    padding: 30px;
+  }
+
+  .show h2 {
+    width: 450px;
+    text-align: center;
+    font-size: 64px;
+    color: #333;
+  }
+
+  .vue {
+    color: transparent;
+    background-image: linear-gradient(210deg, #42d392 25%, #647eff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+
+
+  .show:nth-of-type(2) {
+    background: #000;
+  }
+
+  .ikun {
+    width: 600px;
+    height: 600px;
+    color: transparent;
+    background: url('./cxk.gif') center/cover;
+    font: 1em sans-serif;
+    word-break: break-all;
+    text-align: justify;
+    filter: grayscale(1) brightness(0.5) invert(1);
+    background-clip: text;
+    -webkit-background-clip: text;
+    mix-blend-mode: hard-light;
+  }
+</style>
+
+<body>
+  <h1>background-clip 文字遮罩</h1>
+  <code>
+      .vue {
+        color: transparent;
+        background-image: linear-gradient(210deg, #42d392 25%, #647eff 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+      }
+    </code>
+  <div class="show">
+    <h2><span class="vue">渐进式</span>JavaScript框架</h2>
+  </div>
+  <h2>配合 filter + mix-blend-mode: hard-light 使用</h2>
+  <code>
+    .ikun {
+      width: 600px;
+      height: 600px;
+      color: transparent;
+      background: url('./cxk.gif') center/cover;
+      font: 1em sans-serif;
+      word-break: break-all;
+      text-align: justify;
+      filter: grayscale(1) brightness(0.5) invert(1);
+      background-clip: text;
+      -webkit-background-clip: text;
+      mix-blend-mode: hard-light;
+    }
+  </code>
+  <div class="show">
+    <div class="ikun">
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!
+      We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're Ikun!We're
+      Ikun!
+    </div>
+  </div>
+</body>
+
+</html>

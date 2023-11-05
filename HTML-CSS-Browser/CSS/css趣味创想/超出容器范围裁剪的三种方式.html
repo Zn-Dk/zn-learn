@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title> 超出容器范围裁剪的三种方式 </title>
+  <style>
+    pre {
+      font-size: 18px;
+    }
+
+    code {
+      display: block;
+      white-space: pre;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .show {
+      display: flex;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .parent {
+      width: 400px;
+      height: 400px;
+      background-color: chartreuse;
+    }
+
+    .child {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background-color: gray;
+    }
+
+    .show:nth-of-type(1) .parent {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .show:nth-of-type(2) .parent {
+      contain: paint;
+    }
+
+    .show:nth-of-type(3) .parent {
+      clip-path: polygon(-1000% 0, 1000% 0, 1000% 100%, -1000% 100%)
+    }
+  </style>
+</head>
+
+<body>
+  <h1>超出容器范围裁剪的三种方式</h1>
+  <pre>
+    1. overflow: hidden
+       - 最广泛 但是会因子元素 fixed/absolute 定位失效
+        >
+        >  absolute 子绝父相解决
+        >  fixed 通过重置 stacking context 层叠上下文 比如设置
+        >  transform: translate3D(0,0,0)
+        >
+    2. contain: paint;
+        新属性 但是可以作为性能优化的考虑
+        这个属性的目的是 在超出边界的情况下,子元素的部分及其子子元素不会被渲染
+        contain 是直接不渲染超出的部分 而 overflow 会渲染 但是不显示
+
+    3. clip-path
+        可控制的 灵活裁剪
+        (比如 可以设置仅上下超出隐藏 左右不隐藏(设置%极大范围))
+  </pre>
+  <code>
+    .show:nth-of-type(1) .parent {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .show:nth-of-type(2) .parent {
+      contain: paint;
+    }
+
+    .show:nth-of-type(3) .parent {
+      clip-path: polygon(-1000% 0, 1000% 0, 1000% 100%, -1000% 100%)
+    }
+  </code>
+  <code>拖拽下方小灰块查看效果...</code>
+  <div class="show">
+    <h2>overflow: hidden</h2>
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+  </div>
+  <div class="show">
+    <h2>contain: paint</h2>
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+  </div>
+  <div class="show">
+    <h2>clip-path 仅上下隐藏</h2>
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+  </div>
+</body>
+
+<script>
+  let box1 = document.querySelector('.show:nth-of-type(1) .child');
+  let box2 = document.querySelector('.show:nth-of-type(2) .child');
+  let box3 = document.querySelector('.show:nth-of-type(3) .child');
+
+  function register(parent, child = '.child') {
+    const parentEle = document.querySelector(parent || 'body');
+    const childEle = document.querySelector(parent + ' ' + child);
+    console.log(parentEle)
+    let nowx, nowy;
+    parentEle.onmousedown = function (event) {
+      let sx = event.clientX;
+      let sy = event.clientY;
+      let ex = childEle.offsetLeft;
+      let ey = childEle.offsetTop;
+      let x = sx - ex;
+      let y = sy - ey;
+      parentEle.onmousemove = function (event) {
+        let sx1 = event.clientX;
+        let sy2 = event.clientY;
+        nowx = sx1 - x + 'px';
+        nowy = sy2 - y + 'px';
+        childEle.style.left = sx1 - x + 'px';
+        childEle.style.top = sy2 - y + 'px';
+      }
+      parentEle.onmouseup = function () {
+        parentEle.onmousemove = null;
+        parentEle.onmouseup = null;
+      }
+    }
+  }
+
+  register('.show:nth-of-type(1)')
+  register('.show:nth-of-type(2)')
+  register('.show:nth-of-type(3)')
+
+</script>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title> img加载失败伪元素妙用 </title>
+  <style>
+    pre {
+      font-size: 18px;
+    }
+
+    code {
+      display: block;
+      width: 80%;
+      white-space: pre;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .show {
+      position: relative;
+      padding: 30px;
+    }
+
+    .image {
+      width: 400px;
+      height: 300px;
+      box-shadow: 0 0 4px #ccc;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+
+    img.error {
+      display: block;
+      position: relative;
+    }
+
+    img.error::before {
+      content: '';
+      display: block;
+      width: inherit;
+      height: inherit;
+      background: url('https://tm-image.tianyancha.com/tm/62f3d89d8bfdbedf18dd3e33519b47d6.jpg') center/cover;
+    }
+
+    img.error::after {
+      content: 'Oops!  ' attr(alt) '  没加载出来';
+      display: block;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      color: #fff;
+      text-align: center;
+      line-height: 40px;
+      background-color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>img加载失败伪元素妙用</h1>
+  <p>一般来说 单标签例如 img input iframe 是没有伪元素 before after 的</p>
+  <p>但是特殊的情况 如 img 未加载成功 这时候 before after 是存在的 </p>
+  <p>利用这一特性 同时显示 alt 文本和兜底图</p>
+  <code>
+    // CSS code
+      img.error {
+        display: block;
+        position: relative;
+      }
+
+      img.error::before {
+        content: '';
+        display: block;
+        width: inherit;
+        height: inherit;
+        background: url('//xx/fallback.jpg') center/cover;
+      }
+
+      img.error::after {
+        content: 'Oops!  ' attr(alt) '  没加载出来';
+        display: block;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        color: #fff;
+        text-align: center;
+        line-height: 40px;
+        background-color: #999;
+      }
+
+      // HTML Code
+        &lt;img
+        src="example.jpg"
+        onerror="this.classList.add('error');"
+        alt="图片小猫猫"
+        &gt;
+  </code>
+  <div class="show">
+    <div class="image">
+      <img
+        src="example.jpg"
+        onerror="this.classList.add('error');"
+        alt="图片小猫猫"
+      >
+    </div>
+    <div class="image">
+      <img
+        src="//www.baidu.com/img/flexible/logo/pc/index.png"
+        onerror="this.classList.add('error');"
+        alt="百度"
+      >
+    </div>
+  </div>
+</body>
+
+</html>

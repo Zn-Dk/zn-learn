@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>currentColor</title>
+  <style>
+    code {
+      display: block;
+      width: 60%;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(231, 220, 177, 0.689);
+      font-size: 18px;
+    }
+
+    .show {
+      padding: 30px;
+    }
+
+    .btn {
+      width: 100px;
+      font-size: 24px;
+      margin-bottom: 30px;
+      padding: 20px;
+      line-height: 1.5;
+      border-radius: 8px;
+      color: #f90;
+      border: 1px solid;
+      text-shadow: 1px 2px 3px;
+      box-shadow: 1px 2px 6px;
+    }
+
+    .btn:nth-of-type(2) {
+      color: pink;
+    }
+
+    .btn:nth-of-type(3) {
+      color: cornflowerblue;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 默认 currentColor = color , 但 currentColor 有一个独特的用法是
+    一旦设置了class 的 .color 那么在不另设置对应属性的 color 情况下,
+    诸如: border, box-shadow, text-shadow 这种属性就会继承 color
+  -->
+  <h1>巧用 currentColor 继承颜色</h1>
+  <code>
+    border: 1px solid; === border: 1px solid currentColor;<br>
+    box-shadow: 1px 2px; === box-shadow: 1px 2px currentColor;<br>
+    text-shadow: 1px 2px; === text-shadow: 1px 2px currentColor;<br>
+  </code>
+  <div class="show">
+    <div class="btn">BUTTON</div>
+    <div class="btn">BUTTON</div>
+    <div class="btn">BUTTON</div>
+  </div>
+</body>
+
+</html>

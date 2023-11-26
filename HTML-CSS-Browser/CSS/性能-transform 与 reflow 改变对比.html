@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    header {
+      display: inline-block;
+    }
+
+    code {
+      display: block;
+      white-space: pre-line;
+      width: 500px;
+      background-color: burlywood;
+      padding: 0.5em;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    #btn {
+      padding: 0.5em 1em;
+      border-radius: .5em;
+      border: none;
+      font-size: 1.2em;
+      background-color: deepskyblue;
+      color: #fff;
+    }
+
+    p:nth-of-type(odd) {
+      animation: run1 2s infinite;
+      animation-direction: alternate-reverse;
+    }
+
+    p:nth-of-type(even) {
+      position: relative;
+      left: 50%;
+      color: maroon;
+      animation: run2 2s infinite;
+      animation-direction: alternate-reverse;
+
+    }
+
+    @keyframes run1 {
+      to {
+        transform: translate(50%);
+      }
+    }
+
+    @keyframes run2 {
+      to {
+        left: 0%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h2>举例说明为什么 transform 比改变 true position 好</h2>
+  <header>
+    <code>
+      - transform 的影响发生在 渲染-GPU进程的合成线程上, 即只涉及光栅化的计算
+      - position 改变是直接触发 reflow , 进而导致全部样式重新计算,
+      - 当js代码发生阻塞时, 动画效果随着停止
+      PS. 滚动条也是属于合成线程, 所以freeze时依然可以滚动页面
+   </code>
+    <button id="btn">Freeze!</button>
+  </header>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, corporis.</p>
+  <p>Ipsam totam quo sint nemo facere veritatis, earum omnis repellendus?</p>
+  <p>Vitae ex natus est ducimus qui nostrum facere nam distinctio?</p>
+  <p>Vitae nihil doloribus cum aliquam, eaque eius pariatur delectus ipsum?</p>
+  <p>Possimus quis, quibusdam libero officia repellendus quam quod sequi in.</p>
+  <p>Animi pariatur modi repudiandae, consequuntur ex aut. Officia, similique enim.</p>
+  <p>Totam doloribus ex, ab accusamus autem delectus corporis quidem sunt.</p>
+  <p>Aperiam voluptate laboriosam vitae et similique repellendus, consequuntur enim iure?</p>
+  <p>Ab nobis voluptatibus, pariatur tenetur omnis esse animi dicta nisi.</p>
+  <p>Laudantium accusantium commodi similique cumque mollitia non harum vitae veritatis.</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, corporis.</p>
+  <p>Ipsam totam quo sint nemo facere veritatis, earum omnis repellendus?</p>
+  <p>Vitae ex natus est ducimus qui nostrum facere nam distinctio?</p>
+  <p>Vitae nihil doloribus cum aliquam, eaque eius pariatur delectus ipsum?</p>
+  <p>Possimus quis, quibusdam libero officia repellendus quam quod sequi in.</p>
+  <p>Animi pariatur modi repudiandae, consequuntur ex aut. Officia, similique enim.</p>
+  <p>Totam doloribus ex, ab accusamus autem delectus corporis quidem sunt.</p>
+  <p>Aperiam voluptate laboriosam vitae et similique repellendus, consequuntur enim iure?</p>
+  <p>Ab nobis voluptatibus, pariatur tenetur omnis esse animi dicta nisi.</p>
+  <p>Laudantium accusantium commodi similique cumque mollitia non harum vitae veritatis.</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, corporis.</p>
+  <p>Ipsam totam quo sint nemo facere veritatis, earum omnis repellendus?</p>
+  <p>Vitae ex natus est ducimus qui nostrum facere nam distinctio?</p>
+  <p>Vitae nihil doloribus cum aliquam, eaque eius pariatur delectus ipsum?</p>
+  <p>Possimus quis, quibusdam libero officia repellendus quam quod sequi in.</p>
+  <p>Animi pariatur modi repudiandae, consequuntur ex aut. Officia, similique enim.</p>
+  <p>Totam doloribus ex, ab accusamus autem delectus corporis quidem sunt.</p>
+  <p>Aperiam voluptate laboriosam vitae et similique repellendus, consequuntur enim iure?</p>
+  <p>Ab nobis voluptatibus, pariatur tenetur omnis esse animi dicta nisi.</p>
+  <p>Laudantium accusantium commodi similique cumque mollitia non harum vitae veritatis.</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, corporis.</p>
+  <p>Ipsam totam quo sint nemo facere veritatis, earum omnis repellendus?</p>
+  <p>Vitae ex natus est ducimus qui nostrum facere nam distinctio?</p>
+  <p>Vitae nihil doloribus cum aliquam, eaque eius pariatur delectus ipsum?</p>
+  <p>Possimus quis, quibusdam libero officia repellendus quam quod sequi in.</p>
+  <p>Animi pariatur modi repudiandae, consequuntur ex aut. Officia, similique enim.</p>
+  <p>Totam doloribus ex, ab accusamus autem delectus corporis quidem sunt.</p>
+  <p>Aperiam voluptate laboriosam vitae et similique repellendus, consequuntur enim iure?</p>
+  <p>Ab nobis voluptatibus, pariatur tenetur omnis esse animi dicta nisi.</p>
+  <p>Laudantium accusantium commodi similique cumque mollitia non harum vitae veritatis.</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, corporis.</p>
+  <p>Ipsam totam quo sint nemo facere veritatis, earum omnis repellendus?</p>
+  <p>Vitae ex natus est ducimus qui nostrum facere nam distinctio?</p>
+  <p>Vitae nihil doloribus cum aliquam, eaque eius pariatur delectus ipsum?</p>
+  <p>Possimus quis, quibusdam libero officia repellendus quam quod sequi in.</p>
+  <p>Animi pariatur modi repudiandae, consequuntur ex aut. Officia, similique enim.</p>
+  <p>Totam doloribus ex, ab accusamus autem delectus corporis quidem sunt.</p>
+  <p>Aperiam voluptate laboriosam vitae et similique repellendus, consequuntur enim iure?</p>
+  <p>Ab nobis voluptatibus, pariatur tenetur omnis esse animi dicta nisi.</p>
+  <p>Laudantium accusantium commodi similique cumque mollitia non harum vitae veritatis.</p>
+
+  <script>
+    const delay = t => {
+      const st = Date.now();
+      while (Date.now() - st < t) {
+
+      }
+    }
+    btn.onclick = () => {
+      delay(3000)
+    }
+  </script>
+</body>
+
+</html>

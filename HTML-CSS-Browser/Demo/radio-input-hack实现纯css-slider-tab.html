@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS 实现的滑块切换Tab</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      font-size: 16px;
+      --nav-item-width: 8rem;
+      --nav-item-height: 3rem;
+      --nav-item-padding: .5rem;
+      --nav-bar-bg: #ccc;
+      --nav-item-active-bg: #e2e8f0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: var(--nav-item-active-bg);
+    }
+
+    nav {
+      position: relative;
+      background-color: #fff;
+      /** 成为药丸形状 */
+      border-radius: 9999px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+      margin-bottom: 20px;
+    }
+
+    nav::after {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      width: var(--nav-item-width);
+      height: calc(var(--nav-item-height));
+      margin: var(--nav-item-padding);
+      background: var(--nav-item-active-bg);
+      /** 成为药丸形状 */
+      border-radius: 9999px;
+      transition: all .3s cubic-bezier(0.46, -0.21, 0.3, 1.12);
+    }
+
+    .nav-list {
+      position: relative;
+      display: flex;
+      align-items: center;
+      list-style-type: none;
+      padding: var(--nav-item-padding);
+      font-size: 1.25rem;
+      font-family: Helvetica, Arial, sans-serif;
+      /** 让背景出现在下方 */
+      z-index: 1;
+
+      & li {
+        width: var(--nav-item-width);
+        line-height: var(--nav-item-height);
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        transition: color .3s;
+      }
+    }
+
+    .content-wrap {
+      width: calc(var(--nav-item-width) * 4);
+      height: 600px;
+      background: #fff;
+      border-radius: calc(var(--nav-item-padding) * 2);
+      contain: paint;
+    }
+
+    .content-list {
+      display: flex;
+      height: inherit;
+      color: #fff;
+      transition: all .6s cubic-bezier(0.41, -0.19, 0.6, 1.21);
+
+      &>div[class^="content-"] {
+        box-sizing: border-box;
+        width: calc(var(--nav-item-width) * 4);
+        height: inherit;
+        flex-shrink: 0;
+        padding: calc(var(--nav-item-padding) * 5);
+        line-height: 1.5;
+        word-break: break-all;
+        text-align: justify;
+        font-size: 1.5rem;
+        font-weight: bold;
+
+        &:nth-of-type(1) {
+          background-color: crimson;
+        }
+
+        &:nth-of-type(2) {
+          background-color: deepskyblue;
+        }
+
+        &:nth-of-type(3) {
+          background-color: gold;
+        }
+
+        &:nth-of-type(4) {
+          background-color: limegreen;
+        }
+
+      }
+    }
+
+    /** 控制区域 */
+    input[type="radio"] {
+      display: none;
+    }
+
+    #navHome:checked {
+      &~nav::after {
+        transform: translate(0);
+      }
+
+
+      &~.content-wrap .content-list {
+        transform: translate(0);
+      }
+    }
+
+    #navProducts:checked {
+      &~nav::after {
+        transform: translate(calc(var(--nav-item-width) * 1));
+      }
+
+
+      &~.content-wrap .content-list {
+        transform: translate(-100%);
+      }
+    }
+
+    #navNews:checked {
+      &~nav::after {
+        transform: translate(calc(var(--nav-item-width) * 2));
+      }
+
+
+      &~.content-wrap .content-list {
+        transform: translate(-200%);
+      }
+    }
+
+    #navAbout:checked {
+      &~nav::after {
+        transform: translate(calc(var(--nav-item-width) * 3));
+      }
+
+
+      &~.content-wrap .content-list {
+        transform: translate(-300%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 通过 radio -label hack 实现勾选 -->
+  <input type="radio" name="tab" id="navHome">
+  <input type="radio" name="tab" id="navProducts">
+  <input type="radio" name="tab" id="navNews">
+  <input type="radio" name="tab" id="navAbout">
+  <nav>
+    <ul class="nav-list">
+      <label for="navHome">
+        <li>Home</li>
+      </label>
+      <label for="navProducts">
+        <li>Products</li>
+      </label>
+      <label for="navNews">
+        <li>News</li>
+      </label>
+      <label for="navAbout">
+        <li>About</li>
+      </label>
+    </ul>
+  </nav>
+  <div class="content-wrap">
+    <div class="content-list">
+      <div class="content-home">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis ut esse culpa
+        iure, pariatur quae molestias suscipit, placeat mollitia libero accusantium praesentium aut amet itaque, atque
+        ea eaque enim porro?
+      </div>
+      <div class="content-products">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis ut esse culpa
+        iure, pariatur quae molestias suscipit, placeat mollitia libero accusantium praesentium aut amet itaque, atque
+        ea eaque enim porro?
+      </div>
+      <div class="content-news">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis ut esse culpa
+        iure, pariatur quae molestias suscipit, placeat mollitia libero accusantium praesentium aut amet itaque, atque
+        ea eaque enim porro?
+      </div>
+      <div class="content-about">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis ut esse culpa
+        iure, pariatur quae molestias suscipit, placeat mollitia libero accusantium praesentium aut amet itaque, atque
+        ea eaque enim porro?
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

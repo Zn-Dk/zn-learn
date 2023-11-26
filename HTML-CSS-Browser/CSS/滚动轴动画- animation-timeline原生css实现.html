@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      bottom: 0;
+    }
+
+    .wrap {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      background-color: #ddd;
+      overflow: auto;
+    }
+
+    .scroll {
+      height: 3000px;
+
+    }
+
+    .box {
+      position: sticky;
+      top: 20px;
+      left: 20px;
+      padding: 20px;
+      width: 200px;
+      height: 50px;
+      background-color: red;
+
+      animation: stretch 2s linear;
+      /** 通过时间轴转换动画 使用滚动条控制 */
+      animation-timeline: scroll();
+      /** 动画通过滚动轴开始的偏移值 (这里定义x 滚动 200px 后开始) */
+      animation-range: 200px 100%;
+
+      .text {
+        margin: 0;
+        opacity: 0;
+        text-align: center;
+        color: #fff;
+        line-height: 50px;
+        font-size: 16px;
+        animation: fadeInBigFont 2s linear;
+        animation-timeline: scroll();
+        animation-range: 200px 100%;
+      }
+
+      .circle {
+        position: absolute;
+        opacity: 0;
+        background-color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        animation: bounce 2s linear;
+        animation-timeline: scroll();
+        animation-range: 200px 100%;
+      }
+    }
+
+    /** 容器拉伸 */
+    @keyframes stretch {
+      0% {
+        width: 200px;
+      }
+
+      50% {
+        width: 400px;
+        background-color: violet;
+      }
+
+      100% {
+        width: 400px;
+        height: 100px;
+      }
+    }
+
+    /** 字体缩放 */
+    @keyframes fadeInBigFont {
+      from {
+        font-size: 16px;
+      }
+
+      to {
+        opacity: 1;
+        font-size: 48px;
+        line-height: 100px;
+      }
+    }
+
+    /** 小球滚动 */
+    @keyframes bounce {
+      0% {
+        left: 0;
+        bottom: 0;
+        opacity: 0;
+      }
+
+      20% {
+        transform: translate(100px, -75px);
+        opacity: .25;
+      }
+
+      50% {
+        transform: translate(200px, 0);
+        opacity: .5;
+      }
+
+      75% {
+        transform: translate(300px, -100px);
+        opacity: .75;
+      }
+
+      100% {
+        transform: translate(390px, 0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="scroll">
+      <div class="box">
+        <h3 class="text">
+          The quick brown
+        </h3>
+        <div class="inner">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

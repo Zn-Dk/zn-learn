@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>link 标签的几种预加载机制</title>
+  <!--
+    preconnect / dns-prefetch 标识 (dns-prefetch 是 ie 兼容, 可以写两个当做 fallback)
+    用于加速 DNS 获取
+    允许浏览器在一个 HTTP 请求正式发给服务器前预先执行一些操作，
+    这包括 DNS 解析，TLS 协商，TCP 握手，这消除了往返延迟并为用户节省了时间
+
+    使用方法: href 指定目标网站(比如下面用的Google Font字体 官方给出了两个 preconnect 的资源)
+    字体资源加载优先级一般是 highest
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+  <!--
+    preload 标识
+    用于即刻需要的资源，
+    你可能希望在页面加载的生命周期的早期阶段就开始获取，
+    在浏览器的主渲染机制介入前就进行预加载
+
+    比如某些字体 某些组件库js等
+
+    类似的还有 modulepreload 用于加载模块，不同于 preload 只缓存入内存，modulepreload 还会解析编译
+
+    使用方法:
+    preload 使用 as 指定预加载的内容的类型，将使得浏览器能够
+      - 更精确地优化资源加载优先级
+      - 匹配未来的加载需求，在适当的情况下，重复利用同一资源
+      - 为资源应用正确的内容安全策略
+      - 为资源设置正确的 Accept 请求头
+
+    as 可选以下值:
+      - audio: 音频文件
+      - document: 一个将要被嵌入到 <frame> 或 <iframe> 内部的 HTML 文档
+      - embed: 一个将要被嵌入到 <embed> 元素内部的资源
+      - fetch: 那些将要通过 fetch 和 XHR 请求来获取的资源，比如一个 ArrayBuffer 或 JSON 文件
+      - font: 字体文件
+      - image: 图片文件
+      - object: 一个将会被嵌入到<embed>元素内的文件
+      - script: JavaScript 文件
+      - style: 样式表
+      - track: WebVTT 文件
+      - worker: 一个 JavaScript 的 web worker 或 shared worker
+      - video: 视频文件
+
+      例如: 预加载时我们可以看到浏览器控制台的 network 栏的 priority 列 显示为 high 高优先级
+      下面是 example
+    -->
+  <link
+    rel="preload"
+    href="fonts/zantroke-webfont.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin />
+
+
+  <!--
+        prefetch 标识
+        预先取回资源，等到需要使用时可以立刻使用，优先级一般是 low
+    -->
+  <link
+    rel="prefetch"
+    href="https://unpkg.com/vue@3/dist/vue.global.js">
+
+  <style>
+    h1 {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>The quick brown fox jumps over the lazy dog.</h1>
+
+  <button id="btn">Load Vue3</button>
+  <script>
+
+    /** 调用 prefetch 的资源 */
+    btn.onclick = () => {
+      const script = document.createElement('script');
+      const p = document.createElement('p');
+      script.src = 'https://unpkg.com/vue@3/dist/vue.global.js';
+      document.body.appendChild(script);
+
+      script.onload = () => {
+        p.textContent = 'Vue is Loaded'
+        document.body.append(p);
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>

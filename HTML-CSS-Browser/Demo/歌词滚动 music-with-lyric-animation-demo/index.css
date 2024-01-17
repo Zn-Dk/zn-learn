@@ -1,0 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-color: #1d1f21;
+}
+
+#app {
+  height: 100cqh;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5%;
+}
+
+audio {
+  margin-top: 50px;
+  flex-shrink: 0;
+}
+
+.lyric-wrap {
+  position: relative;
+  overflow: hidden;
+
+  /** mask */
+  &::before {
+    content: '';
+    z-index: 1;
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      180deg,
+      var(--bg-color) 0%,
+      transparent 10%,
+      transparent 80%,
+      var(--bg-color) 100%
+    );
+    pointer-events: none;
+  }
+}
+
+.lyric-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  padding-top: 50px;
+  color: #eee;
+  transition: all 0.3s ease;
+}
+
+.lyric-line {
+  transition: all 0.3s ease;
+
+  &.current {
+    font-size: 1.5rem;
+    color: #f90;
+  }
+}

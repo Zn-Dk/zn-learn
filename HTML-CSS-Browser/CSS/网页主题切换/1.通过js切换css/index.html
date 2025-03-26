@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="normal-theme.css">
+  <link rel="alternative stylesheet" href="dark-theme.css" disabled>
+  <title>Document</title>
+</head>
+
+<body>
+  <div style="display: flex;flex-direction: column; gap: 10px; align-items: center;">
+    <h1>Hello World</h1>
+    <button>Press</button>
+    <a href="https://www.baidu.com">Baidu</a>
+  </div>
+  <script>
+    window.onload = () => {
+      const norCss = document.querySelector('link[rel="stylesheet"]');
+      const altCss = document.querySelector('link[rel="alternative stylesheet"]');
+
+      document.querySelector('button').addEventListener('click', function () {
+        altCss.disabled = !altCss.disabled;
+      });
+    }
+  </script>
+</body>
+
+</html>

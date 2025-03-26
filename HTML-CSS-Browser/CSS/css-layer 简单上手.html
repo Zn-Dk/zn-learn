@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* 1- 外层优先级高于一切 layer */
+    /* p {
+      color: red;
+    } */
+
+    /** 匿名 layer 优先级低于不带 layer 的 */
+    @layer {
+      p {
+        color: orange;
+      }
+    }
+
+    /** 2- 具名的 layer
+        - 可先声明不分配规则,
+        - 按声明先后顺序，优先级从低到高 越晚声明的级联层优先级越高
+      */
+    /* @layer b, a; */
+    @layer a, b;
+
+    /*
+      其他规则
+      @import 'xxx.css' layer(layer-name)给xxx.css添加级联层。当本身存在级联层时，内部级联层会被嵌套在外部层中;
+      @layer可以嵌套使用，优先级比较时，会外层确定，再在层内比较。
+    */
+
+    @layer a {
+      p {
+        color: blue;
+      }
+
+      /** 3- layer间的优先级，比选择器优先级具有更高的权重
+      (可以看到 layer b 声明了 h3 为棕色, 这里的优先级高却不生效 ) */
+      div.h3 {
+        color: yellow;
+      }
+    }
+
+
+    @layer b {
+      p {
+        color: green;
+      }
+
+      h3 {
+        color: brown;
+
+        /** 4- 当级联层中存在!important时，级联层中样式优先级高于不分层中样式； */
+        font-weight: lighter !important;
+      }
+    }
+
+
+    h3 {
+      font-weight: bold;
+      /** 被覆盖 */
+    }
+
+    /** 5- 嵌套层级 */
+    @layer C {
+      @layer D {
+      }
+    }
+
+    /** 等价于, 其中越内部的嵌套 优先级更 **低** , 所以 C > D */
+    @layer C.D {}
+  </style>
+</head>
+
+<body>
+  <p>Para</p>
+  <div>
+    <p>Div Para</p>
+    <h3>H3 ---</h3>
+  </div>
+</body>
+
+</html>

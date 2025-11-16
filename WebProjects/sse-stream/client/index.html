@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #textarea {
+      width: 100%;
+      box-sizing: border-box;
+      height: 300px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="textarea"></div>
+  <button id="btn">getSSE Message</button>
+
+  <script>
+    const btn = document.getElementById('btn')
+    const textarea = document.getElementById('textarea')
+    const url = 'http://localhost:3000/api/sse';
+    /** @type {EventSource} */
+    let sse = null;
+
+    const startSSE = () => {
+      if (sse) sse.close();
+      textarea.innerHTML = '';
+      sse = new EventSource(url) // SSE 流来源
+
+      sse.onopen = () => {
+        console.log('connected to sse source')
+      }
+      // sse.onmessage / addEventListener 默认事件
+      sse.addEventListener('message', (evt) => {
+        const data = evt.data;
+        console.log(evt.data)
+        // 标记消息尾
+        if (data === '[completed]') {
+          sse.close()
+          sse = null;
+          return;
+        }
+
+        // 接受结构化消息
+        const parsedData = JSON.parse(data);
+        textarea.innerHTML += parsedData.content;
+      })
+
+      // addEventListener 自定义事件 (服务端定义 res.write('event: foo'))
+      // sse.addEventListener('foo', (evt) => {
+      //   const data = evt.data;
+      //   textarea.innerHTML += data;
+      // })
+    }
+
+    btn.addEventListener('click', startSSE);
+
+
+  </script>
+</body>
+
+</html>

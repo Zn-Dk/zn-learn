@@ -1,0 +1,27 @@
+{
+  "name": "sse-stream",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:serve": "nodemon --watch **/*.ts --exec \"ts-node\" server/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "dependencies": {
+    "@types/express": "^5.0.5",
+    "@types/koa-static": "^4.0.4",
+    "@types/node": "^24.10.1",
+    "express": "^5.1.0",
+    "koa": "^3.1.1",
+    "koa-static": "^5.0.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/koa": "^3.0.1"
+  }
+}

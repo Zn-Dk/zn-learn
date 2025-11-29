@@ -1,4 +1,4 @@
-import React, { useEffect, useImperativeHandle, useState } from "react";
+import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
 import { useRef } from "react";
 
 export default function App() {
@@ -12,12 +12,17 @@ export default function App() {
     ref.current.value = count;
     ref2.current.setIptValue(count);
   };
+
+  const toggleDemo2IptDisabled = () => {
+    ref2.current.setIptDisabled(!ref2.current.iptDisabled());
+  };
+
   useEffect(() => {
     console.log(ref.current); // HTMLElement
     ref.current.value = count;
     ref.current.disabled = true; // 直接暴露整个 dom 很危险,假如被修改了其他的东西呢?
 
-    console.log(ref2.current); // {setIptValue: ƒ}
+    console.log(ref2.current); // {setIptValue: ƒ, iptDisabled, setIptDisabled: f}
     ref2.current.setIptValue(count);
   }, []);
 
@@ -25,6 +30,7 @@ export default function App() {
     <div>
       <h1>App</h1>
       <button onClick={addCount}>addCount</button>
+      <button onClick={toggleDemo2IptDisabled}>toggleDemo2InputToDisable</button>
       <hr />
       <Demo1 ref={ref} />
       <hr />
@@ -66,16 +72,36 @@ export const Demo1 = React.forwardRef((props, ref) => {
  */
 
 export const Demo2 = React.forwardRef((props, ref) => {
-  const intRef = useRef();
+  const innerRef = useRef();
 
-  // 这个时候组件内部控制这个修改值的方法 组件变得可控
-  const setIptValue = (val) => {
-    intRef.current.value = val;
-  };
+  const setIptValue = useCallback((val) => {
+    if (!innerRef.current) {
+      console.warn('Input ref is not available');
+      return;
+    }
+    innerRef.current.value = val;
+  }, []);
 
-  useImperativeHandle(ref, () => {
-    return { setIptValue }; // 只返回修改的方法
-  });
+  const iptDisabled = useCallback(() => !!innerRef.current?.disabled, []);
+
+  const setIptDisabled = useCallback((val) => {
+    if (typeof val !== 'boolean') {
+      throw new Error('setIptDisabled: parameter must be a boolean');
+    }
+    if (!innerRef.current) {
+      console.warn('Input ref is not available');
+      return;
+    }
+    innerRef.current.disabled = val;
+  }, []);
+
+  // just like vue3 defineExpose API
+  // Only expose necessary methods to parent component
+  useImperativeHandle(ref, () => ({
+    iptDisabled,
+    setIptValue,
+    setIptDisabled,
+  }), [iptDisabled, setIptValue, setIptDisabled]);
 
   return (
     <div>
@@ -86,7 +112,7 @@ export const Demo2 = React.forwardRef((props, ref) => {
       </h3>
       <input
         type="text"
-        ref={intRef}
+        ref={innerRef}
       />
     </div>
   );

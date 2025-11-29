@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, use } from "react";
 import { useEffect } from "react";
 
 /*
@@ -7,7 +7,10 @@ import { useEffect } from "react";
   2.useRef
     (1). Ref Hook可以在函数组件中存储/查找组件内的标签或任意其它数据
     (2). 语法: const refContainer = useRef()
-    (3). 作用:保存标签对象,功能与React.createRef()一样
+    (3). 作用:
+    保存标签对象,功能与React.createRef()一样
+    保存 DOM 元素, 使其在生命周期中保持不变
+    保存一个计时器 timer 用在 setTimeout / setInterval
 
     注意事项：
 
@@ -82,6 +85,8 @@ export default function App() {
         {/* 双标签内部的属性被传入 props.children 中 */}
         <h1>Child 组件</h1>
       </Child>
+      <hr />
+      <DebounceTest></DebounceTest>
     </div>
   );
 }
@@ -96,4 +101,61 @@ function Child(props) {
       <p>收到的 Props : {props.msg}</p>
     </div>
   );
+}
+
+// useRef 处理防抖 timeout
+const DebounceTest = () => {
+  const timer = useRef(null);
+  const [ipt, setIpt] = useState('')
+
+  const [searching, setSearching] = useState(false);
+  const [result, setResult] = useState('')
+
+  const onCleanup = () => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+    setSearching(false);
+  }
+
+  const onRequest = (val) => {
+    if (!val) return;
+    if (timer.current) {
+      onCleanup();
+    }
+    timer.current = setTimeout(() => {
+    setSearching(true);
+    mockApi(val)
+    .then(res => {
+      setResult(res);
+      onCleanup();
+    })
+
+    return () => {
+      onCleanup();
+    }
+  }, 1000)
+  }
+
+  useEffect(() => {
+    onRequest(ipt)
+  }, [ipt]);
+
+  const mockApi = val => new Promise(res => {
+    setTimeout(() => {
+      res(`result~~${val}`)
+    }, 2000);
+  })
+
+  return (<div>
+    <h3>Debounce UseRef</h3>
+    <input type="text"
+      value={ipt}
+      onChange={e => setIpt(e.target.value)}
+    />
+    {searching
+    ? <p>搜索中...</p>
+    : result && <p>搜索完成: {result}</p>
+  }
+  </div>)
 }

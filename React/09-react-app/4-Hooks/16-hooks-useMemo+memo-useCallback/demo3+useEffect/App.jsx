@@ -8,9 +8,10 @@ export const App = () => {
     region: '',
   });
   const [showWarn, setShowWarn] = useState(false);
+  const [success, setSuccess] = useState(false)
 
   // UserType 记录需要计算的属性
-  const UserType = useMemo(
+  const userType = useMemo(
     () => ({
       underAge: person.age && person.age < 18 ? true : false,
       notAsia: person.region !== 'Asia' ? true : false,
@@ -21,14 +22,19 @@ export const App = () => {
   // 执行副作用
   useEffect(() => {
     console.log('UserType changed!');
-    if (UserType.notAsia || UserType.underAge) {
+    if (Object.values(person).some(value => !value)) return;
+
+    if (userType.notAsia || userType.underAge) {
       setShowWarn(true);
+    } else {
+      setSuccess(true);
     }
-  }, [UserType]);
+  }, [userType]);
 
   const handleSetInput = e => {
     const { name, value } = e.target;
     setShowWarn(false);
+    setSuccess(false);
     setPerson({
       ...person,
       [name]: value,
@@ -40,7 +46,7 @@ export const App = () => {
       {/* name 改变时无需响应 */}
       <input type="text" name="name" onChange={handleSetInput} placeholder="input your name." />
       {/* 只校验 age 和 region */}
-      <input type="text" name="age" onChange={handleSetInput} placeholder="input your age." />
+      <input type="number" name="age" onChange={handleSetInput} placeholder="input your age." />
       <select name="region" onChange={handleSetInput} value={person.region}>
         <option value="" disabled>
           choose your region.
@@ -50,6 +56,7 @@ export const App = () => {
         <option value="Europe">Europe</option>
       </select>
       {showWarn && <WarnText />}
+      {success && <SuccessText />}
     </div>
   );
 };
@@ -57,6 +64,13 @@ export const App = () => {
 const WarnText = () => (
   <div>
     <h3>Oops! You are not allow to join this group</h3>
+  </div>
+);
+
+const SuccessText = () => (
+  <div>
+    <h3>Welcome! Press SUBMIT button to proceed</h3>
+    <button style={{ borderRadius: '4px', padding: '10px', background: 'orange' }}>JOIN</button>
   </div>
 );
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTransition } from "react";
 import Loading from "./Loading";
 
@@ -7,18 +7,20 @@ const VeryLongList = ({ searchVal }) => {
   const filterList = Array.from({ length: 9999 }, (it, idx) => {
     return { key: Math.random(), value: ~~(Math.random() * 1000) };
   }).filter((item) => item.value >= +searchVal);
-  return (
-    <ul>
-      {filterList.length ? (
-        filterList.map(({ key, value }, idx) => (
-          <li key={key}>
-            Index: {idx} - Value: {value}
-          </li>
-        ))
-      ) : (
-        <h3>很抱歉,没有找到</h3>
-      )}
-    </ul>
+  return (<>
+      <p>搜索结果共: { filterList.length } 项</p>
+      <ul>
+        {filterList.length ? (
+          filterList.map(({ key, value }, idx) => (
+            <li key={key}>
+              Index: {idx} - Value: {value}
+            </li>
+          ))
+        ) : (
+          <h3>很抱歉,没有找到</h3>
+        )}
+      </ul>
+    </>
   );
 };
 
@@ -30,19 +32,22 @@ const App = () => {
   // startTransition <-渲染回调
 
   const [isTyping, setIsTyping] = useState(false);
+  const timer = useRef(0);
 
   // 以下是结合了防抖+useTransition 的例子
-  let timer;
   const setIptSearch = (e) => {
+    setSearchValue(e.target.value);
     // 这里做防抖
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = undefined;
+    }
     setIsTyping(true);
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
+    timer.current = setTimeout(() => {
       setIsTyping(false);
       // 这里做 useTransition
       startTransition(() => {});
     }, 1000);
-    setSearchValue(e.target.value);
   };
 
   const debounceList = () => {
@@ -77,14 +82,13 @@ const App = () => {
       <h3>防抖优化输入卡顿的体验, useTransition 优化加载渲染体验</h3>
       <hr />
       <h2> VeryLongList : </h2>
-
       <span>列表中大于等于</span>
       <input
         type="number"
         onChange={setIptSearch}
         value={searchValue}
       />
-      <span>的项有:</span>
+      <span>的项</span>
       {isPending ? <Loading /> : debounceList()}
     </div>
   );

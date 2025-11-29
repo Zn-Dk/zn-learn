@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 let rerenderCount = 0;
 const ExpensiveComp = () => {
@@ -25,7 +25,11 @@ const ExpensiveComp = () => {
 // Cons: 过多的使用会消耗大量的内存
 
 export const App = () => {
-  // const [name, setName] = useState('');
+  const [name, setName] = useState('');
+
+  // 1. 太简单的计算属性, 完全没必要多消耗一份内存
+  // const simpleValue = useMemo(() => `Name: ${name}`, [name])
+  const simpleValue = `Name: ${name}`;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
@@ -39,8 +43,14 @@ export const App = () => {
           onChange={e => setName(e.target.value)}
         />
       </form> */}
+
       <Form />
       <ExpensiveComp />
+
+      {/* 情形3: 直接用一个无关联的 childWrapper */}
+      <BgContainer>
+        <ExpensiveComp />
+      </BgContainer>
     </div>
   );
 };
@@ -61,5 +71,23 @@ const Form = () => {
     </form>
   );
 };
+
+// 用children的方式 也是一种策略
+const BgContainer = ({ children }) => {
+  const [backgroundColor, setBackgroundColor] = useState('');
+
+  return (
+    <div style={{ backgroundColor, display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
+      <input
+        type="text"
+        placeholder="set the backgroundColor"
+        onChange={e => setBackgroundColor(e.target.value)}
+      />
+      {/* 我们此时无需关心 children 的重新渲染了, 因为 children 不会自己变化 */}
+      {children}
+    </div>
+  );
+};
+
 
 export default App;

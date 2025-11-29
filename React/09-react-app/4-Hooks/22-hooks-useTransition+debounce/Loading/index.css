@@ -1,8 +1,8 @@
 .loadingWrap {
   --bgColor: #6cefef;
-  --radius: 100px;
+  --radius: 80px;
   --ringWidth: 20%;
-  --animationTime: 0.6s;
+  --animationTime: 0.8s;
   width: var(--radius);
   height: var(--radius);
   padding: 30px;
@@ -13,7 +13,7 @@
   height: 100%;
   border-radius: 50%;
   background-image: conic-gradient(from 0deg, white, var(--bgColor));
-  animation: var(--animationTime) linear 0s infinite rotation;
+  animation: rotation var(--animationTime) linear infinite;
 }
 @keyframes rotation {
   0% {

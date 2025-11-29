@@ -24,7 +24,36 @@ import { useState } from 'react';
       useMemo 缓存函数调用的结果。
       useCallback 缓存函数本身。
 
+    - useCallback deps 使用决策树
+    函数内部是否使用了外部变量？
+    │
+    ├─ 否 → deps: []
+    │   └─ 例如：只操作 ref.current、只调用 setState
+    │
+    └─ 是 → 这些变量是响应式的吗？
+        │
+        ├─ 否（ref.current、常量）→ deps: []
+        │
+        └─ 是（state、props、其他 hook 返回值）
+            └─ deps: [所有响应式变量] 
+
+
+    场景	                deps	                示例
+    只操作 ref	          []	                    innerRef.current.value = val
+    只调用 setState	      []	                    setCount(c => c + 1)
+    使用 state 变量	       [state]	              console.log(count)
+    使用 props	          [props.xxx]	           console.log(props.name)
+    使用多个响应式值	      [a, b, c]	             return a + b + c
+    使用其他 useCallback	 [otherCallback]	     otherCallback()
+
+
+    最佳实践
+      - 使用 ESLint 插件：eslint-plugin-react-hooks 会自动检查依赖
+      - 遵循规则：函数内使用的所有响应式值都要放入 deps
+      - 避免过度优化：不是所有函数都需要 useCallback
+      - 配合 React.memo：当子组件使用 React.memo 时，useCallback 才有明显效果
 */
+
 export default function App() {
   const [count, setCount] = useState(0);
   const [name, setName] = useState('foo');
@@ -33,11 +62,12 @@ export default function App() {
     setName(prevName => (prevName === 'foo' ? 'bar' : 'foo'));
   };
 
-  // 对照组 普通函数
+  // child3 对照组 普通函数
   const fn = () => {
     console.log('function for Child');
   };
 
+  // child4
   // 使用 useCallback 缓存函数，第二参数为 []，不关联任何依赖
   // 外层组件每次更新时（暂时不考虑依赖）都会复用上次函数。
   // 子组件接收到传入props的 wrapFn 没有变化，所以子组件不会发生更新。
@@ -118,8 +148,8 @@ const Child3 = memo(props => {
 // Case 4: 使用 React.memo 包裹组件 | props 使用 fn(useCallback)
 // 步骤 1 - result: NO LOG
 // - Child4 使用 memo 且属性 fn 使用 useCallBack 进行包裹, 即便父组件发生改变重新渲染, Child 不发生重新渲染
-// 步骤 2 - result: Child5 的 useEffect 运行
-// - name 发生改变, 重新渲染
+// 步骤 2 - result: NO LOG
+// - 同步骤 1
 const Child4 = memo(props => {
   useEffect(() => {
     console.log('Child4 渲染了', props);
@@ -134,15 +164,15 @@ const Child4 = memo(props => {
 // Case 5: 使用 React.memo 包裹组件 | props 使用 name + fn(useCallback)
 // 步骤 1 - result: NO LOG
 // - 同 Child 4
-// 步骤 2 - result: NO LOG
-// - 同步骤 1
+// 步骤 2 - result: Child5 的 useEffect 运行
+// - name 发生改变, 重新渲染
 const Child5 = memo(props => {
   useEffect(() => {
     console.log('Child5 渲染了', props);
   });
   return (
     <div>
-      <h2>Child4 组件 - memo 组件使用 name + fn(useCallback)</h2>
+      <h2>Child5 组件 - memo 组件使用 name + fn(useCallback)</h2>
     </div>
   );
 });

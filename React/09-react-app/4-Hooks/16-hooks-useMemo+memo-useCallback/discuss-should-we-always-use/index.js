@@ -5,8 +5,7 @@
 // React 18 新写法 (不需要引入 React 本体)
 import { createRoot } from 'react-dom/client';
 
-// import App from './Demo1';
-import App from './Demo2';
+import App from './App';
 
 const container = document.querySelector('#root');
 

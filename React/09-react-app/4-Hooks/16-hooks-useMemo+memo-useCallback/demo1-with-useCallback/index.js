@@ -5,9 +5,9 @@
 // React 18 新写法 (不需要引入 React 本体)
 import { createRoot } from 'react-dom/client';
 
-// import App from './useMemoDemo';
+import App from './useMemoDemo/App';
 // import App from './React-memo+useCallback';
-import App from './SearchCommentDemo';
+// import App from './SearchCommentDemo';
 
 const container = document.querySelector('#root');
 

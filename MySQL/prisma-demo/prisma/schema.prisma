@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// 安装 vscode 插件 prisma 启用语法提示
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated" // migrate 完成并运行 generate, 生成的目标文件
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  @@unique([id, name])
+  email String
+  desc String? // 可选
+  // 与另一个 model 进行关联
+  // 注意 此时如果双方不存在任何引用关系, 语法提示会自动报错
+  posts Post[]
+}
+
+// 用户文章
+model Post {
+  id         Int    @id @default(autoincrement())
+  title      String
+  content    String @db.Text // @db 指定数据库原生类型
+  // @relation 关联不同的model
+  // 在此使用一个 key 代表另一个model
+  // 通过 fields 关联当前 model 字段
+  // 通过 references 关联 其他model 的字段(外键)
+  author     User   @relation(fields: [authorId, authorName], references: [id, name], onDelete: Cascade, onUpdate: Cascade)
+  authorId   Int
+  authorName String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // @updatedAt 代表自动更新时间
+}

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP API 调试工具</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .json-editor {
+      font-family: 'Courier New', monospace;
+      tab-size: 2;
+    }
+
+    .response-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">HTTP API 调试工具</h1>
+      <p class="text-gray-600">用于调试 SQL 数据库服务端接口</p>
+    </div>
+
+    <!-- Main Form -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <!-- Host Input -->
+      <div class="mb-4">
+        <label for="host" class="block text-sm font-medium text-gray-700 mb-2">
+          服务器 Host
+        </label>
+        <input
+          type="text"
+          id="host"
+          placeholder="http://localhost:3000"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+          value="http://localhost:3000"
+          tabindex="0"
+          aria-label="服务器Host地址" />
+      </div>
+
+      <!-- Path Input -->
+      <div class="mb-4">
+        <label for="path" class="block text-sm font-medium text-gray-700 mb-2">
+          请求路径 Path
+        </label>
+        <input
+          type="text"
+          id="path"
+          placeholder="/api/users"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+          value="/api/users"
+          tabindex="0"
+          aria-label="请求路径" />
+      </div>
+
+      <!-- Method Selection -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          请求方法
+        </label>
+        <div class="flex gap-2">
+          <button
+            id="btn-get"
+            class="px-6 py-2 rounded-lg font-medium transition bg-blue-500 text-white"
+            tabindex="0"
+            aria-label="选择GET方法">
+            GET
+          </button>
+          <button
+            id="btn-post"
+            class="px-6 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700 hover:bg-gray-300"
+            tabindex="0"
+            aria-label="选择POST方法">
+            POST
+          </button>
+        </div>
+      </div>
+
+      <!-- Request Data -->
+      <div class="mb-4">
+        <label for="request-data" class="block text-sm font-medium text-gray-700 mb-2">
+          <span id="data-label">请求参数 (Query Params)</span>
+        </label>
+        <textarea
+          id="request-data"
+          rows="8"
+          placeholder='{"id": 1, "name": "example"}'
+          class="json-editor w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-y"
+          tabindex="0"
+          aria-label="请求数据JSON">{}</textarea>
+        <p class="text-xs text-gray-500 mt-1">请输入有效的 JSON 格式数据</p>
+      </div>
+
+      <!-- Send Button -->
+      <div class="flex gap-3">
+        <button
+          id="btn-send"
+          class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg transition shadow-sm hover:shadow-md"
+          tabindex="0"
+          aria-label="发送请求">
+          发送请求
+        </button>
+        <button
+          id="btn-clear"
+          class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition shadow-sm hover:shadow-md"
+          tabindex="0"
+          aria-label="清空响应">
+          清空响应
+        </button>
+      </div>
+    </div>
+
+    <!-- Response Section -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-800">响应数据</h2>
+        <div id="status-badge" class="hidden px-3 py-1 rounded-full text-sm font-medium"></div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <p class="text-gray-600 mt-2">请求中...</p>
+      </div>
+
+      <!-- Response Container -->
+      <div id="response-container" class="response-container">
+        <div id="empty-state" class="text-center py-12 text-gray-400">
+          <svg class="mx-auto h-12 w-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+            </path>
+          </svg>
+          <p>暂无响应数据</p>
+        </div>
+
+        <!-- Response Data -->
+        <div id="response-data" class="hidden">
+          <pre id="response-content" class="json-editor bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm"></pre>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex items-start">
+            <svg class="h-5 w-5 text-red-400 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <div class="flex-1">
+              <h3 class="text-sm font-medium text-red-800 mb-1">请求失败</h3>
+              <p id="error-message" class="text-sm text-red-700"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentMethod = 'GET';
+
+    // DOM Elements
+    const hostInput = document.getElementById('host');
+    const pathInput = document.getElementById('path');
+    const btnGet = document.getElementById('btn-get');
+    const btnPost = document.getElementById('btn-post');
+    const requestDataTextarea = document.getElementById('request-data');
+    const dataLabel = document.getElementById('data-label');
+    const btnSend = document.getElementById('btn-send');
+    const btnClear = document.getElementById('btn-clear');
+    const loading = document.getElementById('loading');
+    const emptyState = document.getElementById('empty-state');
+    const responseData = document.getElementById('response-data');
+    const responseContent = document.getElementById('response-content');
+    const errorState = document.getElementById('error-state');
+    const errorMessage = document.getElementById('error-message');
+    const statusBadge = document.getElementById('status-badge');
+
+    // Method Toggle
+    const handleMethodChange = (method) => {
+      currentMethod = method;
+
+      if (method === 'GET') {
+        btnGet.className = 'px-6 py-2 rounded-lg font-medium transition bg-blue-500 text-white';
+        btnPost.className = 'px-6 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700 hover:bg-gray-300';
+        dataLabel.textContent = '请求参数 (Query Params)';
+      } else {
+        btnPost.className = 'px-6 py-2 rounded-lg font-medium transition bg-blue-500 text-white';
+        btnGet.className = 'px-6 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700 hover:bg-gray-300';
+        dataLabel.textContent = '请求体 (Request Body)';
+      }
+    };
+
+    btnGet.addEventListener('click', () => handleMethodChange('GET'));
+    btnGet.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleMethodChange('GET');
+      }
+    });
+
+    btnPost.addEventListener('click', () => handleMethodChange('POST'));
+    btnPost.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleMethodChange('POST');
+      }
+    });
+
+    // Clear Response
+    const handleClear = () => {
+      emptyState.classList.remove('hidden');
+      responseData.classList.add('hidden');
+      errorState.classList.add('hidden');
+      statusBadge.classList.add('hidden');
+      responseContent.textContent = '';
+    };
+
+    btnClear.addEventListener('click', handleClear);
+    btnClear.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleClear();
+      }
+    });
+
+    // Send Request
+    const handleSend = async () => {
+      const host = hostInput.value.trim();
+      const path = pathInput.value.trim();
+      const requestDataStr = requestDataTextarea.value.trim();
+
+      // Validation
+      if (!host) {
+        alert('请输入服务器 Host');
+        hostInput.focus();
+        return;
+      }
+
+      if (!path) {
+        alert('请输入请求路径');
+        pathInput.focus();
+        return;
+      }
+
+      // Parse JSON
+      let requestData = {};
+      if (requestDataStr) {
+        try {
+          requestData = JSON.parse(requestDataStr);
+        } catch (e) {
+          alert('请求数据不是有效的 JSON 格式');
+          requestDataTextarea.focus();
+          return;
+        }
+      }
+
+      // Show loading
+      loading.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      responseData.classList.add('hidden');
+      errorState.classList.add('hidden');
+      statusBadge.classList.add('hidden');
+
+      try {
+        let url = host + path;
+        let options = {
+          method: currentMethod,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+
+        if (currentMethod === 'GET') {
+          // Add query params
+          if (Object.keys(requestData).length > 0) {
+            const params = new URLSearchParams();
+            Object.keys(requestData).forEach(key => {
+              params.append(key, requestData[key]);
+            });
+            url += '?' + params.toString();
+          }
+        } else {
+          // Add body
+          options.body = JSON.stringify(requestData);
+        }
+
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        // Hide loading
+        loading.classList.add('hidden');
+
+        // Show status
+        statusBadge.classList.remove('hidden');
+        if (response.ok) {
+          statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+          statusBadge.textContent = `${response.status} ${response.statusText}`;
+        } else {
+          statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+          statusBadge.textContent = `${response.status} ${response.statusText}`;
+        }
+
+        // Show response
+        responseData.classList.remove('hidden');
+        responseContent.textContent = JSON.stringify(data, null, 2);
+
+      } catch (error) {
+        // Hide loading
+        loading.classList.add('hidden');
+
+        // Show error
+        errorState.classList.remove('hidden');
+        errorMessage.textContent = error.message || '网络请求失败，请检查服务器地址和网络连接';
+
+        statusBadge.classList.remove('hidden');
+        statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+        statusBadge.textContent = 'Error';
+      }
+    };
+
+    btnSend.addEventListener('click', handleSend);
+    btnSend.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Enter to send
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn">Click me to Add 20 thousands div !</button>
+  <ul id="list"></ul>
+  <script>
+    const btn = document.getElementById('btn');
+    const list = document.getElementById('list');
+    // large array
+    const len = 200000;
+    const arr = new Array(len);
+
+    let addedCnt = 0;
+    /**
+     * @argument {IdleDeadline} deadline
+     */
+    function ricHandle(deadline) {
+      // 只在空闲时添加元素
+      // append element only if RIC state timeRemaining() is true
+      // 这样网页不会被大列表添加的耗时而堵塞, 用户体验更加
+      while (addedCnt < len && deadline.timeRemaining()) {
+        const li = document.createElement('li');
+        li.textContent = addedCnt + 1;
+        addedCnt++;
+        list.appendChild(li);
+        // start recursion
+        requestIdleCallback(ricHandle);
+      }
+    }
+
+
+    btn.addEventListener('click', () => {
+      requestIdleCallback(ricHandle);
+    });
+  </script>
+</body>
+
+</html>

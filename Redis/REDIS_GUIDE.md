@@ -1,11 +1,13 @@
 # Redis 快速上手指南
 
 ## 目录
+
 - [Redis 简介](#redis-简介)
 - [安装 Redis](#安装-redis)
 - [基本概念](#基本概念)
 - [数据类型](#数据类型)
 - [常用命令](#常用命令)
+- [事务](#事务)
 - [在 Node.js 中使用 Redis](#在-nodejs-中使用-redis)
 - [实战示例](#实战示例)
 - [最佳实践](#最佳实践)
@@ -15,11 +17,13 @@
 ## Redis 简介
 
 Redis（Remote Dictionary Server）是一个开源的内存数据结构存储系统，可以用作：
+
 - **数据库**：持久化存储数据
 - **缓存**：高速缓存层
 - **消息队列**：发布/订阅模式
 
 ### 核心特性
+
 - ⚡ **高性能**：所有数据存储在内存中，读写速度极快
 - 🔄 **持久化**：支持 RDB 和 AOF 两种持久化方式
 - 📊 **丰富的数据类型**：String、Hash、List、Set、Sorted Set 等
@@ -31,6 +35,7 @@ Redis（Remote Dictionary Server）是一个开源的内存数据结构存储系
 ## 安装 Redis
 
 ### Linux (Ubuntu/Debian)
+
 ```bash
 # 更新包管理器
 sudo apt update
@@ -49,6 +54,7 @@ sudo systemctl status redis-server
 ```
 
 ### macOS
+
 ```bash
 # 使用 Homebrew 安装
 brew install redis
@@ -61,6 +67,7 @@ redis-server
 ```
 
 ### Windows
+
 ```bash
 # 使用 WSL2 或下载 Windows 版本
 # 推荐使用 WSL2 + Ubuntu 方式安装
@@ -69,7 +76,8 @@ redis-server
 docker run -d -p 6379:6379 --name redis redis:latest
 ```
 
-### Docker 安装（推荐）
+### Docker 安装
+
 ```bash
 # 拉取 Redis 镜像
 docker pull redis:latest
@@ -85,7 +93,70 @@ docker run -d \
 docker exec -it redis redis-cli
 ```
 
+#### 如果要使用密码 推荐配置如下
+
+```bash
+# 1. 在本地创建目录
+mkdir -p ~/redis/{config,data}
+
+# 2. 在本地创建配置文件
+cat > ~/redis/config/redis.conf << 'EOF'
+bind 0.0.0.0
+requirepass MySecurePassword123!
+appendonly yes
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+EOF
+
+# 启动并映射(run -v)本地配置文件和数据
+docker run -d \
+  --name redis \
+  -p 6379:6379 \
+  -v ~/redis/config/redis.conf:/usr/local/etc/redis/redis.conf \
+  -v ~/redis/data:/data \
+  redis:8.4 \
+  redis-server /usr/local/etc/redis/redis.conf
+
+# 进入 Redis CLI
+docker exec -it redis redis-cli
+
+# 输入密码
+127.0.0.1:6379> AUTH MySecurePassword123!
+
+# 或者直接带密码登录(no-auth-warning, 不显示不安全提示)
+docker exec -it redis redis-cli -a MySecurePassword123! --no-auth-warning
+```
+
+#### 配置主从复制
+```bash
+# 1. 创建网络(关键, 否则两容器无法互通)
+docker network create redis-net
+
+# 2. 主服务器加入网络（已运行的容器直接 connect）
+docker network connect redis-net redis
+
+# 3. 启动从服务器
+docker run -d \
+  --name redis-slave1 \
+  --network redis-net \
+  -p 6378:6378 \
+  -v ~/redis/slave1/config/redis.conf:/usr/local/etc/redis/redis.conf \
+  -v ~/redis/slave1/data:/data \
+  redis:8.4 \
+  redis-server /usr/local/etc/redis/redis.conf
+
+# 4. 验证网络
+docker network inspect redis-net
+
+# 5. 进入slave1 容器(省略命令)
+
+# 验证主从复制状态
+127.0.0.1:从服务器> SLAVEOF 127.0.0.1 6379
+127.0.0.1:从服务器> INFO replication
+```
+
 ### 验证安装
+
 ```bash
 # 连接到 Redis
 redis-cli
@@ -103,11 +174,14 @@ redis-cli
 ## 基本概念
 
 ### 键值对存储
+
 Redis 使用键值对（Key-Value）方式存储数据：
+
 - **Key**：字符串类型，唯一标识
 - **Value**：支持多种数据类型
 
 ### 数据库
+
 - Redis 默认有 16 个数据库（0-15）
 - 默认使用 0 号数据库
 - 使用 `SELECT` 命令切换数据库
@@ -131,6 +205,7 @@ FLUSHALL
 ## 数据类型
 
 ### 1. String（字符串）
+
 最基本的数据类型，可以存储字符串、整数或浮点数(数值都是转为字符串的)。
 
 ```bash
@@ -185,6 +260,7 @@ DECRBY counter 3       # 减少 3
 ```
 
 ### 2. Hash（哈希表）
+
 键值对集合，适合存储对象。
 
 ```bash
@@ -225,6 +301,7 @@ HINCRBY user:1001 age 1    # 年龄加 1
 ```
 
 ### 3. List（列表）
+
 有序的字符串列表，可以从两端添加或删除元素。
 
 ```bash
@@ -271,6 +348,7 @@ LTRIM tasks 0 99           # 只保留前 100 个
 ```
 
 ### 4. Set（集合）
+
 无序的字符串集合，元素唯一。
 
 ```bash
@@ -295,6 +373,9 @@ SRANDMEMBER tags 2
 # 弹出随机元素
 SPOP tags
 
+# 清空集合
+SCARD tags
+
 # 集合运算
 SADD set1 "a" "b" "c"
 SADD set2 "b" "c" "d"
@@ -318,6 +399,7 @@ SDIFFSTORE
 ```
 
 ### 5. Sorted Set（有序集合）
+
 有序的字符串集合，每个元素关联一个分数（score）。
 
 ```bash
@@ -365,6 +447,7 @@ ZREMRANGEBYRANK leaderboard 0 2
 ## 常用命令
 
 ### 键操作
+
 ```bash
 # 查看所有键
 KEYS *
@@ -413,6 +496,7 @@ RANDOMKEY
 ```
 
 ### 数据库操作
+
 ```bash
 # 切换数据库
 SELECT 1
@@ -431,6 +515,7 @@ MOVE name 1
 ```
 
 ### 服务器操作
+
 ```bash
 # 查看服务器信息
 INFO
@@ -469,7 +554,8 @@ ECHO "Hello Redis"
 SLOWLOG GET 10
 ```
 
-### 发布订阅（Pub/Sub）
+## 发布订阅（Pub/Sub）
+
 Redis 的发布订阅模式允许消息的发送者（发布者）和接收者（订阅者）之间进行解耦通信。
 
 ```bash
@@ -513,6 +599,7 @@ PUBSUB NUMPAT
 ```
 
 **发布订阅示例场景**：
+
 ```bash
 # 终端 1：订阅者
 SUBSCRIBE notifications user:1001:msg
@@ -535,6 +622,7 @@ PUBLISH user:1001:msg "You have a new friend request"
 ```
 
 **模式订阅示例**：
+
 ```bash
 # 订阅所有新闻频道
 PSUBSCRIBE news:*
@@ -546,12 +634,14 @@ PUBLISH weather:today "Sunny"            # 订阅者不会收到
 ```
 
 **注意事项**：
+
 - 发布订阅是**即时通信**，消息不会被持久化
 - 如果发布时没有订阅者，消息会丢失
 - 订阅者在订阅期间会进入阻塞状态，无法执行其他命令
 - 适用于实时通知、聊天系统、事件广播等场景
 
-### 事务（Transactions）
+## 事务
+
 Redis 事务允许一组命令在单个步骤中执行，保证原子性操作。
 
 ```bash
@@ -630,6 +720,7 @@ EXEC
 ```
 
 **事务使用示例**：
+
 ```bash
 # 示例 1：批量设置用户信息
 MULTI
@@ -663,6 +754,7 @@ EXEC
 ```
 
 **事务特性**：
+
 - ✅ **原子性**：事务中的所有命令要么全部执行，要么全部不执行（入队阶段错误）
 - ✅ **隔离性**：事务执行期间，不会被其他客户端的命令打断
 - ✅ **顺序性**：命令按照入队顺序执行
@@ -670,6 +762,7 @@ EXEC
 - ❌ **不支持嵌套**：事务内不能再开启事务
 
 **WATCH 机制（乐观锁）**：
+
 ```bash
 # 场景：多个客户端同时修改同一个键
 
@@ -692,6 +785,7 @@ UNWATCH
 ```
 
 **事务 vs Lua 脚本**：
+
 - **事务**：适合简单的原子操作，不支持条件判断
 - **Lua 脚本**：支持复杂逻辑、条件判断，性能更好（推荐）
 
@@ -713,9 +807,447 @@ EVAL "
 
 ---
 
+## 主从复制
+
+Redis 主从复制（Replication）是一种数据冗余和高可用的机制，允许将一个 Redis 服务器（主节点 Master）的数据复制到一个或多个 Redis 服务器（从节点 Slave/Replica）。
+
+### 核心概念
+
+- **主节点（Master）**：负责处理写操作，并将数据变更同步到从节点
+- **从节点（Slave/Replica）**：复制主节点的数据，可以处理读操作
+- **异步复制**：主节点写入后立即返回，异步将数据同步到从节点
+- **全量同步 + 增量同步**：首次连接进行全量同步，之后进行增量同步
+
+### 主从复制的作用
+
+1. **数据冗余**：实现数据的热备份，是持久化之外的另一种数据冗余方式
+2. **故障恢复**：当主节点出现问题时，可以由从节点提供服务
+3. **负载均衡**：读写分离，主节点负责写，从节点负责读，分担服务器负载
+4. **高可用基石**：是哨兵模式和集群模式实现高可用的基础
+
+### 配置主从复制
+
+#### 方式一：配置文件（推荐）
+
+在从节点的 `redis.conf` 中添加：
+
+```bash
+# Redis 5.0+ 使用 replicaof（推荐）
+replicaof 192.168.1.100 6379
+
+# Redis 5.0 之前使用 slaveof
+# slaveof 192.168.1.100 6379
+
+# 如果主节点有密码，需要配置
+masterauth your_master_password
+
+# 从节点是否只读（默认 yes，推荐保持只读）
+replica-read-only yes
+
+# 从节点优先级（用于哨兵模式选举，数字越小优先级越高，0 表示永不成为主节点）
+replica-priority 100
+```
+
+#### 方式二：命令行配置
+
+```bash
+# 在从节点上执行，连接到主节点
+REPLICAOF 192.168.1.100 6379
+
+# 或者使用旧命令（已废弃但仍可用）
+SLAVEOF 192.168.1.100 6379
+
+# 如果主节点有密码
+CONFIG SET masterauth your_master_password
+
+# 断开复制，成为独立的主节点
+REPLICAOF NO ONE
+```
+
+#### 方式三：启动时指定
+
+```bash
+# 启动从节点时指定主节点
+redis-server --replicaof 192.168.1.100 6379 --masterauth your_password
+```
+
+### 查看复制状态
+
+```bash
+# 查看复制信息
+INFO replication
+
+# ========== 主节点返回示例 ==========
+# role:master
+# connected_slaves:2
+# slave0:ip=192.168.1.101,port=6379,state=online,offset=1234,lag=0
+# slave1:ip=192.168.1.102,port=6379,state=online,offset=1234,lag=1
+# master_replid:8371445796c7e91c6e0c3d5b0c6c3f2b1a0d9e8f
+# master_repl_offset:1234
+
+# ========== 从节点返回示例 ==========
+# role:slave
+# master_host:192.168.1.100
+# master_port:6379
+# master_link_status:up
+# master_last_io_seconds_ago:1
+# master_sync_in_progress:0
+# slave_repl_offset:1234
+# slave_priority:100
+# slave_read_only:1
+```
+
+### 复制流程详解
+
+#### 1. 全量同步（Full Resynchronization）
+
+首次连接或复制 ID 不匹配时触发：
+
+```
+从节点                              主节点
+  |                                   |
+  |-------- PSYNC ? -1 ------------->|  # 首次同步，发送 PSYNC
+  |                                   |
+  |<------- FULLRESYNC replid offset-|  # 返回复制 ID 和偏移量
+  |                                   |
+  |                              [BGSAVE]  # 主节点后台生成 RDB
+  |                                   |
+  |<------- RDB 文件 -----------------|  # 发送 RDB 文件
+  |                                   |
+  [加载 RDB]                          |
+  |                                   |
+  |<------- 缓冲区命令 ---------------|  # 发送 RDB 生成期间的写命令
+  |                                   |
+```
+
+#### 2. 增量同步（Partial Resynchronization）
+
+从节点断线重连时，如果条件满足会进行增量同步：
+
+```bash
+# 条件：
+# 1. 从节点的复制 ID 与主节点匹配
+# 2. 从节点请求的偏移量在主节点的复制积压缓冲区内
+
+从节点                              主节点
+  |                                   |
+  |--- PSYNC replid offset --------->|  # 发送复制 ID 和偏移量
+  |                                   |
+  |<------ CONTINUE -----------------|  # 确认可以增量同步
+  |                                   |
+  |<------ 增量数据 -----------------|  # 只发送缺失的命令
+  |                                   |
+```
+
+### 复制相关配置
+
+```bash
+# ========== 主节点配置 ==========
+
+# 复制积压缓冲区大小（用于增量同步，默认 1MB）
+repl-backlog-size 64mb
+
+# 复制积压缓冲区释放时间（所有从节点断开后多久释放，默认 3600 秒）
+repl-backlog-ttl 3600
+
+# 最小从节点数量（少于此数量时主节点拒绝写入）
+min-replicas-to-write 1
+
+# 从节点最大延迟（秒）
+min-replicas-max-lag 10
+
+# 是否在后台生成 RDB 时禁用 TCP_NODELAY
+repl-disable-tcp-nodelay no
+
+# ========== 从节点配置 ==========
+
+# 是否只读
+replica-read-only yes
+
+# 是否广播自己的 IP 和端口（用于 NAT 环境）
+replica-announce-ip 192.168.1.101
+replica-announce-port 6379
+
+# 主节点密码
+masterauth your_password
+
+# 复制超时时间（秒）
+repl-timeout 60
+
+# 是否在同步期间响应客户端（使用过期数据）
+replica-serve-stale-data yes
+```
+
+### 实战示例：搭建一主两从
+
+#### Docker Compose 配置
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  redis-master:
+    image: redis:7
+    container_name: redis-master
+    command: redis-server --requirepass master123
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-master-data:/data
+
+  redis-slave-1:
+    image: redis:7
+    container_name: redis-slave-1
+    command: >
+      redis-server
+      --replicaof redis-master 6379
+      --masterauth master123
+      --requirepass slave123
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis-slave1-data:/data
+    depends_on:
+      - redis-master
+
+  redis-slave-2:
+    image: redis:7
+    container_name: redis-slave-2
+    command: >
+      redis-server
+      --replicaof redis-master 6379
+      --masterauth master123
+      --requirepass slave123
+    ports:
+      - '6381:6379'
+    volumes:
+      - redis-slave2-data:/data
+    depends_on:
+      - redis-master
+
+volumes:
+  redis-master-data:
+  redis-slave1-data:
+  redis-slave2-data:
+```
+
+启动并验证：
+
+```bash
+# 启动服务
+docker-compose up -d
+
+# 连接主节点
+docker exec -it redis-master redis-cli -a master123
+
+# 查看复制状态
+INFO replication
+# role:master
+# connected_slaves:2
+
+# 在主节点写入数据
+SET test:key "Hello Redis Replication"
+
+# 连接从节点验证数据
+docker exec -it redis-slave-1 redis-cli -a slave123
+GET test:key
+# "Hello Redis Replication"
+```
+
+### Node.js 读写分离示例
+
+```typescript
+import Redis from 'ioredis';
+
+class RedisReplication {
+  private master: Redis;
+  private slaves: Redis[];
+  private currentSlaveIndex: number = 0;
+
+  constructor() {
+    // 主节点（写操作）
+    this.master = new Redis({
+      host: 'localhost',
+      port: 6379,
+      password: 'master123',
+    });
+
+    // 从节点（读操作）
+    this.slaves = [
+      new Redis({
+        host: 'localhost',
+        port: 6380,
+        password: 'slave123',
+      }),
+      new Redis({
+        host: 'localhost',
+        port: 6381,
+        password: 'slave123',
+      }),
+    ];
+  }
+
+  // 获取从节点（轮询负载均衡）
+  private getSlaveClient(): Redis {
+    const slave = this.slaves[this.currentSlaveIndex];
+    this.currentSlaveIndex = (this.currentSlaveIndex + 1) % this.slaves.length;
+    return slave;
+  }
+
+  // 写操作 - 使用主节点
+  async set(key: string, value: string, ttl?: number): Promise<void> {
+    if (ttl) {
+      await this.master.setex(key, ttl, value);
+    } else {
+      await this.master.set(key, value);
+    }
+  }
+
+  // 读操作 - 使用从节点
+  async get(key: string): Promise<string | null> {
+    const slave = this.getSlaveClient();
+    return await slave.get(key);
+  }
+
+  // 删除操作 - 使用主节点
+  async del(key: string): Promise<void> {
+    await this.master.del(key);
+  }
+
+  // 关闭所有连接
+  async close(): Promise<void> {
+    await this.master.quit();
+    await Promise.all(this.slaves.map(slave => slave.quit()));
+  }
+}
+
+// 使用示例
+const redis = new RedisReplication();
+
+await redis.set('user:1001', JSON.stringify({ name: 'Alice', age: 25 }));
+const user = await redis.get('user:1001');
+console.log('User:', JSON.parse(user!));
+
+await redis.close();
+```
+
+### 使用 ioredis 内置支持
+
+```typescript
+import Redis from 'ioredis';
+
+// ioredis 支持自动读写分离
+const redis = new Redis({
+  sentinels: [
+    { host: 'localhost', port: 26379 },
+    { host: 'localhost', port: 26380 },
+    { host: 'localhost', port: 26381 },
+  ],
+  name: 'mymaster', // Sentinel 监控的主节点名称
+  role: 'master', // 连接主节点
+});
+
+// 或者使用 Cluster 模式自动读写分离
+const cluster = new Redis.Cluster(
+  [
+    { host: 'localhost', port: 6379 },
+    { host: 'localhost', port: 6380 },
+    { host: 'localhost', port: 6381 },
+  ],
+  {
+    scaleReads: 'slave', // 读操作发送到从节点
+    // scaleReads 可选值：
+    // - 'master': 所有读操作发送到主节点
+    // - 'slave': 所有读操作发送到从节点
+    // - 'all': 随机发送到任意节点
+  }
+);
+```
+
+### 故障转移
+
+#### 手动故障转移
+
+```bash
+# 当主节点故障时，在从节点上执行
+REPLICAOF NO ONE
+
+# 该从节点将成为新的主节点
+# 其他从节点需要重新指向新的主节点
+REPLICAOF new_master_ip new_master_port
+```
+
+#### 自动故障转移
+
+需要配合 **Redis Sentinel（哨兵）** 实现自动故障转移：
+
+```bash
+# sentinel.conf 配置示例
+sentinel monitor mymaster 192.168.1.100 6379 2
+sentinel auth-pass mymaster your_password
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 60000
+sentinel parallel-syncs mymaster 1
+
+# 参数说明：
+# monitor: 监控的主节点名称、IP、端口、需要多少个哨兵同意才能认为主节点故障
+# down-after-milliseconds: 主节点无响应多久后认为主观下线
+# failover-timeout: 故障转移超时时间
+# parallel-syncs: 故障转移后，同时进行同步的从节点数量
+```
+
+### 常见问题与解决方案
+
+#### 1. 复制延迟
+
+```bash
+# 查看复制延迟
+INFO replication
+# 关注 master_repl_offset 和 slave_repl_offset 的差值
+
+# 解决方案：
+# - 优化网络环境
+# - 增加复制积压缓冲区大小
+# - 减少大 key 的写入
+```
+
+#### 2. 全量同步频繁
+
+```bash
+# 原因：复制积压缓冲区太小，从节点断线重连时无法增量同步
+# 解决方案：增加缓冲区大小
+CONFIG SET repl-backlog-size 256mb
+```
+
+#### 3. 从节点数据不一致
+
+```bash
+# 原因：异步复制导致的数据延迟
+# 解决方案：
+# 1. 对一致性要求高的读操作，直接读主节点
+# 2. 使用 WAIT 命令等待同步完成
+
+# WAIT 命令：等待至少 N 个从节点确认接收写命令
+SET important:data "value"
+WAIT 2 5000  # 等待 2 个从节点确认，超时 5000ms
+```
+
+### 主从复制注意事项
+
+1. **异步复制**：主从复制是异步的，可能存在数据延迟
+2. **主节点故障**：需要配合哨兵或手动切换实现故障转移
+3. **内存限制**：从节点需要足够内存来存储复制的数据
+4. **网络带宽**：全量同步会消耗大量网络带宽
+5. **只读从节点**：建议保持从节点只读，避免数据不一致
+6. **密码一致性**：如果主节点有密码，从节点必须配置 `masterauth`
+
+---
+
 ## 在 Node.js 中使用 Redis
 
 ### 安装依赖
+
 ```bash
 # 使用 ioredis（推荐）
 npm install ioredis
@@ -725,6 +1257,7 @@ npm install redis
 ```
 
 ### 基本连接（ioredis）
+
 ```javascript
 import Redis from 'ioredis';
 
@@ -734,7 +1267,7 @@ const redis = new Redis({
   port: 6379,
   password: 'your_password', // 如果有密码
   db: 0,
-  retryStrategy: (times) => {
+  retryStrategy: times => {
     const delay = Math.min(times * 50, 2000);
     return delay;
   },
@@ -745,7 +1278,7 @@ redis.on('connect', () => {
   console.log('✅ Redis connected');
 });
 
-redis.on('error', (err) => {
+redis.on('error', err => {
   console.error('❌ Redis error:', err);
 });
 
@@ -796,7 +1329,6 @@ const main = async () => {
     multi.incr('counter');
     const transResults = await multi.exec();
     console.log('Transaction results:', transResults);
-
   } catch (error) {
     console.error('Error:', error);
   } finally {
@@ -808,6 +1340,7 @@ main();
 ```
 
 ### TypeScript 示例
+
 ```typescript
 import Redis from 'ioredis';
 
@@ -899,7 +1432,9 @@ export default RedisService;
 ---
 
 ## 实战示例
+
 ### 1. 缓存数据库查询结果
+
 ```typescript
 import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
@@ -933,12 +1468,9 @@ const getUserById = async (userId: string) => {
 ```
 
 ### 2. 分布式锁
+
 ```typescript
-const acquireLock = async (
-  redis: Redis,
-  lockKey: string,
-  ttl: number = 10
-): Promise<boolean> => {
+const acquireLock = async (redis: Redis, lockKey: string, ttl: number = 10): Promise<boolean> => {
   const result = await redis.set(lockKey, '1', 'EX', ttl, 'NX');
   return result === 'OK';
 };
@@ -971,6 +1503,7 @@ const processTask = async (taskId: string) => {
 ```
 
 ### 3. 限流器（Rate Limiter）
+
 ```typescript
 const checkRateLimit = async (
   redis: Redis,
@@ -1003,6 +1536,7 @@ const handleApiRequest = async (userId: string) => {
 ```
 
 ### 4. 发布/订阅
+
 ```typescript
 // 发布者
 const publisher = new Redis();
@@ -1035,6 +1569,7 @@ await publishMessage('notifications', {
 ```
 
 ### 5. 会话管理
+
 ```typescript
 import express from 'express';
 import session from 'express-session';
@@ -1085,7 +1620,7 @@ app.get('/profile', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
+  req.session.destroy(err => {
     if (err) {
       return res.status(500).json({ error: 'Logout failed' });
     }
@@ -1099,6 +1634,7 @@ app.post('/logout', (req, res) => {
 ## 最佳实践
 
 ### 1. 键命名规范
+
 ```bash
 # 使用冒号分隔命名空间
 user:1001:profile
@@ -1119,6 +1655,7 @@ user:1001:prof
 ```
 
 ### 2. 设置合理的过期时间
+
 ```typescript
 // 短期缓存（热点数据）
 await redis.setex('hot:product:123', 300, data); // 5 分钟
@@ -1134,6 +1671,7 @@ await redis.setex('session:xyz', 1800, data); // 30 分钟
 ```
 
 ### 3. 使用管道提高性能
+
 ```typescript
 // ❌ 不好：多次网络往返
 for (let i = 0; i < 1000; i++) {
@@ -1149,11 +1687,9 @@ await pipeline.exec();
 ```
 
 ### 4. 错误处理
+
 ```typescript
-const safeRedisOperation = async <T>(
-  operation: () => Promise<T>,
-  fallback: T
-): Promise<T> => {
+const safeRedisOperation = async <T>(operation: () => Promise<T>, fallback: T): Promise<T> => {
   try {
     return await operation();
   } catch (error) {
@@ -1163,10 +1699,7 @@ const safeRedisOperation = async <T>(
 };
 
 // 使用示例
-const user = await safeRedisOperation(
-  () => getUserFromCache(userId),
-  null
-);
+const user = await safeRedisOperation(() => getUserFromCache(userId), null);
 
 if (!user) {
   // 从数据库获取
@@ -1175,6 +1708,7 @@ if (!user) {
 ```
 
 ### 5. 内存管理
+
 ```bash
 # 设置最大内存
 CONFIG SET maxmemory 1gb
@@ -1191,6 +1725,7 @@ CONFIG SET maxmemory-policy allkeys-lru
 ```
 
 ### 6. 监控和调试
+
 ```typescript
 // 监控慢查询
 const slowlog = await redis.slowlog('get', 10);
@@ -1210,6 +1745,7 @@ console.log('Stats:', stats);
 ```
 
 ### 7. 持久化配置
+
 ```bash
 # RDB 持久化（快照）
 # 900 秒内至少 1 个键被修改
@@ -1228,6 +1764,7 @@ aof-use-rdb-preamble yes
 ```
 
 ### 8. 安全配置
+
 ```bash
 # 设置密码
 requirepass your_strong_password
@@ -1249,6 +1786,7 @@ protected-mode yes
 ## 总结
 
 Redis 是一个功能强大的内存数据库，适用于：
+
 - ✅ 缓存热点数据
 - ✅ 会话管理
 - ✅ 排行榜和计数器
@@ -1257,6 +1795,7 @@ Redis 是一个功能强大的内存数据库，适用于：
 - ✅ 实时分析
 
 ### 学习路径
+
 1. 掌握基本数据类型和命令
 2. 理解持久化和内存管理
 3. 学习在应用中集成 Redis
@@ -1264,6 +1803,7 @@ Redis 是一个功能强大的内存数据库，适用于：
 5. 优化性能和监控
 
 ### 参考资源
+
 - [Redis 官方文档](https://redis.io/documentation)
 - [Redis 命令参考](https://redis.io/commands)
 - [ioredis GitHub](https://github.com/luin/ioredis)

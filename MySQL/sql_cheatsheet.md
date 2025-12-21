@@ -38,6 +38,8 @@
 
 - 切换数据库 `use database_name`
 
+- 查看数据库信息 `show create database database_name`
+
 ## TABLE
 
 - 在数据库中查看表 `show tables`
@@ -54,6 +56,17 @@
       -> column_name ... NOT NULL (可选)
       -> );
   ```
+
+  - 常用类型
+
+    - 数值: INT / BIGINT / FLOAT / DOUBLE
+    - 字符: VARCHAR / CHAR
+
+      > VARCHAR(n = int) 注意:
+      > - 现代兼容 utf8mb4 更习惯 VARCHAR(191) 作为上限, 这是为了快速索引。
+      > - MySQL 的默认 Innodb 数据库引擎的工作方式, 索引只能有 767 个字节, 可存储 255 个 3 字节(早期使用 3 字节作为 utf8), 后面为支持 emoji 和更多字符, 所以使用 4 字节的 utf8mb4, 767 / 4 = 191
+
+    - 时间: DATE / TIME / DATETIME / TIMESTAMP
 
   - NOT NULL 代表该列不允许为空
   - AUTO_INCREMENT 代表该列自增

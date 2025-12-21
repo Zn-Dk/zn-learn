@@ -1,0 +1,20 @@
+{
+  "name": "node-ioredis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start1": "nodemon --exec bun ./1-start/index.js",
+    "start2": "nodemon --exec bun ./2-lua-throttle/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "dependencies": {
+    "express": "^5.2.1",
+    "ioredis": "^5.8.2",
+    "nodemon": "^3.1.11"
+  }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn">点击抽奖</button>
+  <div id="result"></div>
+  <div id="countdown"></div>
+
+  <script>
+    const btn = document.getElementById('btn')
+    const result = document.getElementById('result')
+    const countdown = document.getElementById('countdown')
+
+    let countdownTimer = null
+    let remainingTime = 0
+
+    // Start countdown timer
+    const startCountdown = (ttl) => {
+      // Clear previous timer
+      if (countdownTimer) {
+        clearInterval(countdownTimer)
+      }
+
+      remainingTime = ttl
+      updateCountdownDisplay()
+
+      countdownTimer = setInterval(() => {
+        remainingTime--
+        updateCountdownDisplay()
+
+        if (remainingTime <= 0) {
+          clearInterval(countdownTimer)
+          countdownTimer = null
+          countdown.innerHTML = '冷却完成，可以继续请求'
+        }
+      }, 1000)
+    }
+
+    // Update countdown display
+    const updateCountdownDisplay = () => {
+      if (remainingTime > 0) {
+        countdown.innerHTML = `冷却倒计时: <strong>${remainingTime}</strong> 秒`
+      }
+    }
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/api/lottery')
+        const data = await res.json()
+
+        // Display result
+        result.innerHTML = JSON.stringify(data, null, 2)
+
+        // Start countdown if ttl exists
+        if (data.ttl && data.ttl > 0) {
+          startCountdown(data.ttl)
+        }
+
+        // Show rate limit warning
+        if (data.code === 429) {
+          result.style.color = 'red'
+        } else {
+          result.style.color = 'green'
+        }
+      } catch (error) {
+        result.innerHTML = `请求失败: ${error.message}`
+        result.style.color = 'red'
+      }
+    }
+
+    btn.addEventListener('click', fetchData)
+  </script>
+</body>
+
+</html>

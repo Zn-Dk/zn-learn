@@ -72,9 +72,10 @@ const handlerUpload = () => {
     uploadHandler() {
       this.currentFileChunks.forEach((chunk, index) => {
         const formData = new FormData();
-        formData.append('file', chunk);
         formData.append('filename', `${this.currentFile.name}-${index}`);
         formData.append('chunkSize', chunk.size);
+        // 这里有一个坑 file 必须在最后, 否则会把前面的参数都清空
+        formData.append('file', chunk);
         console.log(`正在上传 ${index + 1} 个分片, 大小 ${chunk.size}`);
         this.postData(formData);
       });

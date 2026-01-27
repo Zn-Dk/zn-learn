@@ -54,7 +54,7 @@ const removeElement = function (nums, val) {
     if (nums[fast] !== val) {
       nums[slow] = nums[fast];
       slow++;
-    }
+    }``
   }
   return slow;
 };

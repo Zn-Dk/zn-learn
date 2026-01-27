@@ -15,14 +15,24 @@ rl.on("line", function (str) {
       left--;
       right++;
     }
-    return s.substr(left + 1, right - left - 1); //将最后的回文数截取出来
+    return right - left - 1; // 最后的回文数长度
   };
+
   let res = "";
+  let start = 0; // 截取点
+  let maxLen = 0;
   for (let i = 0; i < len; i++) {
-    let s1 = centerSpread(str, i, i); //对应ABBA
-    let s2 = centerSpread(str, i, i + 1); //对应ABCBA
-    res = s1.length > res.length ? s1 : res;
-    res = s2.length > res.length ? s2 : res;
+    let len1 = centerSpread(str, i, i); //对应ABBA
+    let len2 = centerSpread(str, i, i + 1); //对应ABCBA
+    let len = Math.max(len1, len2);
+    if (len > maxLen) {
+      // i 为中心, 左边应该有(len - 1) / 2 个字符
+      start = i - Math.floor((len - 1) / 2);
+      maxLen = len;
+    }
   }
+
+  res = str.substring(start, start + maxLen);
   console.log(res); // 输出这个回文数或者长度随你
+  return res;
 });

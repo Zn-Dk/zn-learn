@@ -69,7 +69,7 @@ export default function render(_ctx: any, _cache: any) {
       // 对于动态节点, 则是使用 context 上下文, 并根据 vue 的 patchFlag 绑定,
       // 这里渲染 p 标签 children 时, 使用 _ctx 上下文的 foo 属性用 toDisplayString 方法转换 {{ foo }} -> 真实值, 并用 1 标记为 TEXT 节点
       // props bar, 使用上下文 _ctx 的 bar 属性
-      // 如果有叠加(又有props 又有 text), 则是相加值, 比如 1 TEXT + 8 PROPS = 9
+      // 如果有叠加(又有props 又有 text), 则是按位相加值, 比如 FLAG = 1 TEXT | 8 PROPS (9)
       createElementVNode(
         'p',
         { bar: _ctx.bar },

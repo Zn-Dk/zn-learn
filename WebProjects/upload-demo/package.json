@@ -5,13 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "serve": "nodemon -w ./public/index.js ./server/index.js"
+    "serve": "nodemon ./server/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1",
+    "ioredis": "^5.8.2",
     "multer": "^2.0.2"
   },
   "devDependencies": {

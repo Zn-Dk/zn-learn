@@ -109,6 +109,7 @@ let encodeMap =
 let data = [];
 rl.on("line", function (line) {
   data.push(line);
+  console.log("🚀 ~ line:", line);
   if (data.length == 2) {
     let decode = []; // 解密后的字符集合
     let encode = []; // 加密后的字符集合

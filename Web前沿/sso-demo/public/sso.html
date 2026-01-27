@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSO Landing Page</title>
+</head>
+
+<body>
+  <h2>SSO Landing Page</h2>
+  <p>This is the Single Sign-On (SSO) landing page.</p>
+  <form id="form">
+    <input type="text" id="username" name="username">
+    <input type="password" id="password" name="password">
+    <button type="submit">Login</button>
+  </form>
+  <script>
+    const form = document.getElementById('form');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const search = new URLSearchParams(window.location.search);
+      const app_id = search.get('app_id');
+      const redirect = search.get('redirect');
+      // 请求 sso 服务器
+      console.log('fetch login', { username, password, app_id });
+      fetch('http://localhost:3000/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username,
+            password,
+            app_id,
+            redirect
+          })
+        })
+        // 接口返回 302
+        .then((response) => {
+          console.log('response', response);
+          window.location.href = response.url;
+        });
+    });
+  </script>
+</body>
+
+</html>

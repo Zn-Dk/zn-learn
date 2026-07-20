@@ -26,9 +26,26 @@ function merge(left, right) {
   let res = []; // 结果数组
 
   while (i < left.length && j < right.length) {
-    // 排序
+    // 排序 case 1
+    // 6 7 | 5 6 
+    // l0 < r0 ? -> push r[0], j= 1, res = [5]
+    // l1 < r1 ? -> push r[1], j = 2, res = [5, 6]
+    // break
+
+    // 5 6 6 7 | 3 4 8 9
+    // l0 < r0 -> [3], j = 1
+    // l0 < r1 -> [3, 4] j = 2
+    // l0 < r2 -> [3, 4, 5] i = 1
+    // l1 < r2 -> [3, 4, 5, 6] i =2
+    // [3, 4, 5, 6, 6] i = 3
+    // [3, 4, 5, 6, 6, 7] i = 4 
+    // break
     res.push(left[i] < right[j] ? left[i++] : right[j++]);
   }
+
+  // res1: [5, 6].concat([6, 7])
+
+  // res2: [3, 4, 5, 6, 6, 7].concat([8, 9])
 
   //合并 =>将 左右 数组 剩余的部分 concat
   // (例如 [2] , [3] => l < r => res == [2].concat([3]))
@@ -37,5 +54,9 @@ function merge(left, right) {
 }
 
 let ascArr = mergeSort([7, 6, 5, 6, 8, 4, 9, 3]);
-
+// 7 6 5 6 | 8 4 9 3
+// 7 6 | 5 6 || 8 4 | 9 3
+// 7 | 6 | 5 | 6 || 8 | 4 | 9 | 3
+// 6 7 | 5 6 || 4 8 | 3 9
+// 5 6 6 7 | 3 4 8 9
 console.log(ascArr);

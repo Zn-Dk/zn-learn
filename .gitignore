@@ -3,3 +3,5 @@
 .codebuddy
 temp
 tmp
+_*dev
+node_modules

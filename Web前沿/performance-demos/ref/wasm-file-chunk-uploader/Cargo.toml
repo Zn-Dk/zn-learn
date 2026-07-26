@@ -1,0 +1,15 @@
+[package]
+name = "wasm-hash-pro"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+# 纯 Rust 实现的加密哈希库，性能极高且容易编译为 WASM
+md-5 = "0.10"
+sha2 = "0.10"
+# 用于将二进制摘要转为 Hex 字符串
+hex = "0.4"

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: #f00;
+      animation: move 1s infinite;
+    }
+
+    @keyframes move {
+      0% {
+        transform: translateX(0);
+      }
+
+      50% {
+        transform: translateX(200px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>禁止打开控制台的办法</h1>
+  <div class="box"></div>
+  <!-- 1.第三方库 console-ban -->
+  <!-- <script src="
+  https://cdn.jsdelivr.net/npm/console-ban@5.0.0/dist/console-ban.min.js
+  "></script>
+    <script>
+      // default options
+      ConsoleBan.init()
+      // custom options
+      ConsoleBan.init({
+        redirect: '/404'
+      })
+    </script> -->
+
+  <!-- 2.第三方库disable-devtool(更全面) -->
+  <!-- 自动禁用, 禁止右键, 禁止F12 -->
+  <!-- <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool@0.3.9/disable-devtool.min.js'></script> -->
+  <!-- <script src='https://cdn.jsdelivr.net/npm/disable-devtool@0.3.9/disable-devtool.min.js'></script> -->
+  <!-- <script>
+    // https://github.com/theajack/disable-devtool/blob/master/README.cn.md
+    DisableDevtool({
+      ondevtoolopen(type, next) {
+        alert('Devtool opened with type:' + type);
+        next();
+      },
+      disableMenu: false, // 默认true
+    });
+  </script> -->
+
+  <script>
+    // 1. 重写console
+    // 只能阻止 JS 层面的 console 调用，用户仍然可以打开 DevTools 查看 Elements、Network 等面板
+    // 可以通过 iframe 获取原始的 console 引用来绕过：
+    // const iframe = document.createElement('iframe');
+    // document.body.appendChild(iframe);
+    // const originalConsole = iframe.contentWindow.console;
+    // originalConsole.log('绕过了！');
+    // console.log = function () {
+    //   throw new Error('控制台已被禁用');
+    // };
+
+    // 既然可以用iframe创建一个不被污染的console/setInterval,
+    // 同样的, 如果希望自己的函数不被黑产劫持污染, 可以反向用 iframe 获取不被污染的函数
+    // 然后随机找页面的一个 div 塞进去
+    // 比如
+    const getIframeWindow = () => {
+      const divs = document.querySelectorAll('div')[`${Math.floor(Math.random() * divs.length)}`];
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      divs.appendChild(iframe);
+      return iframe.contentWindow;
+    }
+
+
+    // 2. debugger+ 无限断点
+    let counter = 0
+    const disableDevDebugger = () => {
+      // 使用 new Function 创建的代码是动态生成的，没有对应的源码文件，
+      // 用户无法在 Sources 面板中找到并设置 "Never pause here" 来跳过断点
+
+      // 直接写 debugger 的话，用户可以在 Sources 中找到对应行，
+      // 右键选择 "Never pause here" 轻松绕过
+
+      // 缺点: 用户可以点击 DevTools 中的 "Deactivate breakpoints" 按钮（⏸️图标）来全局禁用所有断点
+      // const db = new Function('debugger');
+      setInterval(() => {
+        console.clear();
+        new Function(`if(${++counter}) debugger`)();
+      }, 1000);
+    }
+    window.onload = () => {
+      disableDevDebugger();
+    }
+
+
+    // 3. console.log 对象 getter 检测
+    // 原理：浏览器在 DevTools 打开时会尝试展开/序列化 console.log 的参数对象，从而触发自定义的 getter。
+    const element = new Image();
+    Object.defineProperty(element, 'id', {
+      get: function () {
+        // 只有控制台打开并展开这个对象时，getter 才会被调用
+        alert('DevTools 已打开！');
+      }
+    });
+    console.log('%O', element);
+
+    // 4. 禁用快捷键和右键
+    // document.addEventListener('keydown', (e) => {
+    //   // 禁止 F12
+    //   if (e.key === 'F12') e.preventDefault();
+    //   // 禁止 Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+U
+    //   if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) e.preventDefault();
+    //   if (e.ctrlKey && e.key === 'u') e.preventDefault();
+    // });
+    // document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+</body>
+
+</html>

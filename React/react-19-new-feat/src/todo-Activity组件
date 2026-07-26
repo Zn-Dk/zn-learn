@@ -1,0 +1,30 @@
+// 类比 Vue 的 keep-alive 组件，用于保留组件状态并智能管理副作用
+
+这是 ‌React 团队在 Canary 频道推出的新实验性功能‌，正式纳入 ‌React 19.2.0 版本‌ ‌
+
+‌核心目的‌：优化条件渲染，‌保留组件状态并智能管理副作用‌，提升用户体验。
+
+‌典型场景‌：
+
+多步骤表单（避免切换时数据丢失）
+标签页导航（隐藏页保留滚动位置、输入内容）
+预加载下一页资源（后台加载 CSS、数据等）
+‌基本用法‌：
+
+```jsx
+import { Activity } from 'react';
+
+<Activity mode={isVisible ? 'visible' : 'hidden'}>
+  <MyComponent />
+</Activity>
+‌两种模式‌：
+
+```jsx
+
+visible：正常渲染，挂载 Effect，响应更新。
+hidden：‌视觉隐藏但保留 React 树中的实例‌，Effect 被暂停，更新被推迟，‌状态不会丢失‌ ‌
+
+⚠️ 注意：该组件目前仅在 ‌React 19.2+ Canary 或正式版‌ 中可用，需确保项目依赖版本符合要求。
+
+二、第三方库 react-activity（活动指示器/加载动画）
+这是一个 ‌独立的开源组件库‌，提供多种加载动画效果，与 React 官方无关 ‌

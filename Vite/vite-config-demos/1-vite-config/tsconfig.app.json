@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    // 路径别名, 可以在项目中直接使用 @/ 开头的路径 (用于代码类型检查, IDE 识别)
+    // 在 vite 中需要同步配置 resolve.alias (用于编译识别)
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    // react-jsx 是 React 17+ 引入的新 JSX 转换（Automatic Runtime），它的特点是：
+    // 编译器会自动注入 import { jsx as _jsx } from 'react/jsx-runtime'
+    // 不再需要在每个文件顶部写 import React from 'react'
+    // 也不需要在 vite 配置 esbuild.jsxInject
+    // "jsx": "react-jsx",
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": [
+    "src"
+  ],
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    .app {
+      width: 100px;
+      height: 100px;
+      background-color: aqua;
+      position: relative;
+      animation: move 2s linear infinite;
+      margin-bottom: 100px;
+    }
+
+    @keyframes move {
+      0% {
+        left: 0px;
+      }
+
+      100% {
+        left: 200px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button id="btn">执行任务</button>
+  <div class="app"></div>
+  <div class="app"></div>
+  <div class="app"></div>
+  <div class="app"></div>
+  <div class="app"></div>
+  <script>
+    //   // 1. 定义并启动监控
+    //   const observer = new PerformanceObserver((list) => {
+    //     list.getEntries().forEach((entry) => {
+    //       console.warn(`🚨 抓到了！检测到长任务！`);
+    //       console.table({
+    //         耗时: Math.round(entry.duration) + "ms",
+    //         开始时间: Math.round(entry.startTime) + "ms",
+    //         来源: entry.name,
+    //       });
+    //     });
+    //   });
+
+    //   observer.observe({ entryTypes: ["longtask"] });
+
+    //   setTimeout(() => {
+    //         console.log("🔥 开始阻塞主线程 2秒...");
+    //         const start = Date.now();
+    //         while (Date.now() - start < 2000) {
+    //           // 死循环，霸占主线程
+    //         }
+    //         console.log("✨ 阻塞结束，请看上方是否有 🚨 警报");
+    //       }, 100);
+
+    // requestIdleCallback 调度器, 模拟 react 核心思想
+    class TaskScheduler {
+      constructor() {
+        this.tasks = []
+        this.running = false
+      }
+
+      // 添加任务 priority 1/2/3 约大越高优先
+      postTask(callback, priority) {
+        const newTask = { callback, priority }
+        // 按优先级找到index, 插入队列
+        // React 的真实实现(最小堆) ⚠️
+        const insertIdx = this.tasks.findIndex(t => t.priority < priority)
+        if (insertIdx === -1) {
+          this.tasks.push(newTask)
+        } else {
+          this.tasks.splice(insertIdx, 0, newTask)
+        }
+
+        if (!this.running) {
+          this.running = true;
+          // 扔到 rIc 执行. 关键步骤
+          requestIdleCallback(this.run.bind(this))
+        }
+      }
+
+      // 执行任务
+      // 每个任务可能都有过期时间，一定要在过期之前，将它执行
+      /** @type {IdleRequestCallback}  */
+      run(deadline) {
+        // 第一部分：while —— 在当前空闲帧内，尽可能多地执行任务
+        while (this.tasks.length > 0 && deadline.timeRemaining() > 1) {
+          // queue FIFO 已排序
+          const task = this.tasks.shift()
+          task.callback()
+        }
+
+        // 第二部分：if —— 当前帧时间用完了，检查还有没有剩余任务
+        if (this.tasks.length > 0) {
+          // 到下一轮回调执行
+          requestIdleCallback(this.run.bind(this))
+        } else {
+          this.running = false // 下班收工
+        }
+      }
+    }
+
+    const scheduler = new TaskScheduler();
+    const runTask = () => {
+      const bigArray = Array.from({ length: 10000 }, (v, i) => i);
+      for (let i = 0; i < bigArray.length; i++) {
+        const element = bigArray[i];
+        const priority = i % 3
+        scheduler.postTask(
+          () => { console.log(`${element} task run`) },
+          priority,
+        );
+      }
+    }
+
+    const btnDom = document.querySelector("#btn");
+    btnDom.addEventListener("click", runTask)
+  </script>
+</body>
+
+</html>

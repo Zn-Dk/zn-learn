@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 表格编辑与二分查找定位</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: -apple-system, sans-serif; background: #f5f5f5; }
+        
+        #viewport {
+            width: 100vw; height: 100vh;
+            overflow: auto; position: relative;
+        }
+        
+        /* 幽灵层：高度由 JS 动态计算设置 */
+        #phantom { width: 1px; height: 1px; } 
+        
+        canvas { display: block; position: fixed; top: 0; left: 0; pointer-events: none; }
+
+        /* --- 核心：漂浮编辑器 --- */
+        #cellEditor {
+            position: fixed;
+            display: none; /* 默认隐藏 */
+            border: 2px solid #1890ff; /* 激活时的边框色 */
+            outline: none;
+            padding: 0 12px;
+            font-size: 13px;
+            font-family: sans-serif;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        #debug {
+            position: fixed; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,0.7); color: #fff; padding: 10px;
+            pointer-events: none; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="viewport"><div id="phantom"></div></div>
+<canvas id="stage"></canvas>
+
+<input type="text" id="cellEditor">
+
+<div id="debug">初始化...</div>
+
+<script>
+    // ==========================================
+    // 1. 核心算法：前缀和与二分查找 (GridMetrics)
+    // ==========================================
+    class GridMetrics {
+        constructor(rowCount, defaultHeight) {
+            this.rowCount = rowCount;
+            this.heights = []; // 存储每一行的高度
+            this.offsets = [0]; // 前缀和数组：offsets[i] = 第 i 行的起始 Y 坐标
+            
+            // 模拟：生成不定行高 (随机高度 30px - 60px)
+            let currentOffset = 0;
+            for (let i = 0; i < rowCount; i++) {
+                // 演示技巧：偶数行高一些，奇数行矮一些
+                const h = (i % 5 === 0) ? 60 : 30; 
+                this.heights.push(h);
+                currentOffset += h;
+                this.offsets.push(currentOffset);
+            }
+            
+            this.totalHeight = currentOffset;
+        }
+
+        // 获取第 index 行的起始位置 (O(1))
+        getRowOffset(index) {
+            if (index < 0) return 0;
+            if (index >= this.offsets.length) return this.offsets[this.offsets.length - 1];
+            return this.offsets[index];
+        }
+
+        // 获取第 index 行的高度 (O(1))
+        getRowHeight(index) {
+            if (index < 0 || index >= this.heights.length) return 0;
+            return this.heights[index];
+        }
+
+        // 核心难点：给定 Y 坐标，找到对应的行索引 (O(log N))
+        // 使用二分查找 (Binary Search)
+        getRowIndexAt(y) {
+            let low = 0;
+            let high = this.rowCount - 1;
+            
+            while (low <= high) {
+                const mid = (low + high) >> 1;
+                const start = this.offsets[mid];
+                const end = this.offsets[mid + 1];
+
+                if (y >= start && y < end) {
+                    return mid; // 命中
+                } else if (y < start) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            }
+            return -1; // 超出范围
+        }
+    }
+
+    // ==========================================
+    // 2. 数据管理 (DataModel)
+    // ==========================================
+    const dataModel = {
+        changes: {}, // 稀疏存储修改过的数据 "row,col" -> value
+
+        getValue(r, c) {
+            const key = `${r},${c}`;
+            if (this.changes[key] !== undefined) return this.changes[key];
+            return `原始 ${r}-${c}`; // 默认数据
+        },
+
+        setValue(r, c, val) {
+            this.changes[`${r},${c}`] = val;
+        }
+    };
+
+    // ==========================================
+    // 3. 全局配置与初始化
+    // ==========================================
+    const CONFIG = {
+        colWidth: 120, // 简化起见，列宽暂时固定 (列宽不定同理可用前缀和)
+        headerWidth: 50,
+        headerHeight: 30,
+        totalRows: 10000,
+        totalCols: 100
+    };
+
+    const metrics = new GridMetrics(CONFIG.totalRows, 30);
+    const viewport = document.getElementById('viewport');
+    const phantom = document.getElementById('phantom');
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const editor = document.getElementById('cellEditor');
+    const debug = document.getElementById('debug');
+
+    // 设置虚拟滚动高度
+    phantom.style.height = metrics.totalHeight + 'px';
+    phantom.style.width = (CONFIG.totalCols * CONFIG.colWidth) + 'px';
+
+    // 状态
+    let state = {
+        scrollTop: 0,
+        scrollLeft: 0,
+        editing: null // { r, c } or null
+    };
+
+    function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.scale(dpr, dpr);
+        render();
+    }
+
+    // ==========================================
+    // 4. 渲染循环 (Render)
+    // ==========================================
+    function render() {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const { scrollTop, scrollLeft } = state;
+        
+        // --- A. 计算可视范围 ---
+        // 利用二分查找快速定位 StartRow，而不是简单的除法
+        const startRow = Math.max(0, metrics.getRowIndexAt(scrollTop));
+        // EndRow 可以通过从 StartRow 累加高度直到超出视口来确定，或者也查表
+        let endRow = startRow;
+        let currentY = metrics.getRowOffset(startRow);
+        while (currentY < scrollTop + window.innerHeight && endRow < CONFIG.totalRows) {
+            currentY += metrics.getRowHeight(endRow);
+            endRow++;
+        }
+
+        // 列的计算 (固定宽度，O(1))
+        const startCol = Math.floor(scrollLeft / CONFIG.colWidth);
+        const endCol = Math.floor((scrollLeft + window.innerWidth) / CONFIG.colWidth) + 1;
+
+        // --- B. 绘制 Grid ---
+        ctx.save();
+        ctx.translate(CONFIG.headerWidth, CONFIG.headerHeight);
+
+        // 优化：只遍历可见区域
+        for (let r = startRow; r < endRow; r++) {
+            // 获取当前行在世界坐标系中的 Y 和 高度
+            const rowY = metrics.getRowOffset(r); 
+            const rowH = metrics.getRowHeight(r);
+            const drawY = rowY - scrollTop; // 转换为屏幕坐标
+
+            for (let c = startCol; c < endCol; c++) {
+                const drawX = (c * CONFIG.colWidth) - scrollLeft;
+                
+                // 绘制背景
+                ctx.fillStyle = ((r+c)%2===0) ? '#ffffff' : '#f9f9f9';
+                ctx.fillRect(drawX, drawY, CONFIG.colWidth, rowH);
+
+                // 绘制边框
+                ctx.strokeStyle = '#e8e8e8';
+                ctx.strokeRect(drawX, drawY, CONFIG.colWidth, rowH);
+
+                // 绘制文字
+                ctx.fillStyle = '#333';
+                ctx.font = '13px sans-serif';
+                ctx.textBaseline = 'middle';
+                
+                // 裁剪文字防止溢出
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(drawX, drawY, CONFIG.colWidth, rowH);
+                ctx.clip();
+                
+                const text = dataModel.getValue(r, c);
+                ctx.fillText(text, drawX + 8, drawY + rowH / 2);
+                ctx.restore();
+            }
+        }
+        ctx.restore();
+
+        // --- C. 绘制固定表头 (简化版) ---
+        // (略，重点展示点击定位)
+        ctx.fillStyle = '#eee';
+        ctx.fillRect(0, 0, canvas.width, CONFIG.headerHeight);
+        ctx.fillRect(0, 0, CONFIG.headerWidth, canvas.height);
+    }
+
+    // ==========================================
+    // 5. 交互核心：点击与编辑
+    // ==========================================
+
+    viewport.addEventListener('scroll', () => {
+        state.scrollTop = viewport.scrollTop;
+        state.scrollLeft = viewport.scrollLeft;
+        
+        // 滚动时隐藏编辑器 (这是 Excel 的默认行为，也可以做成跟随移动)
+        if (state.editing) closeEditor(false); 
+        
+        requestAnimationFrame(render);
+    });
+
+    // 监听 viewport 的点击 (因为 canvas pointer-events: none)
+    // 实际上我们需要监听一个能捕获点击的层。
+    // 为了简单，我们把 canvas pointer-events 打开，或者在 viewport 上监听
+    // 这里我们直接监听 window 或 viewport，因为 viewport 盖住了 canvas
+    viewport.addEventListener('click', (e) => {
+        // 1. 获取相对于 Viewport 内容区的坐标
+        // e.clientX 是相对于视口的，加上 scrollLeft 就是相对于整个大表格左上角的
+        // 还要减去表头的固定宽度/高度偏移
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+
+        // 如果点在表头区域，忽略
+        if (clientX < CONFIG.headerWidth || clientY < CONFIG.headerHeight) return;
+
+        // 真正的世界坐标 (World Coordinate)
+        const worldX = clientX - CONFIG.headerWidth + state.scrollLeft;
+        const worldY = clientY - CONFIG.headerHeight + state.scrollTop;
+
+        // 2. 空间索引反算 (Spatial Indexing)
+        // 列：固定宽度 -> O(1) 直接除法
+        const colIndex = Math.floor(worldX / CONFIG.colWidth);
+        
+        // 行：不定高度 -> O(log N) 二分查找
+        const rowIndex = metrics.getRowIndexAt(worldY);
+
+        // 3. 触发编辑
+        if (rowIndex >= 0 && colIndex >= 0) {
+            startEditing(rowIndex, colIndex);
+        }
+    });
+
+    function startEditing(r, c) {
+        // 保存当前编辑状态
+        state.editing = { r, c };
+
+        // 1. 计算编辑框的目标位置 (Screen Coordinates)
+        const rowY = metrics.getRowOffset(r); // 世界坐标 Y
+        const rowH = metrics.getRowHeight(r);
+        
+        const screenX = (c * CONFIG.colWidth) - state.scrollLeft + CONFIG.headerWidth;
+        const screenY = rowY - state.scrollTop + CONFIG.headerHeight;
+
+        // 2. 设置 Editor 样式并显示
+        editor.style.display = 'block';
+        editor.style.left = screenX + 'px';
+        editor.style.top = screenY + 'px';
+        editor.style.width = (CONFIG.colWidth - 4) + 'px'; // 减去 padding/border
+        editor.style.height = (rowH - 4) + 'px';
+        // 调整行高让文字居中
+        editor.style.lineHeight = (rowH - 4) + 'px'; 
+
+        // 3. 填充值并聚焦
+        editor.value = dataModel.getValue(r, c);
+        editor.focus();
+
+        debug.innerHTML = `点击命中: Row ${r} (H:${rowH}px), Col ${c} <br> 算法: 二分查找定位`;
+    }
+
+    function closeEditor(save) {
+        if (!state.editing) return;
+        const { r, c } = state.editing;
+
+        if (save) {
+            dataModel.setValue(r, c, editor.value);
+            render(); // 重绘显示新值
+        }
+
+        editor.style.display = 'none';
+        state.editing = null;
+    }
+
+    // 编辑器事件
+    editor.addEventListener('blur', () => closeEditor(true)); // 失去焦点保存
+    editor.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            closeEditor(true);
+            // 这里还可以做：按 Enter 自动跳到下一行
+        }
+    });
+
+    // 初始化
+    window.addEventListener('resize', resize);
+    resize();
+
+</script>
+</body>
+</html>

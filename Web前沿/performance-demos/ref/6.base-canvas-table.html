@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Canvas 高性能表格渲染</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      /* 视口容器 */
+      #viewport {
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        position: relative;
+        background: #f5f5f5; /* 滚动区域背景色 */
+      }
+
+      /* 幽灵层：撑开滚动条 */
+      #phantom {
+        width: 20000px;
+        height: 20000px;
+      }
+
+      /* 绘图层 */
+      canvas {
+        display: block; /* 防止 inline 间隙 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none; /* 让事件穿透到 viewport，如果不做复杂交互 */
+      }
+
+      /* 调试信息 */
+      #info {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ccc;
+        color: #333;
+        padding: 8px 12px;
+        font-size: 12px;
+        pointer-events: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewport">
+      <div id="phantom"></div>
+    </div>
+    <canvas id="stage" width="1920" height="1080"></canvas>
+    <div id="info">初始化中...</div>
+
+    <script>
+      // 简单示例，canvas 绘制单元格
+      //   const stageDom = document.querySelector("#stage");
+      //   const ctx = stageDom.getContext("2d");
+      //   console.log("🚀 ~ ctx:", ctx);
+      //   const rows = new Array(10).fill(0);
+      //   const cells = new Array(10).fill(0);
+
+      //   ctx.beginPath();
+      //   for (let row = 0; row < rows.length; row++) {
+      //     for (let i = 0; i < cells.length; i++) {
+      //       ctx.moveTo(i * 100, row * 30);
+      //       ctx.lineTo(i * 100, row * 30);
+      //       ctx.lineTo(i * 100, row * 30 + 30);
+      //       ctx.lineTo(0, row * 30 + 30);
+      //       ctx.stroke();
+      //     }
+      //   }
+      //   ctx.endPath();
+
+      // --- 配置参数 ---
+      const COL_WIDTH = 120; // 列宽
+      const ROW_HEIGHT = 30; // 行高
+      const HEADER_COL_WIDTH = 50; // 左侧行号栏宽度
+      const HEADER_ROW_HEIGHT = 30; // 顶部列标栏高度
+
+      // 颜色配置
+      const THEME = {
+        bg: "#ffffff",
+        grid: "#e0e0e0",
+        text: "#333333",
+        headerBg: "#f8f9fa",
+        headerText: "#666",
+        headerBorder: "#ccc",
+        hover: "rgba(24, 144, 255, 0.1)", // 悬停色
+        select: "rgba(24, 144, 255, 0.2)", // 选中色
+        selectBorder: "#1890ff",
+      };
+
+      // --- DOM 元素 ---
+      const viewport = document.getElementById("viewport");
+      const canvas = document.getElementById("stage");
+      const ctx = canvas.getContext("2d", { alpha: false }); // 优化：关闭透明通道提升性能
+      const info = document.getElementById("info");
+
+      // --- 状态管理 ---
+      let state = {
+        scrollTop: 0,
+        scrollLeft: 0,
+        hover: { r: -1, c: -1 },
+        selected: { r: -1, c: -1 },
+      };
+
+      // --- 核心工具函数 ---
+
+      // 数字转 Excel 列标 (0 -> A, 1 -> B, ..., 26 -> AA)
+      function getColLabel(n) {
+        let s = "";
+        while (n >= 0) {
+          s = String.fromCharCode((n % 26) + 65) + s;
+          n = Math.floor(n / 26) - 1;
+        }
+        return s;
+      }
+
+      function resize() {
+        // 处理高分屏清晰度
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        ctx.scale(dpr, dpr);
+        render();
+      }
+
+      // --- 绘制逻辑 ---
+
+      function drawCell(r, c, x, y, isHeader = false) {
+        // 1. 绘制背景
+        if (isHeader) {
+          ctx.fillStyle = THEME.headerBg;
+        } else {
+          // 选中 > 悬停 > 默认
+          if (r === state.selected.r && c === state.selected.c)
+            ctx.fillStyle = THEME.select;
+          else if (r === state.hover.r && c === state.hover.c)
+            ctx.fillStyle = THEME.hover;
+          else ctx.fillStyle = THEME.bg;
+        }
+        ctx.fillRect(x, y, COL_WIDTH, ROW_HEIGHT);
+
+        // 2. 绘制边框 (使用 0.5 偏移让线条更锐利)
+        ctx.strokeStyle = isHeader ? THEME.headerBorder : THEME.grid;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x + COL_WIDTH, y);
+        ctx.lineTo(x + COL_WIDTH, y + ROW_HEIGHT); // 右边框
+        ctx.lineTo(x, y + ROW_HEIGHT); // 下边框
+        ctx.stroke();
+
+        // 3. 绘制文字
+        ctx.fillStyle = isHeader ? THEME.headerText : THEME.text;
+        ctx.font = isHeader ? "bold 12px sans-serif" : "13px sans-serif";
+        ctx.textBaseline = "middle";
+
+        // 模拟数据内容
+        let text = isHeader ? "Header" : `Data ${r}-${c}`;
+        // 如果是特定表头逻辑
+        if (isHeader) {
+          // 这里仅仅是作为普通单元格绘制时的占位，真正的表头在 renderFixedHeaders 处理
+        }
+
+        // 简单的文字裁剪（防止溢出）
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, y, COL_WIDTH, ROW_HEIGHT);
+        ctx.clip();
+        ctx.fillText(text, x + 8, y + ROW_HEIGHT / 2);
+        ctx.restore();
+      }
+
+      function render() {
+        // 清空画布
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const { scrollTop, scrollLeft } = state;
+
+        // --- 1. 计算可视区域的数据单元格 ---
+        // 注意：我们把内容区向右下偏移，留出表头位置
+        const contentScrollTop = scrollTop;
+        const contentScrollLeft = scrollLeft;
+
+        const startRow = Math.floor(contentScrollTop / ROW_HEIGHT);
+        const endRow =
+          Math.floor((contentScrollTop + window.innerHeight) / ROW_HEIGHT) + 1;
+        const startCol = Math.floor(contentScrollLeft / COL_WIDTH);
+        const endCol =
+          Math.floor((contentScrollLeft + window.innerWidth) / COL_WIDTH) + 1;
+
+        let renderCount = 0;
+
+        // --- 2. 绘制数据单元格 ---
+        ctx.save();
+        // 整体坐标系向右下偏移，给固定表头留空间
+        ctx.translate(HEADER_COL_WIDTH, HEADER_ROW_HEIGHT);
+
+        for (let r = startRow; r < endRow; r++) {
+          for (let c = startCol; c < endCol; c++) {
+            const x = c * COL_WIDTH - contentScrollLeft;
+            const y = r * ROW_HEIGHT - contentScrollTop;
+
+            // 只有在屏幕内的才绘制
+            if (x + COL_WIDTH > 0 && y + ROW_HEIGHT > 0) {
+              drawCell(r, c, x, y);
+              renderCount++;
+            }
+          }
+        }
+
+        // 如果有选中框，绘制一个明显的焦点边框
+        if (state.selected.r !== -1) {
+          const sx = state.selected.c * COL_WIDTH - contentScrollLeft;
+          const sy = state.selected.r * ROW_HEIGHT - contentScrollTop;
+          // 确保选中框也在可视范围内才画
+          if (sx > -COL_WIDTH && sy > -ROW_HEIGHT) {
+            ctx.strokeStyle = THEME.selectBorder;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(sx, sy, COL_WIDTH, ROW_HEIGHT);
+          }
+        }
+
+        ctx.restore();
+
+        // --- 3. 绘制固定表头 (Sticky Headers) ---
+        renderFixedHeaders(
+          startRow,
+          endRow,
+          startCol,
+          endCol,
+          contentScrollLeft,
+          contentScrollTop
+        );
+
+        // 更新调试信息
+        info.innerHTML = `Pos: (${scrollLeft}, ${scrollTop}) | Rendered: ${renderCount} cells | Hover: [${state.hover.r}, ${state.hover.c}]`;
+      }
+
+      // 绘制覆盖在最上层的表头
+      function renderFixedHeaders(
+        startRow,
+        endRow,
+        startCol,
+        endCol,
+        scrollLeft,
+        scrollTop
+      ) {
+        ctx.font = "12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // A. 绘制顶部列标头 (A, B, C...)
+        ctx.save();
+        ctx.translate(HEADER_COL_WIDTH, 0); // 让出左上角
+        for (let c = startCol; c < endCol; c++) {
+          const x = c * COL_WIDTH - scrollLeft;
+
+          // 绘制背景
+          ctx.fillStyle = THEME.headerBg;
+          ctx.fillRect(x, 0, COL_WIDTH, HEADER_ROW_HEIGHT);
+
+          // 绘制边框
+          ctx.strokeStyle = THEME.headerBorder;
+          ctx.strokeRect(x, 0, COL_WIDTH, HEADER_ROW_HEIGHT);
+
+          // 绘制文字
+          ctx.fillStyle = THEME.headerText;
+          if (c === state.selected.c) {
+            // 高亮选中的列头
+            ctx.fillStyle = THEME.selectBorder;
+            ctx.font = "bold 12px sans-serif";
+          } else {
+            ctx.font = "12px sans-serif";
+          }
+          ctx.fillText(
+            getColLabel(c),
+            x + COL_WIDTH / 2,
+            HEADER_ROW_HEIGHT / 2
+          );
+        }
+        ctx.restore();
+
+        // B. 绘制左侧行号头 (1, 2, 3...)
+        ctx.save();
+        ctx.translate(0, HEADER_ROW_HEIGHT); // 让出左上角
+        for (let r = startRow; r < endRow; r++) {
+          const y = r * ROW_HEIGHT - scrollTop;
+
+          ctx.fillStyle = THEME.headerBg;
+          ctx.fillRect(0, y, HEADER_COL_WIDTH, ROW_HEIGHT);
+
+          ctx.strokeStyle = THEME.headerBorder;
+          ctx.strokeRect(0, y, HEADER_COL_WIDTH, ROW_HEIGHT);
+
+          ctx.fillStyle = THEME.headerText;
+          if (r === state.selected.r) {
+            // 高亮选中的行头
+            ctx.fillStyle = THEME.selectBorder;
+            ctx.font = "bold 12px sans-serif";
+          } else {
+            ctx.font = "12px sans-serif";
+          }
+          ctx.fillText(r + 1, HEADER_COL_WIDTH / 2, y + ROW_HEIGHT / 2);
+        }
+        ctx.restore();
+
+        // C. 绘制左上角的全选块
+        ctx.fillStyle = THEME.headerBg;
+        ctx.fillRect(0, 0, HEADER_COL_WIDTH, HEADER_ROW_HEIGHT);
+        ctx.strokeStyle = THEME.headerBorder;
+        ctx.strokeRect(0, 0, HEADER_COL_WIDTH, HEADER_ROW_HEIGHT);
+        // 画个小三角
+        ctx.fillStyle = "#ccc";
+        ctx.beginPath();
+        ctx.moveTo(HEADER_COL_WIDTH - 5, HEADER_ROW_HEIGHT - 5);
+        ctx.lineTo(HEADER_COL_WIDTH - 5, HEADER_ROW_HEIGHT - 15);
+        ctx.lineTo(HEADER_COL_WIDTH - 15, HEADER_ROW_HEIGHT - 5);
+        ctx.fill();
+      }
+
+      // --- 事件监听 ---
+
+      window.addEventListener("resize", resize);
+
+      viewport.addEventListener("scroll", () => {
+        state.scrollTop = viewport.scrollTop;
+        state.scrollLeft = viewport.scrollLeft;
+        requestAnimationFrame(render);
+      });
+
+      // 鼠标交互：将屏幕坐标转换为 Grid 坐标
+      viewport.addEventListener("mousemove", (e) => {
+        // 减去表头的偏移量
+        const mouseX = e.clientX - HEADER_COL_WIDTH + viewport.scrollLeft;
+        const mouseY = e.clientY - HEADER_ROW_HEIGHT + viewport.scrollTop;
+
+        // 计算所在的行列
+        let c = Math.floor(mouseX / COL_WIDTH);
+        let r = Math.floor(mouseY / ROW_HEIGHT);
+
+        // 只有在数据区内才更新
+        if (e.clientX > HEADER_COL_WIDTH && e.clientY > HEADER_ROW_HEIGHT) {
+          if (state.hover.r !== r || state.hover.c !== c) {
+            state.hover = { r, c };
+            requestAnimationFrame(render);
+          }
+        } else {
+          state.hover = { r: -1, c: -1 };
+          requestAnimationFrame(render);
+        }
+      });
+
+      viewport.addEventListener("click", (e) => {
+        // 简单的点击选中逻辑
+        if (state.hover.r !== -1) {
+          state.selected = { ...state.hover };
+          requestAnimationFrame(render);
+        }
+      });
+
+      // 启动
+      resize();
+    </script>
+  </body>
+</html>

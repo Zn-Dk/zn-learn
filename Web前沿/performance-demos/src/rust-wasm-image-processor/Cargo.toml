@@ -1,0 +1,24 @@
+[package]
+name = "rust-wasm-image-processor"
+version = "0.1.0"
+edition = "2024"
+
+# Rust 项目有两种主要入口：
+# [lib] <- src/lib.rs / [bin] <- src/main.rs
+# 作为库 / 作为可执行程序直接运行, 我们这里使用的是 wasm-pack, 故必须是 lib
+[lib]
+# wasm-pack 编译 WASM 时，只认 cdylib。 (C 兼容的动态库，使用 C ABI)
+crate-type=["cdylib"] 
+
+[dependencies]
+# 核心桥接库
+wasm-bindgen = "0.2.104"
+# 错误处理 (rust panic 传递到 js console)
+console_error_panic_hook = "0.1.6"
+
+# 图像处理库 image
+[dependencies.image]
+version ="0.24"
+# 关闭默认功能, 只开启需要的格式
+default-features = false
+features = ["jpeg", "png", "gif"]

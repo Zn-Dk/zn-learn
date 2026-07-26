@@ -1,0 +1,26 @@
+{
+  "name": "2-vite-plugin-env",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:release": "vite build --mode release",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/mockjs": "^1.0.10",
+    "mockjs": "^1.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.12",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}

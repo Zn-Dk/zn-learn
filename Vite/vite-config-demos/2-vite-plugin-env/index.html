@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2-vite-plugin-env</title>
+</head>
+
+<body>
+  <div style="padding: 20px; border: 1px solid; border-radius: 6px;">
+    <h1>basic env info(从 vite 插件 transformHTML 中替换): </h1>
+    <ul>
+      <li>NODE_ENV: {{ENV}}</li>
+      <li>MODE: %MODE%</li>
+      <li>VITE_API_URL: %VITE_API_URL%</li>
+      <li>FOO_VAR: %FOO_VAR%</li>
+      <li>UNKNOWN: %VITE_XXX%</li>
+      <!-- 使用未定义的变量, vite 会在开发时cli提示你是否未定义 -->
+    </ul>
+  </div>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

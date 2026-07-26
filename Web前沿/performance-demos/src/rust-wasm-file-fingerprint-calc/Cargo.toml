@@ -1,0 +1,16 @@
+[package]
+name = "rust-wasm-file-fingerprint-calc"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type=["cdylib"]
+
+[dependencies]
+# 核心桥接库
+wasm-bindgen = "0.2.104"
+# rust 的hash加密库
+md-5="0.10"
+sha2="0.10"
+# 二进制摘要 -> Hex
+hex="0.4"

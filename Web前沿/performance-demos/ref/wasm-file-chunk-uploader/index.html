@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rust WASM 大文件秒传计算</title>
+    <style>
+      body {
+        font-family: -apple-system, sans-serif;
+        padding: 20px;
+        max-width: 700px;
+        margin: 0 auto;
+        background: #f0f2f5;
+      }
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .row {
+        margin: 15px 0;
+      }
+      input[type="file"] {
+        display: block;
+        margin-top: 10px;
+      }
+
+      /* 进度条样式 */
+      .progress-container {
+        height: 20px;
+        background: #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 20px;
+        display: none;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4caf50, #8bc34a);
+        width: 0%;
+        transition: width 0.1s linear;
+      }
+
+      .result-box {
+        background: #fafafa;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #eee;
+        margin-top: 20px;
+        word-break: break-all;
+        font-family: monospace;
+        display: none;
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+      .tag-rust {
+        background: #dea584;
+        color: #fff;
+      }
+      .tag-js {
+        background: #f1e05a;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>🚀 大文件指纹计算 (WASM + Worker)</h2>
+      <p>方案：Rust(md5/sha2) + Web Worker + 零拷贝切片传输</p>
+
+      <div class="row">
+        <label>算法：</label>
+        <select id="algo-select">
+          <option value="MD5">MD5 (常用)</option>
+          <option value="SHA-256">SHA-256 (更安全)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <input type="file" id="file-input" />
+      </div>
+
+      <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div
+        style="
+          text-align: center;
+          font-size: 12px;
+          color: #666;
+          margin-top: 5px;
+        "
+        id="speed-text"
+      ></div>
+
+      <div class="result-box" id="result-box"></div>
+    </div>
+
+    <script type="module">
+      const fileInput = document.getElementById("file-input");
+      const resultBox = document.getElementById("result-box");
+      const progressBar = document.getElementById("progress-bar");
+      const progressContainer = document.getElementById("progress-container");
+      const speedText = document.getElementById("speed-text");
+      const algoSelect = document.getElementById("algo-select");
+
+      // 1. 创建 Worker
+      const worker = new Worker(new URL("./worker.js", import.meta.url), {
+        type: "module",
+      });
+
+      fileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // 重置 UI
+        resultBox.style.display = "none";
+        progressContainer.style.display = "block";
+        progressBar.style.width = "0%";
+        speedText.innerText = "准备中...";
+
+        // 2. 初始化 Worker 中的 WASM
+        const algo = algoSelect.value;
+        worker.postMessage({ type: "init", payload: algo });
+
+        // 等待 Worker 就绪
+        await new Promise((resolve) => {
+          const handler = (e) => {
+            if (e.data.type === "ready") {
+              worker.removeEventListener("message", handler);
+              resolve();
+            }
+          };
+          worker.addEventListener("message", handler);
+        });
+
+        // 3. 开始切片读取与计算
+        const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB 切片
+        let offset = 0;
+        const total = file.size;
+        const startTime = performance.now();
+
+        // 核心循环：读取 -> 传输 -> 计算
+        const process = async () => {
+          while (offset < total) {
+            const chunk = file.slice(offset, offset + CHUNK_SIZE);
+
+            // 将 Blob 转为 ArrayBuffer
+            const buffer = await chunk.arrayBuffer();
+            // 转为 Uint8Array (WASM 需要)
+            const data = new Uint8Array(buffer);
+
+            // 4. 关键点：使用 Transferable Objects 发送数据
+            // 第二个参数 [buffer] 表示转移内存所有权，而非复制
+            // 主线程瞬间失去对 buffer 的访问权，速度极快
+            worker.postMessage({ type: "update", payload: data }, [
+              data.buffer,
+            ]);
+
+            // 等待 Worker 处理完当前块（简单的流控，防止内存爆仓）
+            // 实际生产中可以采用“双缓冲”策略优化并发
+            await new Promise((resolve) => {
+              const handler = (e) => {
+                if (e.data.type === "progress") {
+                  worker.removeEventListener("message", handler);
+                  resolve();
+                }
+              };
+              worker.addEventListener("message", handler);
+            });
+
+            offset += CHUNK_SIZE;
+
+            // 更新进度条
+            const percent = Math.min(100, (offset / total) * 100).toFixed(1);
+            progressBar.style.width = `${percent}%`;
+
+            // 计算实时速度
+            const elapsed = (performance.now() - startTime) / 1000;
+            const speed = (offset / 1024 / 1024 / elapsed).toFixed(1);
+            speedText.innerText = `进度: ${percent}% | 速度: ${speed} MB/s`;
+          }
+
+          // 5. 所有分片处理完毕，获取结果
+          worker.postMessage({ type: "digest" });
+        };
+
+        // 监听最终结果
+        worker.onmessage = (e) => {
+          if (e.data.type === "result") {
+            const endTime = performance.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+            resultBox.style.display = "block";
+            resultBox.innerHTML = `
+                    <div style="margin-bottom:8px">
+                        <span class="tag tag-rust">Rust WASM</span>
+                        <span style="font-weight:bold; color:green">计算完成</span>
+                    </div>
+                    <div>文件: ${file.name} (${(
+              file.size /
+              1024 /
+              1024
+            ).toFixed(2)} MB)</div>
+                    <div>耗时: ${duration}s (平均 ${(
+              file.size /
+              1024 /
+              1024 /
+              duration
+            ).toFixed(2)} MB/s)</div>
+                    <div style="margin-top:10px; color:#333; font-weight:bold;">${algo} Hash:</div>
+                    <div style="font-size:12px; color:#555">${
+                      e.data.payload
+                    }</div>
+                `;
+          }
+        };
+
+        process();
+      });
+    </script>
+  </body>
+</html>

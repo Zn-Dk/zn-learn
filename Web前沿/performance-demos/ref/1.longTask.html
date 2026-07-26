@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    .box {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background-color: aqua;
+      /* 旋转动画 */
+
+      animation: rotate 2s linear infinite;
+      /* animation: move 2s linear infinite; */
+      margin-bottom: 200px;
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes move {
+      0% {
+        left: 0px;
+      }
+
+      100% {
+        left: 200px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button id="btn">开始阻塞</button>
+  <div class="box"></div>
+  <pre>
+    transform 和 opacity 这两个属性非常特殊——它们的动画可以完全在GPU合成线程上运行，不需要经过主线程的 Layout 和 Paint 阶段。
+    普通属性动画（如 width、left、margin）需要主线程的 Layout 阶段，这会因为主线程阻塞而卡死。
+  </pre>
+  <textarea placeholder="点击开始阻塞后尝试输入文字"></textarea>
+  <script>
+    // 1. 定义并启动监控
+    // const observer = new PerformanceObserver((list) => {
+    //   list.getEntries().forEach((entry) => {
+    //     console.log("🚀 ~ entry:", entry);
+    //     console.warn(`🚨 抓到了！检测到长任务！`);
+    //     console.table({
+    //       耗时: Math.round(entry.duration) + "ms",
+    //       开始时间: Math.round(entry.startTime) + "ms",
+    //       来源: entry.name,
+    //     });
+    //   });
+    // });
+    // observer.observe({ entryTypes: ["longtask"] });
+
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        console.warn(`🚨 长动画帧！总耗时: ${Math.round(entry.duration)}ms`);
+        // 关键：scripts 数组包含了具体的脚本归因
+        entry.scripts?.forEach((script) => {
+          console.table({
+            '调用函数': script.invokerType + ': ' + script.invoker,
+            '脚本URL': script.sourceURL,
+            '函数位置': `${script.sourceFunctionName} (${script.sourceCharPosition})`,
+            '执行耗时': Math.round(script.executionStart
+              ? script.startTime + script.duration - script.executionStart
+              : script.duration) + 'ms',
+          });
+        });
+      });
+    });
+    observer.observe({ entryTypes: ["long-animation-frame"] }); // Chrome 123+
+
+    const btnDom = document.querySelector("#btn");
+    const longTask = () => {
+      console.log("🔥 开始阻塞主线程 2秒...");
+      const start = Date.now();
+      while (Date.now() - start < 2000) {
+        // 死循环，霸占主线程
+      }
+      console.log("✨ 阻塞结束，请看上方是否有 🚨 警报");
+    }
+    btnDom.addEventListener("click", longTask);
+  </script>
+</body>
+
+</html>

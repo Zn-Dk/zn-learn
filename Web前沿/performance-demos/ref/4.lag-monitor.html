@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .app {
+        width: 100px;
+        height: 100px;
+        background-color: aqua;
+        /* 非常复杂的旋转动画 */
+        animation: rotate 2s linear infinite;
+        margin-bottom: 200px;
+      }
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="btn">开始阻塞</button>
+    <div class="app"></div>
+    <script>
+      class LagMonitor {
+        constructor() {
+          this.frameTimestamps = [];
+          this.longTasksBuffer = [];
+          this.initLongTaskObserver();
+          // 这个是针对掉帧情况的捕获
+        //   this.startFPSLoop();
+        }
+
+        initLongTaskObserver() {
+          // 持续收集长任务，只保留最近 50 条
+          // TODO: LRU 缓存
+          new PerformanceObserver((list) => {
+            this.longTasksBuffer.push(...list.getEntries());
+            console.log('🚀 ~ LagMonitor ~ initLongTaskObserver ~ this.longTasksBuffer:', this.longTasksBuffer)
+            if (this.longTasksBuffer.length > 50) this.longTasksBuffer.shift();
+          }).observe({ entryTypes: ["longtask"] });
+        }
+
+        checkJank(fps) {
+          if (fps < 20) {
+            this.captureSnapshot();
+          }
+        }
+
+        captureSnapshot() {
+          const report = {
+            reason: "Low FPS",
+            memory: performance.memory?.usedJSHeapSize,
+            recentLongTasks: this.longTasksBuffer, // 罪魁祸首通常在这里
+            url: window.location.href,
+          };
+          console.log("🚀 ~ LagMonitor ~ captureSnapshot ~ report:", report);
+          // 避免重复上报（节流）
+          this.sendReport(report);
+        }
+      }
+
+      const lagMonitor = new LagMonitor();
+
+      setTimeout(() => {
+        console.log("🔥 开始阻塞主线程 2秒...");
+        const start = Date.now();
+        while (Date.now() - start < 2000) {
+          // 死循环，霸占主线程
+        }
+        console.log("✨ 阻塞结束，请看上方是否有 🚨 警报");
+      }, 100);
+    </script>
+  </body>
+</html>

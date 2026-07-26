@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <meta data-asd="asasd">
+</head>
+
+<body>
+  <div id="container">
+
+  </div>
+  <script>
+    const htmlStr = `
+  <head>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        padding: 10px;
+        background-color: pink;
+      }
+    </style>
+  </head>
+  <div class="box">
+    <h1 class="title">Hello</h1>
+    <button id="abc" onclick="alert('clicked')">Click me</button>
+  </div>`
+
+    const parser = new DOMParser()
+
+    // 直接解析 html字符串生成 dom
+    const dom = parser.parseFromString(htmlStr, 'text/html') // 除了 html 之外，还可以是 xml / svg
+
+    console.log(dom)
+    console.log(dom.querySelector('h1.title').textContent);
+
+    document.body.appendChild(dom.querySelector('.box'))
+    document.head.appendChild(dom.querySelector('style'));
+    // const container = document.querySelector('#container')
+    // const box = dom.querySelector('.box')
+    // container.appendChild(box)
+
+  </script>
+</body>
+
+</html>

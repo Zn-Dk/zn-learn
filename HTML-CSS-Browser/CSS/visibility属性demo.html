@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>visibility: hidden 完整 Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px 40px;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #1a1a2e;
+    }
+
+    h2 {
+      margin: 30px 0 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #6c63ff;
+      color: #1a1a2e;
+    }
+
+    h3 {
+      margin: 15px 0 10px;
+      color: #444;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .demo-area {
+      background: #f9f9fb;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      position: relative;
+    }
+
+    .demo-area .label {
+      position: absolute;
+      top: -10px;
+      left: 15px;
+      background: #6c63ff;
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    button {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #6c63ff;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #5a52d5;
+    }
+
+    button.danger {
+      background: #e74c3c;
+    }
+
+    button.danger:hover {
+      background: #c0392b;
+    }
+
+    button.success {
+      background: #27ae60;
+    }
+
+    button.success:hover {
+      background: #219a52;
+    }
+
+    /* ====== Demo 1: 保留布局空间 ====== */
+    .layout-demo .box {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 100px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .layout-demo .box-a {
+      background: #e74c3c;
+    }
+
+    .layout-demo .box-b {
+      background: #3498db;
+    }
+
+    .layout-demo .box-c {
+      background: #2ecc71;
+    }
+
+    .layout-demo .box-b.hidden-visibility {
+      visibility: hidden;
+    }
+
+    .layout-demo .box-b.hidden-display {
+      display: none;
+    }
+
+    /* ====== Demo 2: 配合 transition 动画 ====== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      width: 350px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      transform: translateY(-20px);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: translateY(0);
+    }
+
+    /* ====== Demo 3: 子元素单独恢复可见 ====== */
+    .parent-hidden {
+      background: #ecf0f1;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #bdc3c7;
+    }
+    
+    .parent-hidden.is-hidden {
+      visibility: hidden;
+    }
+
+    .parent-hidden .child-visible {
+      visibility: visible;
+      background: #6c63ff;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .parent-hidden .child-normal {
+      background: #e74c3c;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    /* ====== Demo 4: 预渲染测量尺寸 ====== */
+    .measure-result {
+      background: #eafaf1;
+      border: 1px solid #27ae60;
+      border-radius: 6px;
+      padding: 12px 18px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    /* ====== Demo 5: 三种方式对比 ====== */
+    .compare-row {
+      display: flex;
+      gap: 20px;
+      margin: 15px 0;
+    }
+
+    .compare-col {
+      flex: 1;
+      text-align: center;
+    }
+
+    .compare-col h4 {
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .compare-box {
+      width: 120px;
+      height: 80px;
+      margin: 0 auto;
+      border-radius: 8px;
+      line-height: 80px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .compare-box.vis {
+      background: #e74c3c;
+    }
+
+    .compare-box.disp {
+      background: #3498db;
+    }
+
+    .compare-box.opa {
+      background: #2ecc71;
+    }
+
+    .compare-box.vis.is-hidden {
+      visibility: hidden;
+    }
+
+    .compare-box.disp.is-hidden {
+      display: none;
+    }
+
+    .compare-box.opa.is-hidden {
+      opacity: 0;
+    }
+
+    .compare-placeholder {
+      width: 120px;
+      height: 80px;
+      margin: 0 auto;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      line-height: 80px;
+      color: #999;
+      font-size: 12px;
+    }
+
+    /* ====== 对比表格 ====== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    th {
+      background: #6c63ff;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f8fc;
+    }
+
+    tr:hover {
+      background: #ededff;
+    }
+
+    /* ====== 代码块 ====== */
+    code {
+      background: #f0f0f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #e74c3c;
+    }
+
+    pre {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      padding: 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 12px 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    pre .comment {
+      color: #6c7086;
+    }
+
+    pre .keyword {
+      color: #cba6f7;
+    }
+
+    pre .property {
+      color: #89b4fa;
+    }
+
+    pre .value {
+      color: #a6e3a1;
+    }
+
+    pre .selector {
+      color: #f9e2af;
+    }
+
+    pre .tag {
+      color: #89b4fa;
+    }
+
+    pre .string {
+      color: #a6e3a1;
+    }
+
+    .event-log {
+      background: #1e1e2e;
+      color: #a6e3a1;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 13px;
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+
+    .tip {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎭 visibility: hidden 完整 Demo</h1>
+
+  <!-- ====== 对比表格 ====== -->
+  <div class="section">
+    <h2>📊 三种隐藏方式对比总览</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>特性</th>
+          <th><code style="color:#fff;background:transparent;">visibility: hidden</code></th>
+          <th><code style="color:#fff;background:transparent;">display: none</code></th>
+          <th><code style="color:#fff;background:transparent;">opacity: 0</code></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>是否占据空间</td>
+          <td>✅ 是</td>
+          <td>❌ 否</td>
+          <td>✅ 是</td>
+        </tr>
+        <tr>
+          <td>是否触发重排 (reflow)</td>
+          <td>❌ 否（仅 repaint）</td>
+          <td>✅ 是（reflow + repaint）</td>
+          <td>❌ 否（仅 repaint / 合成）</td>
+        </tr>
+        <tr>
+          <td>是否响应点击事件</td>
+          <td>❌ 否</td>
+          <td>❌ 否</td>
+          <td>✅ 是（仍可点击！）</td>
+        </tr>
+        <tr>
+          <td>子元素可否单独恢复可见</td>
+          <td>✅ 可以</td>
+          <td>❌ 不可以</td>
+          <td>❌ 不可以</td>
+        </tr>
+        <tr>
+          <td>支持 CSS transition</td>
+          <td>✅ 支持（但无中间过渡态）</td>
+          <td>❌ 不支持</td>
+          <td>✅ 支持（平滑过渡）</td>
+        </tr>
+        <tr>
+          <td>能否获取 offsetWidth/Height</td>
+          <td>✅ 可以（正常值）</td>
+          <td>❌ 不可以（返回 0）</td>
+          <td>✅ 可以（正常值）</td>
+        </tr>
+        <tr>
+          <td>屏幕阅读器是否可读</td>
+          <td>❌ 通常跳过</td>
+          <td>❌ 跳过</td>
+          <td>✅ 可读</td>
+        </tr>
+        <tr>
+          <td>性能表现</td>
+          <td>⭐⭐⭐⭐ 良好</td>
+          <td>⭐⭐ 较差（触发重排）</td>
+          <td>⭐⭐⭐⭐⭐ 最佳（可 GPU 加速）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ====== Case 1: 保留布局空间 ====== -->
+  <div class="section">
+    <h2>Case 1：保留布局空间的隐藏</h2>
+    <p>使用 <code>visibility: hidden</code> 隐藏中间的蓝色方块，空间仍保留，布局不跳动。</p>
+    <p>对比 <code>display: none</code> 隐藏，蓝色方块消失，绿色方块会左移。</p>
+
+    <div class="demo-area layout-demo">
+      <span class="label">交互区</span>
+      <div>
+        <div class="box box-a">A</div>
+        <div class="box box-b" id="layout-box-b">B</div>
+        <div class="box box-c">C</div>
+      </div>
+      <div style="margin-top: 15px;">
+        <button onclick="layoutVisibility()">visibility: hidden</button>
+        <button onclick="layoutDisplay()" class="danger">display: none</button>
+        <button onclick="layoutReset()" class="success">恢复</button>
+      </div>
+    </div>
+
+    <h3>📝 代码</h3>
+    <pre><span class="comment">/* visibility: hidden — 空间保留，布局不变 */</span>
+<span class="selector">.box-b.hidden-visibility</span> {
+  <span class="property">visibility</span>: <span class="value">hidden</span>;
+}
+
+<span class="comment">/* display: none — 空间消失，后续元素左移 */</span>
+<span class="selector">.box-b.hidden-display</span> {
+  <span class="property">display</span>: <span class="value">none</span>;
+}</pre>
+
+    <div class="note">
+      💡 <strong>典型场景</strong>：Tab 切换、骨架屏占位、表格中临时隐藏某行但保持对齐。
+    </div>
+  </div>
+
+  <!-- ====== Case 2: 配合 transition 动画 ====== -->
+  <div class="section">
+    <h2>Case 2：配合 opacity + transition 实现淡入淡出</h2>
+    <p><code>visibility</code> 单独使用没有视觉过渡效果（只有 visible / hidden 两态）。</p>
+    <p>但配合 <code>opacity</code> 使用时，<code>visibility</code> 控制交互时机，<code>opacity</code> 产生平滑过渡。</p>
+
+    <div class="demo-area">
+      <span class="label">交互区</span>
+      <button onclick="openModal()">打开弹窗（opacity + visibility）</button>
+    </div>
+
+    <h3>📝 代码</h3>
+    <pre><span class="selector">.modal-overlay</span> {
+  <span class="property">opacity</span>: <span class="value">0</span>;
+  <span class="property">visibility</span>: <span class="value">hidden</span>;
+  <span class="property">transition</span>: <span class="value">opacity 0.3s, visibility 0.3s</span>;
+}
+
+<span class="selector">.modal-overlay.active</span> {
+  <span class="property">opacity</span>: <span class="value">1</span>;
+  <span class="property">visibility</span>: <span class="value">visible</span>;
+}
+
+<span class="comment">/* 显示时：visibility 立即变为 visible（元素可交互），opacity 渐变产生淡入 */</span>
+<span class="comment">/* 隐藏时：opacity 渐变到 0，visibility 在过渡结束后才变为 hidden */</span></pre>
+
+    <div class="note">
+      💡 <strong>为什么不能只用 opacity: 0？</strong> 因为 opacity: 0 的元素<strong>仍然可以被点击</strong>，会遮挡下方内容。<br>
+      加上 <code>visibility: hidden</code> 可以在动画结束后阻止用户交互。
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3 style="margin-bottom: 15px;">🎉 弹窗标题</h3>
+      <p>这是一个使用 <code>opacity + visibility</code> 过渡的弹窗。</p>
+      <p style="margin-top: 10px; color: #888; font-size: 13px;">点击遮罩或按钮关闭</p>
+      <button onclick="closeModal()" class="danger" style="margin-top: 15px;">关闭弹窗</button>
+    </div>
+  </div>
+
+  <!-- ====== Case 3: 子元素单独恢复可见 ====== -->
+  <div class="section">
+    <h2>Case 3：子元素可以单独恢复可见</h2>
+    <p><code>visibility: hidden</code> 的独特特性：子元素设置 <code>visibility: visible</code> 可以重新显示。</p>
+    <p>而 <code>display: none</code> 的子元素无论如何都无法显示。</p>
+
+    <div class="demo-area">
+      <span class="label">交互区</span>
+      <p style="margin-bottom: 10px;">下方父容器设置了 <code>visibility: hidden</code>，观察两个子元素的表现：</p>
+      <button onclick="setParentVisibility(true)">父容器 显示</button>
+      <button onclick="setParentVisibility(false)">父容器 隐藏</button>
+      <div class="parent-hidden is-hidden" id="parent-hidden">
+        <span>（父容器文字 — 不可见）</span>
+        <span class="child-visible">✅ 我设置了 visibility: visible</span>
+        <span class="child-normal">❌ 我没设置，继承 hidden</span>
+      </div>
+    </div>
+
+    <h3>📝 代码</h3>
+    <pre><span class="selector">.parent</span> {
+  <span class="property">visibility</span>: <span class="value">hidden</span>;  <span class="comment">/* 父容器隐藏 */</span>
+}
+
+<span class="selector">.parent .child-visible</span> {
+  <span class="property">visibility</span>: <span class="value">visible</span>;  <span class="comment">/* ✅ 子元素可以单独恢复显示！ */</span>
+}
+
+<span class="selector">.parent .child-normal</span> {
+  <span class="comment">/* 没有设置 visibility，继承父级的 hidden，不可见 */</span>
+}</pre>
+
+    <div class="note">
+      💡 <strong>典型场景</strong>：隐藏父容器但显示其中特定的子元素，如下拉菜单中的某个选项、工具提示等。
+    </div>
+  </div>
+
+  <!-- ====== Case 4: 预渲染 / 测量元素尺寸 ====== -->
+  <div class="section">
+    <h2>Case 4：预渲染 / 测量元素尺寸</h2>
+    <p>需要获取未显示元素的尺寸时，<code>visibility: hidden</code> 可以正常测量。</p>
+    <p>而 <code>display: none</code> 的元素返回 <code>offsetWidth = 0, offsetHeight = 0</code>。</p>
+
+    <div class="demo-area">
+      <span class="label">交互区</span>
+      <button onclick="measureSize()">测量隐藏元素尺寸</button>
+      <!-- 用 visibility:hidden 隐藏的元素 -->
+      <div id="measure-vis" style="visibility: hidden; width: 250px; height: 80px; padding: 15px; background: #3498db;">
+        visibility: hidden 的元素
+      </div>
+      <!-- 用 display:none 隐藏的元素 -->
+      <div id="measure-disp" style="display: none; width: 250px; height: 80px; padding: 15px; background: #e74c3c;">
+        display: none 的元素
+      </div>
+      <div class="measure-result" id="measure-result" style="display:none;"></div>
+    </div>
+
+    <h3>📝 代码</h3>
+    <pre><span class="comment">// visibility: hidden — 可以正常获取尺寸</span>
+<span class="keyword">const</span> visEl = document.getElementById(<span class="string">'measure-vis'</span>);
+console.log(visEl.offsetWidth);   <span class="comment">// 280 (250 + padding)</span>
+console.log(visEl.offsetHeight);  <span class="comment">// 110 (80 + padding)</span>
+
+<span class="comment">// display: none — 尺寸返回 0</span>
+<span class="keyword">const</span> dispEl = document.getElementById(<span class="string">'measure-disp'</span>);
+console.log(dispEl.offsetWidth);  <span class="comment">// 0 ❌</span>
+console.log(dispEl.offsetHeight); <span class="comment">// 0 ❌</span></pre>
+
+    <div class="tip">
+      ✅ <strong>最佳实践</strong>：需要预渲染计算尺寸时，使用 <code>visibility: hidden</code>。
+    </div>
+  </div>
+
+  <!-- ====== Case 5: 三种方式实时对比 ====== -->
+  <div class="section">
+    <h2>Case 5：三种隐藏方式实时对比（点击事件测试）</h2>
+    <p>点击下方的"隐藏"按钮后，尝试点击三个方块的位置，观察事件触发情况。</p>
+
+    <div class="demo-area">
+      <span class="label">交互区</span>
+      <div class="compare-row">
+        <div class="compare-col">
+          <h4><code>visibility: hidden</code></h4>
+          <div class="compare-box vis" id="compare-vis" onclick="logEvent('visibility 方块被点击！')">点我</div>
+          <p style="margin-top:8px;font-size:13px;color:#888;">⬆ 空间保留，不可点击</p>
+        </div>
+        <div class="compare-col">
+          <h4><code>display: none</code></h4>
+          <div class="compare-box disp" id="compare-disp" onclick="logEvent('display 方块被点击！')">点我</div>
+          <div class="compare-placeholder" id="compare-disp-placeholder" style="display:none;">已消失</div>
+          <p style="margin-top:8px;font-size:13px;color:#888;">⬆ 空间消失，不可点击</p>
+        </div>
+        <div class="compare-col">
+          <h4><code>opacity: 0</code></h4>
+          <div class="compare-box opa" id="compare-opa" onclick="logEvent('opacity 方块被点击！⚠️ 透明但仍然响应！')">点我</div>
+          <p style="margin-top:8px;font-size:13px;color:#888;">⬆ 空间保留，<strong>仍可点击！</strong></p>
+        </div>
+      </div>
+      <div style="margin-top: 15px;">
+        <button onclick="compareHide()">全部隐藏</button>
+        <button onclick="compareShow()" class="success">全部恢复</button>
+        <button onclick="clearLog()" class="danger">清空日志</button>
+      </div>
+      <div class="event-log" id="event-log">// 点击事件日志将显示在这里...</div>
+    </div>
+
+    <h3>📝 代码</h3>
+    <pre><span class="comment">/* 三种隐藏方式 */</span>
+<span class="selector">.box-vis</span>  { <span class="property">visibility</span>: <span class="value">hidden</span>; }  <span class="comment">/* 空间保留 ✅ | 事件阻断 ✅ */</span>
+<span class="selector">.box-disp</span> { <span class="property">display</span>:    <span class="value">none</span>;   }  <span class="comment">/* 空间消失 ❌ | 事件阻断 ✅ */</span>
+<span class="selector">.box-opa</span>  { <span class="property">opacity</span>:    <span class="value">0</span>;      }  <span class="comment">/* 空间保留 ✅ | 事件仍响应 ⚠️ */</span>
+
+<span class="comment">/* opacity: 0 的元素仍然可以被点击，这在很多场景下是一个坑！*/</span></pre>
+
+    <div class="note">
+      ⚠️ <strong>重点</strong>：<code>opacity: 0</code> 的元素<strong>仍然会响应鼠标事件</strong>，这是它与 <code>visibility: hidden</code>
+      的关键区别。
+      如果需要透明但不可点击，需要额外添加 <code>pointer-events: none</code>。
+    </div>
+  </div>
+
+  <!-- ====== Case 6: 性能说明 ====== -->
+  <div class="section">
+    <h2>📈 性能对比说明</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>属性切换</th>
+          <th>触发阶段</th>
+          <th>性能影响</th>
+          <th>优化建议</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>display: none ↔ block</code></td>
+          <td>Layout → Paint → Composite<br>(重排 + 重绘 + 合成)</td>
+          <td>⚠️ 最重：触发完整渲染流水线</td>
+          <td>避免频繁切换；可用 class 替代</td>
+        </tr>
+        <tr>
+          <td><code>visibility: hidden ↔ visible</code></td>
+          <td>Paint → Composite<br>(重绘 + 合成)</td>
+          <td>✅ 较好：跳过 Layout 阶段</td>
+          <td>适合保留空间的隐藏切换</td>
+        </tr>
+        <tr>
+          <td><code>opacity: 0 ↔ 1</code></td>
+          <td>Composite<br>(仅合成，如果在合成层)</td>
+          <td>🚀 最佳：可完全 GPU 加速</td>
+          <td>配合 <code>will-change: opacity</code><br>浏览器通常自动提升合成层</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      ✅ <strong>最佳实践（如本页弹窗）</strong>：使用 <code>opacity + visibility</code> 组合 —— opacity 提供平滑动画 + GPU 加速，visibility
+      在动画结束后阻止交互。<br>
+      对于简单场景，不需要手动添加 <code>will-change</code>，浏览器在 transition 期间会自动提升到合成层。
+    </div>
+  </div>
+
+  <script>
+    // ====== Case 1: 保留布局空间 ======
+    function layoutVisibility() {
+      const box = document.getElementById('layout-box-b');
+      box.className = 'box box-b hidden-visibility';
+    }
+    function layoutDisplay() {
+      const box = document.getElementById('layout-box-b');
+      box.className = 'box box-b hidden-display';
+    }
+    function layoutReset() {
+      const box = document.getElementById('layout-box-b');
+      box.className = 'box box-b';
+    }
+
+    // ====== Case 2: 弹窗动画 ======
+    function openModal() {
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+    function closeModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    // ====== Case 3: 子元素单独恢复可见 ======
+    function setParentVisibility(visible) {
+      document.getElementById('parent-hidden').classList.toggle('is-hidden', !visible);
+    }
+    // ====== Case 4: 测量尺寸 ======
+    function measureSize() {
+      const visEl = document.getElementById('measure-vis');
+      const dispEl = document.getElementById('measure-disp');
+      const result = document.getElementById('measure-result');
+
+      result.style.display = 'block';
+      result.innerHTML =
+        '<strong>visibility: hidden 的元素：</strong><br>' +
+        '&nbsp;&nbsp;offsetWidth = ' + visEl.offsetWidth + 'px, offsetHeight = ' + visEl.offsetHeight + 'px ✅<br><br>' +
+        '<strong>display: none 的元素：</strong><br>' +
+        '&nbsp;&nbsp;offsetWidth = ' + dispEl.offsetWidth + 'px, offsetHeight = ' + dispEl.offsetHeight + 'px ❌ (均为 0)';
+    }
+
+    // ====== Case 5: 三种方式对比 ======
+    function compareHide() {
+      document.getElementById('compare-vis').classList.add('is-hidden');
+      document.getElementById('compare-disp').classList.add('is-hidden');
+      document.getElementById('compare-disp-placeholder').style.display = 'block';
+      document.getElementById('compare-opa').classList.add('is-hidden');
+      logEvent('--- 全部已隐藏，现在尝试点击各方块原来的位置 ---');
+    }
+    function compareShow() {
+      document.getElementById('compare-vis').classList.remove('is-hidden');
+      document.getElementById('compare-disp').classList.remove('is-hidden');
+      document.getElementById('compare-disp-placeholder').style.display = 'none';
+      document.getElementById('compare-opa').classList.remove('is-hidden');
+      logEvent('--- 全部已恢复 ---');
+    }
+    function logEvent(msg) {
+      const log = document.getElementById('event-log');
+      const time = new Date().toLocaleTimeString();
+      log.innerHTML += '\n[' + time + '] ' + msg;
+      log.scrollTop = log.scrollHeight;
+    }
+    function clearLog() {
+      document.getElementById('event-log').innerHTML = '// 日志已清空';
+    }
+  </script>
+
+</body>
+
+</html>

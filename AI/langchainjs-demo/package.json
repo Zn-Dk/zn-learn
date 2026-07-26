@@ -1,0 +1,35 @@
+{
+  "name": "langchainjs-demo",
+  "version": "1.0.0",
+  "description": "LangChain.js with Ollama demo project",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "debug": "node --inspect -r tsx/cjs src/index.ts"
+  },
+  "keywords": [
+    "langchain",
+    "ollama",
+    "ai"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@langchain/classic": "^1.0.7",
+    "@langchain/community": "^1.1.29",
+    "@langchain/core": "^1.2.3",
+    "@langchain/deepseek": "^1.1.5",
+    "@langchain/ollama": "^1.2.2",
+    "@langchain/openai": "^1.2.2",
+    "d3-dsv": "^3.0.1",
+    "dotenv": "^17.4.2",
+    "langchain": "^1.2.3",
+    "zod": "^3.25.76"
+  }
+}

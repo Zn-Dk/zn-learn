@@ -1,0 +1,64 @@
+/* vanilla 子应用样式 — 限定在 #root 作用域内，避免污染主应用 */
+
+#root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --mono: ui-monospace, Consolas, monospace;
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  font: 18px/145% var(--sans);
+  color: var(--text);
+  text-align: center;
+}
+
+#root h1 {
+  font-size: 32px;
+  letter-spacing: -0.5px;
+  margin: 16px 0;
+  color: var(--text-h);
+}
+
+#root code {
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+#root .counter {
+  font-family: var(--mono);
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+}
+
+#root .counter:hover {
+  border-color: var(--accent-border);
+}
+
+#root #center {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  place-content: center;
+  place-items: center;
+  padding: 24px;
+  border: 2px solid var(--accent);
+  margin: 16px;
+  border-radius: 8px;
+}

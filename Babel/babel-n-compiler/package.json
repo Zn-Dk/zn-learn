@@ -1,0 +1,24 @@
+{
+  "name": "babel-n-complier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "@babel/cli": "7.28.3",
+    "@babel/core": "7.28.3",
+    "@babel/generator": "7.28.3",
+    "@babel/parser": "7.28.3",
+    "@babel/traverse": "7.28.3",
+    "@babel/types": "7.29.0"
+  },
+  "dependencies": {
+    "babel-plugin-syntax-jsx": "^6.18.0"
+  }
+}

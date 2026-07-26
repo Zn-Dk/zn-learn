@@ -1,0 +1,30 @@
+{
+  "name": "@zn-lowcode/code-runner",
+  "version": "1.0.0",
+  "description": "低代码代码运行器",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}

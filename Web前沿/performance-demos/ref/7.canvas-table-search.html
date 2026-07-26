@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 时间切片搜索演示</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: -apple-system, sans-serif; }
+        
+        /* 布局基础 */
+        #viewport {
+            width: 100vw; height: 100vh;
+            overflow: auto;
+            position: relative;
+            background: #f5f5f5;
+        }
+        #phantom { width: 20000px; height: 50000px; } /* 更大的虚拟空间 */
+        canvas { display: block; position: fixed; top: 0; left: 0; pointer-events: none; }
+
+        /* --- UI 控件区域 --- */
+        #controls {
+            position: fixed; top: 20px; right: 20px;
+            background: #fff; padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column; gap: 10px;
+            width: 260px; z-index: 100;
+        }
+        
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        button {
+            padding: 8px; background: #1890ff; color: white;
+            border: none; border-radius: 4px; cursor: pointer;
+            font-weight: bold; transition: background 0.2s;
+        }
+        button:hover { background: #40a9ff; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        button.cancel { background: #ff4d4f; }
+
+        /* --- 演示不卡死的关键：CSS 动画 --- */
+        .spinner {
+            width: 24px; height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1890ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite; /* 如果 JS 阻塞，这个动画会停止 */
+            margin: 0 auto;
+            display: none; /* 默认隐藏 */
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #status { font-size: 12px; color: #666; margin-top: 5px; min-height: 1.5em; }
+    </style>
+</head>
+<body>
+
+<div id="viewport"><div id="phantom"></div></div>
+<canvas id="stage"></canvas>
+
+<div id="controls">
+    <h3 style="margin:0 0 10px 0;">时间切片搜索演示</h3>
+    <input type="text" id="searchInput" placeholder="输入坐标如 100-50" value="100-50">
+    
+    <div style="display:flex; gap:10px;">
+        <button id="btnSearch" onclick="startSearch()">开始搜索</button>
+        <button id="btnCancel" class="cancel" onclick="stopSearch()" disabled>停止</button>
+    </div>
+
+    <div id="loading" class="spinner"></div>
+    <div id="status">准备就绪 (数据范围: 5000行 x 100列)</div>
+</div>
+
+<script>
+    // --- 1. 基础配置与渲染逻辑 (沿用之前的优化) ---
+    const COL_WIDTH = 120;
+    const ROW_HEIGHT = 30;
+    const HEADER_COL_WIDTH = 50;
+    const HEADER_ROW_HEIGHT = 30;
+    
+    // 模拟数据范围（虽然phantom很大，为了搜索演示我们限定一个搜索范围）
+    const MAX_SEARCH_ROWS = 5000; 
+    const MAX_SEARCH_COLS = 100;
+
+    const viewport = document.getElementById('viewport');
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    
+    let state = {
+        scrollTop: 0, scrollLeft: 0,
+        selected: { r: -1, c: -1 } // 搜索结果会更新这个
+    };
+
+    function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.scale(dpr, dpr);
+        render();
+    }
+
+    function render() {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 简单重绘逻辑 (为了专注搜索部分，简化了渲染代码，保留核心视觉)
+        const startRow = Math.floor(state.scrollTop / ROW_HEIGHT);
+        const endRow = Math.floor((state.scrollTop + window.innerHeight) / ROW_HEIGHT) + 1;
+        const startCol = Math.floor(state.scrollLeft / COL_WIDTH);
+        const endCol = Math.floor((state.scrollLeft + window.innerWidth) / COL_WIDTH) + 1;
+
+        ctx.save();
+        ctx.translate(HEADER_COL_WIDTH, HEADER_ROW_HEIGHT);
+
+        for (let r = startRow; r < endRow; r++) {
+            for (let c = startCol; c < endCol; c++) {
+                let x = (c * COL_WIDTH) - state.scrollLeft;
+                let y = (r * ROW_HEIGHT) - state.scrollTop;
+                
+                // 绘制单元格
+                if (r === state.selected.r && c === state.selected.c) {
+                    ctx.fillStyle = 'rgba(255, 215, 0, 0.3)'; // 金色高亮选中
+                } else {
+                    ctx.fillStyle = ((r+c)%2===0) ? '#fff' : '#fafafa';
+                }
+                ctx.fillRect(x, y, COL_WIDTH, ROW_HEIGHT);
+                ctx.strokeStyle = '#eee';
+                ctx.strokeRect(x, y, COL_WIDTH, ROW_HEIGHT);
+
+                // 文字
+                ctx.fillStyle = '#333';
+                ctx.font = '13px sans-serif';
+                // *** 这里定义了我们要搜索的数据内容格式 ***
+                ctx.fillText(`Data ${r}-${c}`, x + 10, y + 20);
+            }
+        }
+        
+        // 绘制一个明显的红色框在选中项上
+        if (state.selected.r !== -1) {
+            let sx = (state.selected.c * COL_WIDTH) - state.scrollLeft;
+            let sy = (state.selected.r * ROW_HEIGHT) - state.scrollTop;
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(sx, sy, COL_WIDTH, ROW_HEIGHT);
+        }
+
+        ctx.restore();
+        
+        // 绘制表头遮挡层（简单模拟）
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, canvas.width, HEADER_ROW_HEIGHT);
+        ctx.fillRect(0, 0, HEADER_COL_WIDTH, canvas.height);
+        ctx.fillStyle = '#333';
+        ctx.fillText("Fixed Header Area", 60, 20);
+    }
+
+    viewport.addEventListener('scroll', () => {
+        state.scrollTop = viewport.scrollTop;
+        state.scrollLeft = viewport.scrollLeft;
+        requestAnimationFrame(render);
+    });
+    window.addEventListener('resize', resize);
+    resize();
+
+
+    // ==========================================
+    // === 核心逻辑：时间切片搜索 (Time Slicing) ===
+    // ==========================================
+
+    let isSearching = false;
+    let searchJobId = null; // 用于取消任务
+
+    // 1. 生成器函数 (Generator)
+    // 它可以暂停执行，保存上下文（当前的行和列索引）
+    function* gridSearchGenerator(targetText) {
+        // 遍历假设的大数据集
+        for (let r = 0; r < MAX_SEARCH_ROWS; r++) {
+            for (let c = 0; c < MAX_SEARCH_COLS; c++) {
+                
+                // 模拟耗时操作：实际业务中可能是在比对复杂的对象
+                // 为了让搜索稍微慢一点，容易看出演示效果，我们加一点点数学计算开销
+                // Math.random(); 
+                
+                // 数据生成逻辑必须与 render 中的一致
+                const cellData = `Data ${r}-${c}`; // 比如 "Data 100-50"
+                
+                // 检查是否匹配
+                if (cellData.includes(targetText)) {
+                    yield { found: true, r, c, val: cellData }; // 找到了，暂停并返回结果
+                    return; // 结束搜索
+                }
+
+                // 每检查一个单元格，就 yield 暂停一次？
+                // 不，这样开销太大。我们在调度器里控制何时暂停。
+                // 这里我们仅仅是产出状态。
+                yield { found: false, progress: { r, c } };
+            }
+        }
+    }
+
+    // 2. 调度器 (Scheduler)
+    function startSearch() {
+        const query = document.getElementById('searchInput').value;
+        if (!query) return;
+
+        // UI 状态更新
+        isSearching = true;
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('btnSearch').disabled = true;
+        document.getElementById('btnCancel').disabled = false;
+        document.getElementById('status').innerText = '搜索中... (请观察动画是否流畅)';
+
+        // 创建生成器实例
+        const searchIterator = gridSearchGenerator(query);
+        
+        // 定义每一帧的时间预算 (毫秒)
+        // 16ms 是一帧，留给渲染和浏览器内核约 6-8ms，剩下 8-10ms 给 JS 运算
+        const TIME_BUDGET = 8; 
+
+        function runSlice() {
+            if (!isSearching) return; // 被取消
+
+            const start = performance.now();
+
+            // --- 关键循环 ---
+            // 只要当前帧还有剩余时间，就一直执行 next()
+            while (performance.now() - start < TIME_BUDGET) {
+                const result = searchIterator.next();
+
+                if (result.done) {
+                    finishSearch(null); // 遍历完也没找到
+                    return;
+                }
+
+                if (result.value.found) {
+                    finishSearch(result.value); // 找到了
+                    return;
+                }
+                
+                // 可选：更新进度条（不要太频繁，会影响性能，这里简单显示行号）
+                // document.getElementById('status').innerText = `正在搜索第 ${result.value.progress.r} 行...`;
+            }
+
+            // 时间片用完了，通过 RAF 申请在下一帧继续执行
+            searchJobId = requestAnimationFrame(runSlice);
+        }
+
+        // 启动任务
+        runSlice();
+    }
+
+    // 3. 结束处理
+    function finishSearch(result) {
+        stopSearch();
+        
+        if (result) {
+            document.getElementById('status').innerText = `找到结果: [Row ${result.r}, Col ${result.c}]`;
+            document.getElementById('status').style.color = 'green';
+            
+            // 跳转逻辑
+            jumpToCell(result.r, result.c);
+        } else {
+            document.getElementById('status').innerText = '未找到匹配项';
+            document.getElementById('status').style.color = 'red';
+        }
+    }
+
+    function stopSearch() {
+        isSearching = false;
+        if (searchJobId) cancelAnimationFrame(searchJobId);
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('btnSearch').disabled = false;
+        document.getElementById('btnCancel').disabled = true;
+    }
+
+    // 自动滚动到目标位置并高亮
+    function jumpToCell(r, c) {
+        state.selected = { r, c };
+        
+        // 计算目标滚动位置 (居中显示)
+        const targetTop = (r * ROW_HEIGHT) - (window.innerHeight / 2) + (ROW_HEIGHT / 2);
+        const targetLeft = (c * COL_WIDTH) - (window.innerWidth / 2) + (COL_WIDTH / 2);
+        
+        viewport.scrollTo({
+            top: Math.max(0, targetTop),
+            left: Math.max(0, targetLeft),
+            behavior: 'smooth' // 平滑滚动
+        });
+
+        // 触发一次重绘以显示高亮
+        render();
+    }
+
+</script>
+</body>
+</html>

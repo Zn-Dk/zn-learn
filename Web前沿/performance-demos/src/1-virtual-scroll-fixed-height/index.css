@@ -1,0 +1,36 @@
+/* 列表视口 (Viewport) */
+#list-container {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto; /* 开启原生滚动 */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 幽灵占位区域 (Phantom) - 用于撑开滚动条 */
+#list-phantom {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: -1;
+}
+
+/* 真实列表容器 */
+#list-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+/* 列表项样式 */
+.list-item {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}

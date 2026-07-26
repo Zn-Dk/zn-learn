@@ -1,0 +1,25 @@
+{
+  "name": "ts-decorator-demo",
+  "version": "1.0.0",
+  "description": "TypeScript装饰器语法实践指南",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "keywords": [
+    "typescript",
+    "decorator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2"
+  }
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pic-mark-editor</title>
+</head>
+
+<body>
+  <div id="app">
+    <div class="toolbar">
+      <div class="toolbar-item">
+        <!-- undo btn -->
+        <button id="undo-button">撤销</button>
+      </div>
+      <div class="toolbar-item">
+        <!-- redo btn -->
+        <button id="redo-button">重做</button>
+      </div>
+      <div class="toolbar-item">
+        <!-- select -->
+        <select id="tool-select">
+          <option value="pen">画笔</option>
+          <option value="eraser">橡皮擦</option>
+        </select>
+      </div>
+      <div class="toolbar-item">
+        <!-- color picker(type) -->
+        <select id="mark-type-select">
+        </select>
+      </div>
+    </div>
+  </div>
+  <canvas id="canvas"></canvas>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
